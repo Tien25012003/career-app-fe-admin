@@ -4,18 +4,17 @@ import {
   Box,
   Button,
   Container,
-  Divider,
   Group,
   Paper,
   PasswordInput,
   Stack,
   TextInput,
-  useMantineColorScheme,
   useMantineTheme,
   getGradient,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { SchemaUtils } from "@util/SchemaUtils";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 const formSchema = z.object({
@@ -36,6 +35,11 @@ export function LoginPage() {
     initialValues: initialFormValues,
     validate: zodResolver(formSchema),
   });
+  const navigate = useNavigate();
+  const handleFormSubmit = form.onSubmit((formValues) => {
+    //console.log("formValues", formValues);
+    navigate("/");
+  });
   return (
     <Box
       //bg={colorScheme === "dark" ? theme.colors.dark[6] : theme.colors?.gray[1]}
@@ -54,7 +58,7 @@ export function LoginPage() {
           <Stack justify="center" align="center">
             <CareerAppLogo />
           </Stack>
-          <form onSubmit={() => {}}>
+          <form onSubmit={handleFormSubmit}>
             <TextInput
               withAsterisk
               label="Tên đăng nhập"
