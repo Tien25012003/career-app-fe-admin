@@ -1,0 +1,11 @@
+@import url("https://fonts.googleapis.com/css?family=JetBrains+Mono");
+@import url("https://fonts.googleapis.com/css?family=Montserrat");
+
+.jotai-devtools-trigger-button,
+.jotai-devtools-trigger-button:active {
+  left: initial !important;
+  right: 5px !important;
+  bottom: 60px !important;
+  transform: scale(0.65) !important;
+  z-index: 100 !important;
+}
