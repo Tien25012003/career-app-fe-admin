@@ -1,10 +1,11 @@
 import { Header } from "@component/Header";
+import { NavBar } from "@component/NavBar";
 import {
   AppShell,
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
-import { hideNavbarAtom } from "atoms/AppAtoms";
+import { hideNavbarAtom, miniNavbarAtom } from "atoms/AppAtoms";
 import { useAtom } from "jotai";
 import React, { useMemo } from "react";
 import { Outlet } from "react-router-dom";
@@ -13,13 +14,13 @@ export function HomePage() {
   const { colorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
   const [hideNavbar] = useAtom(hideNavbarAtom);
+  const [miniNavbar] = useAtom(miniNavbarAtom);
 
   const appSheelStyles = useMemo(
     () => ({
       main: {
         background:
           colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0],
-        width: "100%",
       },
     }),
     [colorScheme]
@@ -28,18 +29,18 @@ export function HomePage() {
     <AppShell
       style={appSheelStyles}
       navbar={{
-        width: 300,
+        width: miniNavbar ? 80 : 300,
         breakpoint: "sm",
         collapsed: { mobile: hideNavbar },
       }}
       header={{ height: 65 }}
     >
       <Header />
+      <NavBar />
       <AppShell.Main
         bg={
           colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0]
         }
-        ml={{ sm: -25 }}
       >
         <Outlet />
       </AppShell.Main>

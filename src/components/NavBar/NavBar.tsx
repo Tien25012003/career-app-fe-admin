@@ -3,26 +3,137 @@ import {
   ScrollArea,
   useMantineColorScheme,
   useMantineTheme,
+  NavLink,
+  HoverCard,
+  Stack,
+  Text,
+  Box,
+  Group,
+  ActionIcon,
 } from "@mantine/core";
+import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { NavElement } from "@type/ui/navElements";
 import { miniNavbarAtom } from "atoms/AppAtoms";
+import { navElements } from "constants/navElements";
 import { useAtom } from "jotai";
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
+type TNavLink = {
+  item: NavElement;
+  children?: React.ReactNode;
+  showLabel?: boolean;
+};
+const CustomNavLink = ({ item, children, showLabel = true }: TNavLink) => {
+  const location = useLocation();
+  const theme = useMantineTheme();
+  const [miniNavbar] = useAtom(miniNavbarAtom);
+
+  return (
+    <NavLink
+      key={item.label}
+      style={{
+        borderRadius: theme.radius.sm,
+      }}
+      styles={{
+        section: {
+          marginRight: miniNavbar ? 0 : 10,
+        },
+      }}
+      label={showLabel ? item.label : ""}
+      component={Link}
+      to={item.link || ""}
+      leftSection={
+        item.icon && (
+          <item.icon size={"1.25rem"} stroke={1.5} style={{ marginLeft: 0 }} />
+        )
+      }
+      childrenOffset={"1rem"}
+      active={item.link === location.pathname}
+      h="2.625rem"
+    >
+      {children && children}
+    </NavLink>
+  );
+};
 export function NavBar() {
   const { colorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
   const [miniNavbar, setMiniNavbar] = useAtom(miniNavbarAtom);
   //const largerThanSm = useLargerThan("sm");
-  const location = useLocation();
+
   return (
-    <AppShell.Navbar w={{ sm: miniNavbarAtom ? 90 : 275 }}>
+    <AppShell.Navbar>
       <AppShell.Section
         grow
         component={ScrollArea}
         p={theme.spacing.md}
         scrollbarSize={10}
-      ></AppShell.Section>
+      >
+        {!miniNavbar
+          ? navElements.map((navElement) => (
+              <CustomNavLink item={navElement}>
+                {navElement.children?.map((childNavElement) => {
+                  return <CustomNavLink item={childNavElement} />;
+                })}
+              </CustomNavLink>
+            ))
+          : navElements.map((navElement) => (
+              <HoverCard key={navElement.label} disabled={!navElement.children}>
+                <HoverCard.Target>
+                  <CustomNavLink item={navElement} showLabel={false} />
+                </HoverCard.Target>
+                <HoverCard.Dropdown
+                  p="md"
+                  bg={
+                    colorScheme === "dark" ? theme.colors.dark[7] : theme.white
+                  }
+                >
+                  <Stack gap={"xs"}>
+                    <Text c="dimmed" size="sm">
+                      {navElement.label}
+                    </Text>
+                    <Box>
+                      {navElement.children?.map((childNavElement) => (
+                        <CustomNavLink item={childNavElement} />
+                      ))}
+                    </Box>
+                  </Stack>
+                </HoverCard.Dropdown>
+              </HoverCard>
+            ))}
+      </AppShell.Section>
+      <AppShell.Section visibleFrom="sm">
+        <Group
+          py="sm"
+          style={{
+            borderTop: `1px solid ${
+              colorScheme === "dark"
+                ? theme.colors.dark[5]
+                : theme.colors.gray[2]
+            }`,
+          }}
+          mx="lg"
+          align="center"
+          justify="space-between"
+        >
+          {!miniNavbar && (
+            <Text c="dimmed" size="xs">
+              version 1.1
+            </Text>
+          )}
+          <ActionIcon
+            variant="default"
+            onClick={() => setMiniNavbar(!miniNavbar)}
+          >
+            {miniNavbar ? (
+              <IconChevronRight size="1.125rem" stroke={1.5} />
+            ) : (
+              <IconChevronLeft size="1.125rem" stroke={1.5} />
+            )}
+          </ActionIcon>
+        </Group>
+      </AppShell.Section>
     </AppShell.Navbar>
   );
 }
