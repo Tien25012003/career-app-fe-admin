@@ -5,6 +5,7 @@ import {
   IconNews,
   IconPencil,
   IconBook2,
+  IconBrandWechat,
 } from "@tabler/icons-react";
 
 export const navElements: NavElement[] = [
@@ -12,6 +13,11 @@ export const navElements: NavElement[] = [
     label: "Tổng quan",
     link: "/",
     icon: IconHome,
+  },
+  {
+    label: "Tài khoản",
+    link: "/account",
+    icon: IconUser,
   },
   {
     label: "Bài kiểm tra",
@@ -24,9 +30,9 @@ export const navElements: NavElement[] = [
     icon: IconNews,
   },
   {
-    label: "Tài khoản",
-    link: "/account",
-    icon: IconUser,
+    label: "Chat bot",
+    link: "/chatbot",
+    icon: IconBrandWechat,
   },
   {
     label: "Từ điển",

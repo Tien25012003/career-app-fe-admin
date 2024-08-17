@@ -15,8 +15,9 @@ import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { NavElement } from "@type/ui/navElements";
 import { miniNavbarAtom } from "atoms/AppAtoms";
 import { navElements } from "constants/navElements";
+import { useLargerThan } from "hooks/useLargerThan";
 import { useAtom } from "jotai";
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 type TNavLink = {
@@ -28,9 +29,11 @@ const CustomNavLink = ({ item, children, showLabel = true }: TNavLink) => {
   const location = useLocation();
   const theme = useMantineTheme();
   const [miniNavbar] = useAtom(miniNavbarAtom);
+  const { colorScheme } = useMantineColorScheme();
 
   return (
     <NavLink
+      variant={colorScheme === "light" ? "filled" : "light"}
       key={item.label}
       style={{
         borderRadius: theme.radius.sm,
@@ -45,7 +48,7 @@ const CustomNavLink = ({ item, children, showLabel = true }: TNavLink) => {
       to={item.link || ""}
       leftSection={
         item.icon && (
-          <item.icon size={"1.25rem"} stroke={1.5} style={{ marginLeft: 0 }} />
+          <item.icon size={"1.25rem"} stroke={1.5} style={{ marginRight: 0 }} />
         )
       }
       childrenOffset={"1rem"}
@@ -60,7 +63,14 @@ export function NavBar() {
   const { colorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
   const [miniNavbar, setMiniNavbar] = useAtom(miniNavbarAtom);
-  //const largerThanSm = useLargerThan("sm");
+  const largerThanMd = useLargerThan("md");
+  useEffect(() => {
+    if (largerThanMd !== undefined && !largerThanMd) {
+      setMiniNavbar(true);
+    } else if (largerThanMd) {
+      setMiniNavbar(false);
+    }
+  }, [largerThanMd]);
 
   return (
     <AppShell.Navbar>
@@ -79,15 +89,17 @@ export function NavBar() {
               </CustomNavLink>
             ))
           : navElements.map((navElement) => (
-              <HoverCard key={navElement.label} disabled={!navElement.children}>
+              <HoverCard key={navElement.label} position="right">
                 <HoverCard.Target>
-                  <CustomNavLink item={navElement} showLabel={false} />
+                  <Box>
+                    <CustomNavLink item={navElement} showLabel={false} />
+                  </Box>
                 </HoverCard.Target>
                 <HoverCard.Dropdown
-                  p="md"
                   bg={
                     colorScheme === "dark" ? theme.colors.dark[7] : theme.white
                   }
+                  pb="0"
                 >
                   <Stack gap={"xs"}>
                     <Text c="dimmed" size="sm">
@@ -103,7 +115,7 @@ export function NavBar() {
               </HoverCard>
             ))}
       </AppShell.Section>
-      <AppShell.Section visibleFrom="sm">
+      <AppShell.Section>
         <Group
           py="sm"
           style={{

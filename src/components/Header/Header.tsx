@@ -1,3 +1,4 @@
+import { ActionButton } from "@component/ActionButton";
 import { HeaderLogo } from "@icon/HeaderLogo";
 import {
   AppShell,
@@ -8,16 +9,27 @@ import {
   Flex,
   Box,
   Burger,
+  Menu,
+  Button,
 } from "@mantine/core";
+import {
+  IconLogout,
+  IconMoonStars,
+  IconSun,
+  IconUserCircle,
+} from "@tabler/icons-react";
 import { hideNavbarAtom } from "atoms/AppAtoms";
 import { useAtom } from "jotai";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 
 export function Header() {
-  const { colorScheme } = useMantineColorScheme();
+  const { colorScheme, setColorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
   const [hideNavbar, setHideNavbar] = useAtom(hideNavbarAtom);
+
+  const handleChangeColorScheme = () =>
+    setColorScheme(colorScheme === "dark" ? "light" : "dark");
 
   const mantineHeaderStyles = useMemo(
     () => ({
@@ -42,23 +54,69 @@ export function Header() {
               onClick={() => setHideNavbar((o) => !o)}
               size="sm"
               color={theme.colors.gray[6]}
-              mr="xl"
+              mr="sm"
             />
           </Box>
           <Group gap={"md"}>
             <Box
               component={Link}
               to="/"
-              style={{
-                transition: "filter 0.5s, transform 0.2s",
-                cursor: "pointer",
-                "&:hover": { filter: "brightness(1.5)" },
-                "&:active": { transform: "scale(0.95)" },
-              }}
+              className="hover:scale-110 hover:brightness-110 transition duration-300"
             >
               <HeaderLogo />
             </Box>
           </Group>
+        </Flex>
+        <Flex align={"center"} visibleFrom="sm">
+          <Group gap={"xs"}>
+            <ActionButton
+              tooltip={"Trang cá nhân"}
+              icon={IconUserCircle}
+              onClick={() => {}}
+            />
+            <ActionButton
+              tooltip={colorScheme === "dark" ? "Chế độ sáng" : "Chế độ tối"}
+              icon={colorScheme === "dark" ? IconSun : IconMoonStars}
+              onClick={handleChangeColorScheme}
+            />
+            <ActionButton
+              tooltip="Đăng xuất"
+              icon={IconLogout}
+              onClick={() => {}}
+            />
+          </Group>
+        </Flex>
+        <Flex align={"center"} hiddenFrom="sm">
+          <Menu shadow="md" width={200}>
+            <Menu.Target>
+              <Button>Menu</Button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item
+                leftSection={<IconUserCircle size="1.125rem" stroke={1.5} />}
+              >
+                Trang cá nhân
+              </Menu.Item>
+              <Menu.Item
+                leftSection={
+                  colorScheme === "dark" ? (
+                    <IconSun size="1.375rem" stroke={1.5} />
+                  ) : (
+                    <IconMoonStars size="1.375rem" stroke={1.5} />
+                  )
+                }
+                onClick={handleChangeColorScheme}
+              >
+                {colorScheme === "dark" ? "Chế độ sáng" : "Chế độ tối"}
+              </Menu.Item>
+              <Menu.Item
+                leftSection={<IconLogout size="1.125rem" stroke={1.5} />}
+                onClick={() => {}}
+              >
+                Đăng xuất
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
         </Flex>
       </Group>
     </AppShell.Header>

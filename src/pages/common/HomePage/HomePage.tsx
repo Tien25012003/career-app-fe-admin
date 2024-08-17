@@ -7,7 +7,7 @@ import {
 } from "@mantine/core";
 import { hideNavbarAtom, miniNavbarAtom } from "atoms/AppAtoms";
 import { useAtom } from "jotai";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { Outlet } from "react-router-dom";
 
 export function HomePage() {
@@ -23,7 +23,7 @@ export function HomePage() {
           colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0],
       },
     }),
-    [colorScheme]
+    [colorScheme, theme.colors.dark, theme.colors.gray]
   );
   return (
     <AppShell

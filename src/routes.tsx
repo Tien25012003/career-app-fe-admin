@@ -3,6 +3,8 @@ import { ProtectedRoutes } from "@component/ProtectedRoutes/ProtectedRoutes";
 import { HomePage } from "@page/common/HomePage";
 import { DashboardPage } from "@page/common/DashboardPage";
 import { LoginPage } from "@page/auth/LoginPage";
+import { NewsPage } from "@page/common/NewsPage";
+import { NotFoundPage } from "@page/common/NotFoundPage";
 
 const publicRoutes: RouteObject[] = [
   {
@@ -23,6 +25,14 @@ const privateRoutes: RouteObject[] = [
           {
             index: true,
             element: <DashboardPage />,
+          },
+          {
+            path: "/news",
+            element: <NewsPage />,
+          },
+          {
+            path: "/*",
+            element: <NotFoundPage />,
           },
         ],
       },
