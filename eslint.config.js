@@ -28,5 +28,20 @@ export default tseslint.config({
       "warn",
       { allowConstantExport: true },
     ],
+    "prettier/prettier": [
+      "warn",
+      {
+        arrowParens: "always",
+        jsxSingleQuote: true,
+        trailingComma: "all",
+        tabWidth: 2,
+        semi: true,
+        singleQuote: true,
+        useTabs: false,
+        endOfLine: "auto",
+        printWidth: 100,
+        bracketSameLine: false,
+      },
+    ],
   },
 });

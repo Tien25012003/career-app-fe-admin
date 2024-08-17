@@ -28,7 +28,7 @@ const initialFormValues: FormValues = {
   password: "",
 };
 
-export function LoginPage() {
+export default function LoginPage() {
   //const { colorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
   const form = useForm({
