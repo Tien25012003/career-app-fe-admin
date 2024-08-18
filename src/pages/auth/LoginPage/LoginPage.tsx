@@ -1,4 +1,4 @@
-import { CareerAppLogo } from "@icon/CareerAppLogo";
+import { CareerAppLogo } from '@icon/CareerAppLogo';
 import {
   Anchor,
   Box,
@@ -11,11 +11,11 @@ import {
   TextInput,
   useMantineTheme,
   getGradient,
-} from "@mantine/core";
-import { useForm, zodResolver } from "@mantine/form";
-import { SchemaUtils } from "@util/SchemaUtils";
-import { useNavigate } from "react-router-dom";
-import { z } from "zod";
+} from '@mantine/core';
+import { useForm, zodResolver } from '@mantine/form';
+import { SchemaUtils } from '@util/SchemaUtils';
+import { useNavigate } from 'react-router-dom';
+import { z } from 'zod';
 
 const formSchema = z.object({
   username: z.string().trim().min(1, SchemaUtils.message.nonempty),
@@ -24,8 +24,8 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 const initialFormValues: FormValues = {
-  username: "",
-  password: "",
+  username: '',
+  password: '',
 };
 
 export default function LoginPage() {
@@ -38,7 +38,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const handleFormSubmit = form.onSubmit((formValues) => {
     //console.log("formValues", formValues);
-    navigate("/");
+    navigate('/');
   });
   return (
     <Box
@@ -46,36 +46,32 @@ export default function LoginPage() {
       bg={getGradient(
         {
           deg: 180,
-          from: theme.colors.green[9],
-          to: theme.colors.green[1],
+          from: theme.colors.main[9],
+          to: theme.colors.main[1],
         },
-        theme
+        theme,
       )}
-      mih="100vh"
+      mih='100vh'
     >
-      <Container size={420} pt="20vh" pb="2rem">
-        <Paper withBorder shadow="md" radius={"md"} p={30}>
-          <Stack justify="center" align="center">
+      <Container size={420} pt='20vh' pb='2rem'>
+        <Paper withBorder shadow='md' radius={'md'} p={30}>
+          <Stack justify='center' align='center'>
             <CareerAppLogo />
           </Stack>
           <form onSubmit={handleFormSubmit}>
-            <TextInput
-              withAsterisk
-              label="Tên đăng nhập"
-              {...form.getInputProps("username")}
-            />
+            <TextInput withAsterisk label='Tên đăng nhập' {...form.getInputProps('username')} />
             <PasswordInput
               withAsterisk
-              label="Mật khẩu"
-              mt="md"
-              {...form.getInputProps("password")}
+              label='Mật khẩu'
+              mt='md'
+              {...form.getInputProps('password')}
             />
-            <Group justify="end" mt="sm">
-              <Anchor component="button" size="sm" c={theme.colors.blue[6]}>
+            <Group justify='end' mt='sm'>
+              <Anchor component='button' size='sm' c={theme.colors.blue[6]}>
                 Quên mật khẩu?
               </Anchor>
             </Group>
-            <Button type="submit" fullWidth mt="xl">
+            <Button type='submit' fullWidth mt='xl'>
               Đăng nhập
             </Button>
           </form>

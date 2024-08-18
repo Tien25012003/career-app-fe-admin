@@ -7,6 +7,7 @@ import { Skeleton } from '@mantine/core';
 import { lazyWithReload } from '@helper/lazyWithReload';
 const DashboardPage = lazyWithReload(() => import('@page/common/DashboardPage/DashboardPage'));
 const LoginPage = lazyWithReload(() => import('@page/auth/LoginPage/LoginPage'));
+const SignUpPage = lazyWithReload(() => import('@page/auth/SignUpPage/SignUpPage'));
 const NewsPage = lazyWithReload(() => import('@page/common/NewsPage/NewsPage'));
 const AccountPage = lazyWithReload(() => import('@page/common/AccountPage/AccountPage'));
 const ExamPage = lazyWithReload(() => import('@page/common/ExamPage/ExamPage'));
@@ -29,7 +30,19 @@ export const LoadingWrapper = ({ children }: { children: React.ReactNode }) => (
 const publicRoutes: RouteObject[] = [
   {
     path: '/login',
-    element: <LoginPage />,
+    element: (
+      <LoadingWrapper>
+        <LoginPage />
+      </LoadingWrapper>
+    ),
+  },
+  {
+    path: '/signup',
+    element: (
+      <LoadingWrapper>
+        <SignUpPage />
+      </LoadingWrapper>
+    ),
   },
 ];
 

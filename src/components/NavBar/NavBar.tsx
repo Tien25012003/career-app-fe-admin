@@ -10,15 +10,15 @@ import {
   Box,
   Group,
   ActionIcon,
-} from "@mantine/core";
-import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
-import { NavElement } from "@type/ui/navElements";
-import { miniNavbarAtom } from "atoms/AppAtoms";
-import { navElements } from "constants/navElements";
-import { useLargerThan } from "hooks/useLargerThan";
-import { useAtom } from "jotai";
-import React, { useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+} from '@mantine/core';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { NavElement } from '@type/ui/navElements';
+import { miniNavbarAtom } from 'atoms/AppAtoms';
+import { navElements } from 'constants/navElements';
+import { useLargerThan } from 'hooks';
+import { useAtom } from 'jotai';
+import React, { useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 type TNavLink = {
   item: NavElement;
@@ -33,7 +33,7 @@ const CustomNavLink = ({ item, children, showLabel = true }: TNavLink) => {
 
   return (
     <NavLink
-      variant={colorScheme === "light" ? "filled" : "light"}
+      variant={colorScheme === 'light' ? 'filled' : 'light'}
       key={item.label}
       style={{
         borderRadius: theme.radius.sm,
@@ -43,17 +43,15 @@ const CustomNavLink = ({ item, children, showLabel = true }: TNavLink) => {
           marginRight: miniNavbar ? 0 : 10,
         },
       }}
-      label={showLabel ? item.label : ""}
+      label={showLabel ? item.label : ''}
       component={Link}
-      to={item.link || ""}
+      to={item.link || ''}
       leftSection={
-        item.icon && (
-          <item.icon size={"1.25rem"} stroke={1.5} style={{ marginRight: 0 }} />
-        )
+        item.icon && <item.icon size={'1.25rem'} stroke={1.5} style={{ marginRight: 0 }} />
       }
-      childrenOffset={"1rem"}
+      childrenOffset={'1rem'}
       active={item.link === location.pathname}
-      h="2.625rem"
+      h='2.625rem'
     >
       {children && children}
     </NavLink>
@@ -63,7 +61,7 @@ export function NavBar() {
   const { colorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
   const [miniNavbar, setMiniNavbar] = useAtom(miniNavbarAtom);
-  const largerThanMd = useLargerThan("md");
+  const largerThanMd = useLargerThan('md');
   useEffect(() => {
     if (largerThanMd !== undefined && !largerThanMd) {
       setMiniNavbar(true);
@@ -74,12 +72,7 @@ export function NavBar() {
 
   return (
     <AppShell.Navbar>
-      <AppShell.Section
-        grow
-        component={ScrollArea}
-        p={theme.spacing.md}
-        scrollbarSize={10}
-      >
+      <AppShell.Section grow component={ScrollArea} p={theme.spacing.md} scrollbarSize={10}>
         {!miniNavbar
           ? navElements.map((navElement) => (
               <CustomNavLink item={navElement}>
@@ -89,20 +82,18 @@ export function NavBar() {
               </CustomNavLink>
             ))
           : navElements.map((navElement) => (
-              <HoverCard key={navElement.label} position="right">
+              <HoverCard key={navElement.label} position='right'>
                 <HoverCard.Target>
                   <Box>
                     <CustomNavLink item={navElement} showLabel={false} />
                   </Box>
                 </HoverCard.Target>
                 <HoverCard.Dropdown
-                  bg={
-                    colorScheme === "dark" ? theme.colors.dark[7] : theme.white
-                  }
-                  pb="0"
+                  bg={colorScheme === 'dark' ? theme.colors.dark[7] : theme.white}
+                  pb='0'
                 >
-                  <Stack gap={"xs"}>
-                    <Text c="dimmed" size="sm">
+                  <Stack gap={'xs'}>
+                    <Text c='dimmed' size='sm'>
                       {navElement.label}
                     </Text>
                     <Box>
@@ -117,31 +108,26 @@ export function NavBar() {
       </AppShell.Section>
       <AppShell.Section>
         <Group
-          py="sm"
+          py='sm'
           style={{
             borderTop: `1px solid ${
-              colorScheme === "dark"
-                ? theme.colors.dark[5]
-                : theme.colors.gray[2]
+              colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
             }`,
           }}
-          mx="lg"
-          align="center"
-          justify="space-between"
+          mx='lg'
+          align='center'
+          justify='space-between'
         >
           {!miniNavbar && (
-            <Text c="dimmed" size="xs">
+            <Text c='dimmed' size='xs'>
               version 1.1
             </Text>
           )}
-          <ActionIcon
-            variant="default"
-            onClick={() => setMiniNavbar(!miniNavbar)}
-          >
+          <ActionIcon variant='default' onClick={() => setMiniNavbar(!miniNavbar)}>
             {miniNavbar ? (
-              <IconChevronRight size="1.125rem" stroke={1.5} />
+              <IconChevronRight size='1.125rem' stroke={1.5} />
             ) : (
-              <IconChevronLeft size="1.125rem" stroke={1.5} />
+              <IconChevronLeft size='1.125rem' stroke={1.5} />
             )}
           </ActionIcon>
         </Group>
