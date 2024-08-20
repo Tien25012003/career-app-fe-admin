@@ -1,9 +1,11 @@
-@import url("https://fonts.googleapis.com/css?family=JetBrains+Mono");
-@import url("https://fonts.googleapis.com/css?family=Montserrat");
+@import url('https://fonts.googleapis.com/css?family=JetBrains+Mono');
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer mantine, mantine-datatable;
 
 .jotai-devtools-trigger-button,
 .jotai-devtools-trigger-button:active {
