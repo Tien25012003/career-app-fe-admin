@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { DataTable, DataTableColumn, DataTableRowClickHandler } from 'mantine-datatable';
+import { useMantineColorScheme, useMantineTheme } from '@mantine/core';
 
 type TAppTable<T> = {
   data: T[];
@@ -9,6 +10,9 @@ type TAppTable<T> = {
 };
 const PAGE_SIZES = [10, 15, 20];
 function AppTable<T>({ data, columns, isLoading, onRowClick }: TAppTable<T>) {
+  const theme = useMantineTheme();
+  const { colorScheme } = useMantineColorScheme();
+
   const [pageSize, setPageSize] = useState(PAGE_SIZES[1]);
 
   useEffect(() => {
@@ -45,11 +49,11 @@ function AppTable<T>({ data, columns, isLoading, onRowClick }: TAppTable<T>) {
       onRowClick={onRowClick}
       styles={{
         header: {
-          backgroundColor: '#ebedef',
+          backgroundColor: colorScheme === 'light' ? theme.colors.gray[0] : theme.colors.gray[9],
           zIndex: 9,
         },
         table: {
-          backgroundColor: 'white',
+          backgroundColor: colorScheme === 'light' ? theme.colors.gray[0] : theme.colors.gray[9],
         },
       }}
       scrollAreaProps={{ type: 'never' }}
