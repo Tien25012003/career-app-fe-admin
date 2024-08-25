@@ -1,4 +1,6 @@
-import { Table, Checkbox, Image } from '@mantine/core';
+import AppTable from '@component/AppTable/AppTable';
+import { TableButton } from '@component/TableButton/TableButton';
+import { Table, Checkbox, Image, Text } from '@mantine/core';
 import { useState } from 'react';
 
 const dictionaryDummyData = [
@@ -65,44 +67,50 @@ const dictionaryDummyData = [
   },
 ];
 export function DictionaryTable() {
-  const [selectedRows, setSelectedRows] = useState<number[]>([]);
   return (
-    <Table striped highlightOnHover withTableBorder withColumnBorders withRowBorders>
-      <Table.Thead>
-        <Table.Tr>
-          <Table.Th />
-          <Table.Th>Tên</Table.Th>
-          <Table.Th>Hình ảnh</Table.Th>
-          <Table.Th>Môn thi</Table.Th>
-          <Table.Th>Ưu điểm</Table.Th>
-          <Table.Th>Khó khăn</Table.Th>
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>
-        {dictionaryDummyData?.map((data, index) => {
-          return (
-            <Table.Tr key={index}>
-              <Table.Td>
-                <Checkbox
-                  aria-label='Select row'
-                  checked={selectedRows.includes(index)}
-                  onChange={(event) =>
-                    setSelectedRows(
-                      event.currentTarget.checked
-                        ? [...selectedRows, index]
-                        : selectedRows.filter((position) => position !== index),
-                    )
-                  }
-                />
-              </Table.Td>
-              <Table.Td>{data.name}</Table.Td>
-              <Table.Td>
-                <Image radius='md' h={100} w={100} fit='contain' src={data.image} />
-              </Table.Td>
-            </Table.Tr>
-          );
-        })}
-      </Table.Tbody>
-    </Table>
+    <AppTable
+      data={dictionaryDummyData}
+      columns={[
+        {
+          accessor: 'name',
+          title: 'Tên ngành',
+          width: 150,
+          render: ({ name }) => (
+            <Text size='sm' fw={'600'}>
+              {name}
+            </Text>
+          ),
+        },
+        {
+          accessor: 'image',
+          title: 'Hình ảnh',
+          width: 200,
+          render: ({ image }: { image: string }) => (
+            <Image width={100} height={100} radius={'sm'} src={image} fit='fill' />
+          ),
+        },
+        {
+          accessor: 'subjects',
+          title: 'Môn thi',
+          width: 150,
+        },
+
+        {
+          accessor: 'pros',
+          title: 'Lợi thế',
+          width: 500,
+        },
+        {
+          accessor: 'cons',
+          title: 'Khó khăn',
+          width: 500,
+        },
+        {
+          accessor: 'actions',
+          title: 'Thao tác',
+          render: () => <TableButton onView={() => {}} onEdit={() => {}} onDelete={() => {}} />,
+        },
+      ]}
+    />
   );
 }

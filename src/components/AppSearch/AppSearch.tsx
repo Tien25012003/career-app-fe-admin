@@ -11,6 +11,7 @@ const AppSearch = () => {
       shadow='md'
       radius={'md'}
       bg={colorScheme === 'light' ? theme.colors.gray[0] : theme.colors.gray[9]}
+      withBorder
     >
       <Group>
         <Button

@@ -11,22 +11,28 @@ import {
 } from '@mantine/core';
 import { useState } from 'react';
 import { DictionaryTable } from './components';
+import PageSegmentControl from '@component/PageSegmentControl';
+import { IconBook2 } from '@tabler/icons-react';
+import AppSearch from '@component/AppSearch/AppSearch';
 
-const GROUPS = ['A0', 'B', 'C', 'D1', 'D7'];
+const GROUPS = ['Khối A0', 'Khối B', 'Khối C', 'Khối D1', 'Khối D7'];
 
 export default function DictionaryPage() {
-  const [selectedGroup, setSelectedGroup] = useState('A0');
+  const [selectedGroup, setSelectedGroup] = useState('Khối A0');
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
   return (
     <Stack my='1rem' mx='1rem'>
-      <PageTitle>Từ điển</PageTitle>
+      <Group>
+        <IconBook2 />
+        <PageTitle>Từ điển</PageTitle>
+      </Group>
       <Group wrap='wrap'>
         {GROUPS.map((btn, index) => {
           return (
             <Button
               key={index}
-              variant={selectedGroup === btn ? 'filled' : 'default'}
+              variant={selectedGroup === btn ? 'filled' : 'outline'}
               miw={100}
               onClick={() => setSelectedGroup(btn)}
             >
@@ -35,7 +41,8 @@ export default function DictionaryPage() {
           );
         })}
       </Group>
-      {/* <DictionaryTable /> */}
+      <AppSearch />
+      <DictionaryTable />
     </Stack>
   );
 }

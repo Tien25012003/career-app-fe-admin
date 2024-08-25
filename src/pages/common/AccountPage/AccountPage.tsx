@@ -1,5 +1,6 @@
 import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
+import PageTitle from '@component/PageTitle/PageTitle';
 import { Badge, Button, Group, Stack, Text } from '@mantine/core';
 import { IconUser } from '@tabler/icons-react';
 import { DateUtils } from '@util/DateUtils';
@@ -46,7 +47,7 @@ export default function AccountPage() {
     <Stack p={'md'}>
       <Group>
         <IconUser />
-        <Text size='1.5rem'>Quản lý tài khoản</Text>
+        <PageTitle>Quản lý tài khoản</PageTitle>
       </Group>
       <Group>
         <Button>Danh sách tài khoản</Button>

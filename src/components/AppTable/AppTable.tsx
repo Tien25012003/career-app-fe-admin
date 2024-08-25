@@ -27,6 +27,8 @@ function AppTable<T>({ data, columns, isLoading, onRowClick }: TAppTable<T>) {
     const to = from + pageSize;
     setRecords(data.slice(from, to));
   }, [page, pageSize, data]);
+
+  const [selectedRecords, setSelectedRecords] = useState([]);
   return (
     <DataTable
       columns={columns}
@@ -34,8 +36,9 @@ function AppTable<T>({ data, columns, isLoading, onRowClick }: TAppTable<T>) {
       withRowBorders
       withTableBorder
       withColumnBorders
-      borderRadius={'sm'}
+      borderRadius={'md'}
       striped
+      //minHeight={500}
       height={500}
       noRecordsText='Không có dữ liệu'
       totalRecords={data.length}
@@ -47,16 +50,21 @@ function AppTable<T>({ data, columns, isLoading, onRowClick }: TAppTable<T>) {
       onRecordsPerPageChange={setPageSize}
       fetching={isLoading}
       onRowClick={onRowClick}
+      highlightOnHover
+      verticalSpacing='md'
       styles={{
         header: {
-          backgroundColor: colorScheme === 'light' ? theme.colors.gray[0] : theme.colors.gray[9],
+          backgroundColor: colorScheme === 'light' ? theme.white : theme.colors.gray[9],
           zIndex: 9,
+          padding: '10px 20px',
         },
         table: {
-          backgroundColor: colorScheme === 'light' ? theme.colors.gray[0] : theme.colors.gray[9],
+          backgroundColor: colorScheme === 'light' ? theme.white : theme.colors.gray[9],
         },
       }}
       scrollAreaProps={{ type: 'never' }}
+      // selectedRecords={selectedRecords}
+      // onSelectedRecordsChange={setSelectedRecords}
     />
   );
 }
