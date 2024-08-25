@@ -8,7 +8,7 @@ type Props = {
 };
 export function TableButton({ onView, onEdit, onDelete }: Props) {
   return (
-    <Group wrap='nowrap' gap={'xs'}>
+    <Group wrap='nowrap' gap={'xs'} align='center' justify='center'>
       {onView && (
         <ActionIcon variant='outline' onClick={onView}>
           <IconEye size='1rem' />

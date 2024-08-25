@@ -1,3 +1,4 @@
+import { PageHeader } from '@component/PageHeader/PageHeader';
 import PageTitle from '@component/PageTitle/PageTitle';
 import { PageUploader } from '@component/PageUploader/PageUploader';
 import {
@@ -70,24 +71,28 @@ export default function DictionaryCreatePage() {
   const handleSubmit = form.onSubmit((formValues) => {});
   return (
     <Stack my='1rem' mx='1rem'>
-      <Group justify='space-between' align='center' gap={0}>
-        <Group>
-          <IconBook2 />
-          <PageTitle>Từ điển</PageTitle>
-          <IconChevronRight size={'20'} />
-          <Text size='xl' fw={500}>
-            Thêm mới
-          </Text>
-        </Group>
-        <Button
-          leftSection={<IconChevronLeft size={'1.125rem'} />}
-          component={Link}
-          to={'/dictionary'}
-          variant='default'
-        >
-          Trở về
-        </Button>
-      </Group>
+      <PageHeader
+        title='Từ điển'
+        leftSection={<IconBook2 />}
+        middleSection={
+          <>
+            <IconChevronRight size={'20'} />
+            <Text size='xl' fw={500}>
+              Thêm mới
+            </Text>
+          </>
+        }
+        rightSection={
+          <Button
+            leftSection={<IconChevronLeft size={'1.125rem'} />}
+            component={Link}
+            to={'/dictionary'}
+            variant='default'
+          >
+            Trở về
+          </Button>
+        }
+      />
 
       <Paper withBorder shadow='sm' radius={'md'} p='md'>
         <Stack ref={focusTrapRef}>

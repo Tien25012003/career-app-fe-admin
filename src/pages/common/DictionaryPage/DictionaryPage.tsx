@@ -6,21 +6,22 @@ import { IconBook2, IconPlus } from '@tabler/icons-react';
 import AppSearch from '@component/AppSearch/AppSearch';
 import { Link } from 'react-router-dom';
 import { GROUPS } from 'constants/groups';
+import { PageHeader } from '@component/PageHeader/PageHeader';
 
 export default function DictionaryPage() {
   const [selectedGroup, setSelectedGroup] = useState('Khối A0');
 
   return (
     <Stack my='1rem' mx='1rem'>
-      <Group justify='space-between'>
-        <Group>
-          <IconBook2 />
-          <PageTitle>Từ điển</PageTitle>
-        </Group>
-        <Button leftSection={<IconPlus size={'1.125rem'} />} component={Link} to={'create'}>
-          Thêm mới
-        </Button>
-      </Group>
+      <PageHeader
+        title='Từ điển'
+        leftSection={<IconBook2 />}
+        rightSection={
+          <Button leftSection={<IconPlus size={'1.125rem'} />} component={Link} to={'create'}>
+            Thêm mới
+          </Button>
+        }
+      />
       <Group wrap='wrap'>
         {GROUPS.map((btn, index) => {
           return (
