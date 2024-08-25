@@ -24,8 +24,9 @@ type TNavLink = {
   item: NavElement;
   children?: React.ReactNode;
   showLabel?: boolean;
+  active?: boolean;
 };
-const CustomNavLink = ({ item, children, showLabel = true }: TNavLink) => {
+const CustomNavLink = ({ item, children, showLabel = true, active }: TNavLink) => {
   const location = useLocation();
   const theme = useMantineTheme();
   const [miniNavbar] = useAtom(miniNavbarAtom);
@@ -50,7 +51,8 @@ const CustomNavLink = ({ item, children, showLabel = true }: TNavLink) => {
         item.icon && <item.icon size={'1.25rem'} stroke={1.5} style={{ marginRight: 0 }} />
       }
       childrenOffset={'1rem'}
-      active={item.link === location.pathname}
+      //active={item.link === location.pathname}
+      active={active}
       h='2.625rem'
     >
       {children && children}
@@ -75,9 +77,27 @@ export function NavBar() {
       <AppShell.Section grow component={ScrollArea} p={theme.spacing.md} scrollbarSize={10}>
         {!miniNavbar
           ? navElements.map((navElement) => (
-              <CustomNavLink item={navElement}>
+              <CustomNavLink
+                item={navElement}
+                active={
+                  navElement.link
+                    ? location.pathname.endsWith(navElement.link) ||
+                      location.pathname.startsWith(`${navElement.link}/`)
+                    : false
+                }
+              >
                 {navElement.children?.map((childNavElement) => {
-                  return <CustomNavLink item={childNavElement} />;
+                  return (
+                    <CustomNavLink
+                      item={childNavElement}
+                      active={
+                        childNavElement.link
+                          ? location.pathname.endsWith(childNavElement.link) ||
+                            location.pathname.startsWith(`${childNavElement.link}/`)
+                          : false
+                      }
+                    />
+                  );
                 })}
               </CustomNavLink>
             ))
@@ -85,7 +105,16 @@ export function NavBar() {
               <HoverCard key={navElement.label} position='right'>
                 <HoverCard.Target>
                   <Box>
-                    <CustomNavLink item={navElement} showLabel={false} />
+                    <CustomNavLink
+                      item={navElement}
+                      showLabel={false}
+                      active={
+                        navElement.link
+                          ? location.pathname.endsWith(navElement.link) ||
+                            location.pathname.startsWith(`${navElement.link}/`)
+                          : false
+                      }
+                    />
                   </Box>
                 </HoverCard.Target>
                 <HoverCard.Dropdown
@@ -98,7 +127,15 @@ export function NavBar() {
                     </Text>
                     <Box>
                       {navElement.children?.map((childNavElement) => (
-                        <CustomNavLink item={childNavElement} />
+                        <CustomNavLink
+                          item={childNavElement}
+                          active={
+                            childNavElement.link
+                              ? location.pathname.endsWith(childNavElement.link) ||
+                                location.pathname.startsWith(`${childNavElement.link}/`)
+                              : false
+                          }
+                        />
                       ))}
                     </Box>
                   </Stack>

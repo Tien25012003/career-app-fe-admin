@@ -12,7 +12,10 @@ const NewsPage = lazyWithReload(() => import('@page/common/NewsPage/NewsPage'));
 const AccountPage = lazyWithReload(() => import('@page/common/AccountPage/AccountPage'));
 const ExamPage = lazyWithReload(() => import('@page/common/ExamPage/ExamPage'));
 const DictionaryPage = lazyWithReload(() => import('@page/common/DictionaryPage/DictionaryPage'));
-const ChatbotPage = lazyWithReload(() => import('pages/common/ChatbotPage/ChatbotPage'));
+const ChatbotPage = lazyWithReload(() => import('@page/common/ChatbotPage/ChatbotPage'));
+const DictionaryCreatePage = lazyWithReload(
+  () => import('@page/common/DictionaryPage/create/DictionaryCreatePage'),
+);
 
 export const LoadingWrapper = ({ children }: { children: React.ReactNode }) => (
   <Suspense
@@ -101,6 +104,14 @@ const privateRoutes: RouteObject[] = [
             element: (
               <LoadingWrapper>
                 <DictionaryPage />
+              </LoadingWrapper>
+            ),
+          },
+          {
+            path: '/dictionary/create',
+            element: (
+              <LoadingWrapper>
+                <DictionaryCreatePage />
               </LoadingWrapper>
             ),
           },

@@ -27,14 +27,14 @@ const AppSearch = () => {
           flex={1}
           styles={{
             input: {
-              borderWidth: 0,
+              borderWidth: 1,
               backgroundColor:
                 colorScheme === 'light' ? theme.colors.gray[0] : theme.colors.gray[9],
             },
           }}
         />
         <Button variant='outline'>Tìm kiếm</Button>
-        <Button leftSection={<IconPlus size={'1.125rem'} />}>Thêm mới</Button>
+        {/* <Button leftSection={<IconPlus size={'1.125rem'} />}>Thêm mới</Button> */}
       </Group>
     </Paper>
   );

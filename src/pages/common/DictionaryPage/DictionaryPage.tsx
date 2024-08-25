@@ -1,31 +1,25 @@
 import PageTitle from '@component/PageTitle/PageTitle';
-import {
-  Button,
-  Group,
-  Paper,
-  Stack,
-  useMantineColorScheme,
-  useMantineTheme,
-  Table,
-  Checkbox,
-} from '@mantine/core';
+import { Button, Group, Paper, Stack } from '@mantine/core';
 import { useState } from 'react';
 import { DictionaryTable } from './components';
-import PageSegmentControl from '@component/PageSegmentControl';
-import { IconBook2 } from '@tabler/icons-react';
+import { IconBook2, IconPlus } from '@tabler/icons-react';
 import AppSearch from '@component/AppSearch/AppSearch';
-
-const GROUPS = ['Khối A0', 'Khối B', 'Khối C', 'Khối D1', 'Khối D7'];
+import { Link } from 'react-router-dom';
+import { GROUPS } from 'constants/groups';
 
 export default function DictionaryPage() {
   const [selectedGroup, setSelectedGroup] = useState('Khối A0');
-  const theme = useMantineTheme();
-  const { colorScheme } = useMantineColorScheme();
+
   return (
     <Stack my='1rem' mx='1rem'>
-      <Group>
-        <IconBook2 />
-        <PageTitle>Từ điển</PageTitle>
+      <Group justify='space-between'>
+        <Group>
+          <IconBook2 />
+          <PageTitle>Từ điển</PageTitle>
+        </Group>
+        <Button leftSection={<IconPlus size={'1.125rem'} />} component={Link} to={'create'}>
+          Thêm mới
+        </Button>
       </Group>
       <Group wrap='wrap'>
         {GROUPS.map((btn, index) => {
