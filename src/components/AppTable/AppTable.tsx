@@ -63,6 +63,7 @@ function AppTable<T>({ data, columns, isLoading, onRowClick }: TAppTable<T>) {
         },
       }}
       scrollAreaProps={{ type: 'never' }}
+      recordsPerPageLabel='Số items mỗi trang'
       // selectedRecords={selectedRecords}
       // onSelectedRecordsChange={setSelectedRecords}
     />
