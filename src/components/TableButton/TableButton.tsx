@@ -5,6 +5,7 @@ type Props = {
   onView?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
+  onDeactive?: () => void;
 };
 export function TableButton({ onView, onEdit, onDelete }: Props) {
   return (
