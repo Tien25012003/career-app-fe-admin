@@ -15,9 +15,7 @@ const AccountPage = lazyWithReload(() => import('@page/common/AccountPage/Accoun
 const ExamPage = lazyWithReload(() => import('@page/common/ExamPage/ExamPage'));
 const DictionaryPage = lazyWithReload(() => import('@page/common/DictionaryPage/DictionaryPage'));
 const ChatbotPage = lazyWithReload(() => import('@page/common/ChatbotPage/ChatbotPage'));
-const DictionaryCreatePage = lazyWithReload(
-  () => import('@page/common/DictionaryPage/create/DictionaryCreatePage'),
-);
+const DictionaryCreatePage = lazyWithReload(() => import('@page/common/DictionaryPage/create/DictionaryCreatePage'));
 
 export const LoadingWrapper = ({ children }: { children: React.ReactNode }) => (
   <Suspense

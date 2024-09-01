@@ -1,5 +1,4 @@
 import { PageHeader } from '@component/PageHeader/PageHeader';
-import PageTitle from '@component/PageTitle/PageTitle';
 import { PageUploader } from '@component/PageUploader/PageUploader';
 import {
   Button,
