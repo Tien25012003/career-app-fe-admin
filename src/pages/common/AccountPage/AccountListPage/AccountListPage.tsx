@@ -9,6 +9,7 @@ type TAccount = {
   username: string;
   name: string;
   email: string;
+  role: string;
   groups: string[];
   createdAt: Date;
   updatedAt: Date;
@@ -19,6 +20,7 @@ const ACCOUNTS = Array.from<TAccount>({ length: 10 }).fill({
   username: 'khang123',
   name: 'Đoàn Tấn Khang',
   groups: ['Group A', 'Group B'],
+  role: 'SUPER_ADMIN',
   updatedAt: new Date(),
   createdAt: new Date(),
   email: 'doank3442@gmail.com',
@@ -68,14 +70,22 @@ const AccountListPage = () => {
               <Group gap={'xs'}>
                 <Avatar.Group>
                   {groups.slice(0, 4).map((group) => (
-                    <Avatar key={group} name={group} color='initials' />
+                    <Avatar key={Math.random()} name={group} color='initials' />
                   ))}
                   {groups.length > 5 && (
-                    <Avatar name={`+${groups.length - 4}`} color='gray'></Avatar>
+                    <Avatar
+                      key={Math.random()}
+                      name={`+${groups.length - 4}`}
+                      color='gray'
+                    ></Avatar>
                   )}
                 </Avatar.Group>
               </Group>
             ),
+          },
+          {
+            accessor: 'role',
+            title: 'Quyền',
           },
           {
             accessor: 'createdAt',
