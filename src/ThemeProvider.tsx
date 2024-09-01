@@ -15,6 +15,22 @@ export const theme: MantineThemeOverride = {
       textOverflow: 'ellipsis',
     },
   },
+  colors: {
+    green: [
+      '#00BF63',
+      '#dff8c3',
+      '#77daba',
+      '#00BF63',
+      '#00BF63',
+      '#fdf278',
+      '#00BF63', // primary
+      '#00BF63',
+      '#00BF63',
+      '#e2f0f6',
+    ],
+    ...(MantineProvider.defaultProps?.theme?.colors || {}),
+  },
+  primaryColor: 'green',
 };
 interface ThemeProviderProps {
   children: React.ReactNode;
@@ -28,7 +44,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       withGlobalClasses
       withNormalizeCSS
       theme={{ ...theme, colorScheme }}
-      forceColorScheme='light'
+      //forceColorScheme='light'
     >
       {children}
     </MantineProvider>
