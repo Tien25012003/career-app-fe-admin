@@ -66,10 +66,14 @@ const AccountGroupListPage = () => {
               <Group gap={'xs'}>
                 <Avatar.Group>
                   {members.slice(0, 4).map((member) => (
-                    <Avatar key={member} name={member} color='initials' />
+                    <Avatar key={Math.random()} name={member} color='initials' />
                   ))}
                   {members.length > 5 && (
-                    <Avatar name={`+${members.length - 4}`} color='gray'></Avatar>
+                    <Avatar
+                      key={Math.random()}
+                      name={`+${members.length - 4}`}
+                      color='gray'
+                    ></Avatar>
                   )}
                 </Avatar.Group>
               </Group>

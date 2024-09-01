@@ -1,24 +1,34 @@
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import { Button, Group, Stack } from '@mantine/core';
 import { IconPlus, IconUser } from '@tabler/icons-react';
-import { useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { startTransition, Suspense, useState } from 'react';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
+import AccountListPage from './AccountListPage/AccountListPage';
+import AccountGroupListPage from './AccountGroupListPage/AccountGroupListPage';
 
 export default function AccountPage() {
-  const navigate = useNavigate();
   const [type, setType] = useState('list');
+
+  const handleTypeChange = (newType: 'list' | 'groups') => {
+    startTransition(() => {
+      setType(newType);
+    });
+  };
   return (
     <Stack p={'md'}>
       <PageHeader
         title='Quản lý tài khoản'
         leftSection={<IconUser />}
-        rightSection={<Button leftSection={<IconPlus size={'1.125rem'} />}>Thêm mới</Button>}
+        rightSection={
+          <Button leftSection={<IconPlus size={'1.125rem'} />} component={Link} to={'/create'}>
+            Thêm mới
+          </Button>
+        }
       />
       <Group>
         <Button
           onClick={() => {
-            navigate('/accounts');
-            setType('list');
+            handleTypeChange('list');
           }}
           variant={type === 'list' ? 'filled' : 'outline'}
         >
@@ -26,15 +36,14 @@ export default function AccountPage() {
         </Button>
         <Button
           onClick={() => {
-            navigate('/accounts/groups');
-            setType('groups');
+            handleTypeChange('groups');
           }}
           variant={type === 'groups' ? 'filled' : 'outline'}
         >
           Danh sách nhóm
         </Button>
       </Group>
-      <Outlet />
+      {type === 'list' ? <AccountListPage /> : <AccountGroupListPage />}
     </Stack>
   );
 }
