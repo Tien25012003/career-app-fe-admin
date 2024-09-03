@@ -12,7 +12,8 @@
       "@icon/*": ["icons/*"],
       "@util/*": ["utils/*"],
       "@type/*": ["types/*"],
-      "@helper/*": ["helpers/*"]
+      "@helper/*": ["helpers/*"],
+      "@interface/*": ["interfaces/*"]
     },
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],

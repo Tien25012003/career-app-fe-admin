@@ -12,6 +12,9 @@ const SignUpPage = lazyWithReload(() => import('@page/auth/SignUpPage/SignUpPage
 const NewsPage = lazyWithReload(() => import('@page/common/NewsPage/NewsPage'));
 const AccountPage = lazyWithReload(() => import('@page/common/AccountPage/AccountPage'));
 const ExamPage = lazyWithReload(() => import('@page/common/ExamPage/ExamPage'));
+const ExamMultipleChoiceCreatePage = lazyWithReload(() => import('@page/common/ExamPage/create/ExamMultipleChoiceCreatePage'));
+const ExamTickboxCreatePage = lazyWithReload(() => import('@page/common/ExamPage/create/ExamTickboxCreatePage'));
+const ExamShortAnswerCreatePage = lazyWithReload(() => import('@page/common/ExamPage/create/ExamShortAnswerCreatePage'));
 const DictionaryPage = lazyWithReload(() => import('@page/common/DictionaryPage/DictionaryPage'));
 const ChatbotPage = lazyWithReload(() => import('@page/common/ChatbotPage/ChatbotPage'));
 const DictionaryCreatePage = lazyWithReload(() => import('@page/common/DictionaryPage/create/DictionaryCreatePage'));
@@ -83,6 +86,30 @@ const privateRoutes: RouteObject[] = [
             element: (
               <LoadingWrapper>
                 <ExamPage />
+              </LoadingWrapper>
+            ),
+          },
+          {
+            path: '/exams/create/MULTIPLE_CHOICE',
+            element: (
+              <LoadingWrapper>
+                <ExamMultipleChoiceCreatePage />
+              </LoadingWrapper>
+            ),
+          },
+          {
+            path: '/exams/create/TICK_BOX',
+            element: (
+              <LoadingWrapper>
+                <ExamTickboxCreatePage />
+              </LoadingWrapper>
+            ),
+          },
+          {
+            path: '/exams/create/SHORT_ANSWER',
+            element: (
+              <LoadingWrapper>
+                <ExamShortAnswerCreatePage />
               </LoadingWrapper>
             ),
           },

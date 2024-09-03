@@ -39,7 +39,7 @@ function AppTable<T>({ data, columns, isLoading, onRowClick }: TAppTable<T>) {
       borderRadius={'md'}
       striped
       //minHeight={500}
-      height={500}
+      //height={500}
       noRecordsText='Không có dữ liệu'
       totalRecords={data.length}
       paginationActiveBackgroundColor='grape'

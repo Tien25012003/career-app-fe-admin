@@ -1,4 +1,4 @@
-import { Button, Group, Stack, Textarea } from '@mantine/core';
+import { Button, Group, Stack, TagsInput, Textarea } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { SchemaUtils } from '@util/SchemaUtils';
 import { z } from 'zod';
@@ -26,7 +26,8 @@ export default function ChatbotCreateModal() {
     <Stack data-autofocus>
       <Textarea withAsterisk label='Câu hỏi' autosize minRows={4} data-autofocus {...form.getInputProps('question')} />
       <Textarea withAsterisk label='Câu trả lời' autosize minRows={4} {...form.getInputProps('answer')} />
-      <Textarea withAsterisk label='Từ khoá' autosize {...form.getInputProps('keywords')} />
+      {/* <Textarea withAsterisk label='Từ khoá' autosize {...form.getInputProps('keywords')} /> */}
+      <TagsInput label='Từ khoá' />
       <Group justify='flex-end'>
         <Button variant='default' onClick={form.reset}>
           Mặc định
