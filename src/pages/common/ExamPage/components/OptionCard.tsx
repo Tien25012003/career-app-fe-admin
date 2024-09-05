@@ -10,7 +10,7 @@ type Props = {
   position: number;
   questionsHandler: UseListStateHandlers<IQuestion>;
 };
-export function MultipleChoiceCard({ id, position, questionsHandler }: Props) {
+export function OptionCard({ id, position, questionsHandler }: Props) {
   const [options, optionsHandler] = useListState<IOption>([]);
   const onDeleteQuestion = () => {
     questionsHandler?.filter((question) => question.id !== id);
@@ -29,7 +29,6 @@ export function MultipleChoiceCard({ id, position, questionsHandler }: Props) {
     optionsHandler?.filter((option) => option.id !== id);
   };
 
-  console.log('options', options);
   return (
     <Paper withBorder shadow='none' radius={'md'} p='md'>
       <Stack>

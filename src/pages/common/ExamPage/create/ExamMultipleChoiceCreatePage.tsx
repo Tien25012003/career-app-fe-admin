@@ -8,7 +8,7 @@ import { EQuestionType, IQuestion } from '@interface/exam';
 import { z } from 'zod';
 import { SchemaUtils } from '@util/SchemaUtils';
 import { useForm, zodResolver } from '@mantine/form';
-import { MultipleChoiceCard } from '../components';
+import { OptionCard } from '../components';
 import { TextUtils } from '@util/TextUtils';
 
 const formSchema = z.object({
@@ -18,7 +18,7 @@ const formSchema = z.object({
     z.object({
       questionTitle: z.string().trim().min(1, SchemaUtils.message.nonempty),
       image: z.instanceof(File).nullable(),
-      questions: z.array(
+      options: z.array(
         z.object({
           image: z.instanceof(File).nullable(),
           content: z.string().trim().min(1, SchemaUtils.message.nonempty),
@@ -55,7 +55,7 @@ export default function ExamMultipleChoiceCreatePage() {
   return (
     <Stack my='1rem' mx='1rem'>
       <PageHeader
-        title='Từ điển'
+        title='Bài kiểm tra'
         leftSection={<IconPencil />}
         middleSection={
           <>
@@ -91,7 +91,7 @@ export default function ExamMultipleChoiceCreatePage() {
           {questions?.length > 0 && (
             <Stack>
               {questions?.map((question, index) => (
-                <MultipleChoiceCard key={index} id={question.id} questionsHandler={questionsHandler} position={index} />
+                <OptionCard key={index} id={question.id} questionsHandler={questionsHandler} position={index} />
               ))}
             </Stack>
           )}

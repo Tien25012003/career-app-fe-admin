@@ -1,2 +1,2 @@
-import { MultipleChoiceCard } from './MultipleChoiceCard';
-export { MultipleChoiceCard };
+import { OptionCard } from './OptionCard';
+export { OptionCard };
