@@ -8,6 +8,7 @@ import { lazyWithReload } from '@helper/lazyWithReload';
 import AccountCreatePage from '@page/common/AccountPage/create/AccountCreatePage';
 import AccountDetailPage from '@page/common/AccountPage/detail/AccountDetailPage';
 import AccountCreateGroupPage from '@page/common/AccountPage/create/AccountCreateGroupPage';
+import NewsCreatePage from '@page/common/NewsPage/create/NewsCreatePage';
 const DashboardPage = lazyWithReload(() => import('@page/common/DashboardPage/DashboardPage'));
 const LoginPage = lazyWithReload(() => import('@page/auth/LoginPage/LoginPage'));
 const SignUpPage = lazyWithReload(() => import('@page/auth/SignUpPage/SignUpPage'));
@@ -140,6 +141,14 @@ const privateRoutes: RouteObject[] = [
             element: (
               <LoadingWrapper>
                 <NewsPage />
+              </LoadingWrapper>
+            ),
+          },
+          {
+            path: '/news/create',
+            element: (
+              <LoadingWrapper>
+                <NewsCreatePage />
               </LoadingWrapper>
             ),
           },

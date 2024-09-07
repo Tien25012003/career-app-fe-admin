@@ -6,7 +6,7 @@ import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
 import Highlight from '@tiptap/extension-highlight';
 import TextAlign from '@tiptap/extension-text-align';
-import { Box, Input, InputWrapperProps, useMantineTheme } from '@mantine/core';
+import { Box, Input, InputWrapperProps, ScrollArea, Stack, useMantineTheme } from '@mantine/core';
 interface PageEditorProps extends InputWrapperProps {
   value?: string;
   onChange?: (value: string) => void;
@@ -82,7 +82,11 @@ export function PageEditor({ value = '<p></p>', onChange, error, sticky, stickyO
             </RichTextEditor.ControlsGroup>
           </RichTextEditor.Toolbar>
 
-          <RichTextEditor.Content />
+          <ScrollArea>
+            <Stack mah={300}>
+              <RichTextEditor.Content />
+            </Stack>
+          </ScrollArea>
         </RichTextEditor>
       </Box>
     </Input.Wrapper>

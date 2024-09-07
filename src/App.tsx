@@ -4,6 +4,7 @@ import '@mantine/charts/styles.css';
 import '@mantine/core/styles.layer.css';
 import 'mantine-datatable/styles.layer.css';
 import '@mantine/tiptap/styles.css';
+import '@mantine/dropzone/styles.css';
 
 import { routes } from './routes';
 import { useNavigate, useRoutes } from 'react-router-dom';
