@@ -6,6 +6,8 @@ import { Suspense } from 'react';
 import { Skeleton } from '@mantine/core';
 import { lazyWithReload } from '@helper/lazyWithReload';
 import AccountCreatePage from '@page/common/AccountPage/create/AccountCreatePage';
+import AccountDetailPage from '@page/common/AccountPage/detail/AccountDetailPage';
+import AccountCreateGroupPage from '@page/common/AccountPage/create/AccountCreateGroupPage';
 const DashboardPage = lazyWithReload(() => import('@page/common/DashboardPage/DashboardPage'));
 const LoginPage = lazyWithReload(() => import('@page/auth/LoginPage/LoginPage'));
 const SignUpPage = lazyWithReload(() => import('@page/auth/SignUpPage/SignUpPage'));
@@ -78,7 +80,27 @@ const privateRoutes: RouteObject[] = [
           },
           {
             path: '/accounts/create',
-            element: <AccountCreatePage />,
+            element: (
+              <LoadingWrapper>
+                <AccountCreatePage />
+              </LoadingWrapper>
+            ),
+          },
+          {
+            path: '/accounts/create/group',
+            element: (
+              <LoadingWrapper>
+                <AccountCreateGroupPage />
+              </LoadingWrapper>
+            ),
+          },
+          {
+            path: '/accounts/view',
+            element: (
+              <LoadingWrapper>
+                <AccountDetailPage />
+              </LoadingWrapper>
+            ),
           },
           {
             path: '/exams',

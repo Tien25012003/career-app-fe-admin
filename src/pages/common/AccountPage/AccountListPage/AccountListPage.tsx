@@ -4,6 +4,7 @@ import { TableButton } from '@component/TableButton/TableButton';
 import { Avatar, Badge, Group, Stack } from '@mantine/core';
 import { DateUtils } from '@util/DateUtils';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 type TAccount = {
   id: number;
   username: string;
@@ -46,6 +47,7 @@ const BadgeStatus = (status: number) => {
   }
 };
 const AccountListPage = () => {
+  const navigate = useNavigate();
   return (
     <Stack>
       <AppSearch />
@@ -105,7 +107,15 @@ const AccountListPage = () => {
           {
             accessor: 'actions',
             title: 'Thao tác',
-            render: () => <TableButton onView={() => {}} onEdit={() => {}} onDelete={() => {}} />,
+            render: () => (
+              <TableButton
+                onView={() => {
+                  navigate('/accounts/view');
+                }}
+                onEdit={() => {}}
+                onDelete={() => {}}
+              />
+            ),
           },
         ]}
         data={ACCOUNTS}

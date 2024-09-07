@@ -55,7 +55,7 @@ const GROUPS = [
   },
 ];
 
-const AccountCreatePage = () => {
+const AccountDetailPage = () => {
   const form = useForm({
     initialValues: initialFormValues,
     validate: zodResolver(formSchema),
@@ -65,13 +65,13 @@ const AccountCreatePage = () => {
   return (
     <Stack my='1rem' mx='1rem'>
       <PageHeader
-        title='Tài khoản'
+        title='Từ điển'
         leftSection={<IconUser />}
         middleSection={
           <>
             <IconChevronRight size={'20'} />
             <Text size='xl' fw={500}>
-              Thêm mới
+              Chi tiết
             </Text>
           </>
         }
@@ -200,4 +200,4 @@ const AccountCreatePage = () => {
   );
 };
 
-export default AccountCreatePage;
+export default AccountDetailPage;
