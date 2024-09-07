@@ -1,8 +1,11 @@
+import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import { TableButton } from '@component/TableButton/TableButton';
-import { Button, Stack } from '@mantine/core';
+import { Button, Modal, Stack } from '@mantine/core';
 import { IconBrandWechat, IconPlus } from '@tabler/icons-react';
+import { useState } from 'react';
+import { ChatbotCreateModal } from './components';
 
 const chatbotDummyData = [
   {
@@ -38,13 +41,19 @@ const chatbotDummyData = [
 ];
 
 export default function ChatbotPage() {
+  const [openCreateModal, setOpenCreateModal] = useState(false);
   return (
     <Stack my='1rem' mx='1rem'>
       <PageHeader
         title='Chat bot'
         leftSection={<IconBrandWechat />}
-        rightSection={<Button leftSection={<IconPlus size={'1.125rem'} />}>Thêm mới</Button>}
+        rightSection={
+          <Button leftSection={<IconPlus size={'1.125rem'} />} onClick={() => setOpenCreateModal(true)}>
+            Thêm mới
+          </Button>
+        }
       />
+      <AppSearch />
       <AppTable
         data={chatbotDummyData}
         columns={[
@@ -74,6 +83,20 @@ export default function ChatbotPage() {
           },
         ]}
       />
+      <Modal
+        opened={openCreateModal}
+        onClose={() => setOpenCreateModal(!openCreateModal)}
+        centered
+        size={'lg'}
+        title='Thêm mới câu hỏi'
+        styles={{
+          title: {
+            fontWeight: 500,
+          },
+        }}
+      >
+        <ChatbotCreateModal />
+      </Modal>
     </Stack>
   );
 }
