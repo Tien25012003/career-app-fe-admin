@@ -4,6 +4,7 @@ import { TableButton } from '@component/TableButton/TableButton';
 import { Avatar, Badge, Group, Stack } from '@mantine/core';
 import { DateUtils } from '@util/DateUtils';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 type TAccount = {
   id: number;
   groupName: string;
@@ -42,6 +43,7 @@ const BadgeStatus = (status: number) => {
   }
 };
 const AccountGroupListPage = () => {
+  const navigate = useNavigate();
   return (
     <Stack>
       <AppSearch />
@@ -68,13 +70,7 @@ const AccountGroupListPage = () => {
                   {members.slice(0, 4).map((member) => (
                     <Avatar key={Math.random()} name={member} color='initials' />
                   ))}
-                  {members.length > 5 && (
-                    <Avatar
-                      key={Math.random()}
-                      name={`+${members.length - 4}`}
-                      color='gray'
-                    ></Avatar>
-                  )}
+                  {members.length > 5 && <Avatar key={Math.random()} name={`+${members.length - 4}`} color='gray'></Avatar>}
                 </Avatar.Group>
               </Group>
             ),
@@ -97,7 +93,15 @@ const AccountGroupListPage = () => {
           {
             accessor: 'actions',
             title: 'Thao tác',
-            render: () => <TableButton onView={() => {}} onEdit={() => {}} onDelete={() => {}} />,
+            render: () => (
+              <TableButton
+                onView={() => {
+                  navigate('/accounts/create/group');
+                }}
+                onEdit={() => {}}
+                onDelete={() => {}}
+              />
+            ),
           },
         ]}
         data={ACCOUNTS}
