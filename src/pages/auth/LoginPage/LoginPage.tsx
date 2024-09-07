@@ -1,17 +1,5 @@
 import { CareerAppLogo } from '@icon/CareerAppLogo';
-import {
-  Anchor,
-  Box,
-  Button,
-  Container,
-  Group,
-  Paper,
-  PasswordInput,
-  Stack,
-  TextInput,
-  useMantineTheme,
-  getGradient,
-} from '@mantine/core';
+import { Anchor, Box, Button, Container, Group, Paper, PasswordInput, Stack, TextInput, useMantineTheme, getGradient } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { SchemaUtils } from '@util/SchemaUtils';
 import { useNavigate } from 'react-router-dom';
@@ -46,8 +34,8 @@ export default function LoginPage() {
       bg={getGradient(
         {
           deg: 180,
-          from: theme.colors.main[9],
-          to: theme.colors.main[1],
+          from: theme.colors.green[9],
+          to: theme.colors.green[1],
         },
         theme,
       )}
@@ -60,12 +48,7 @@ export default function LoginPage() {
           </Stack>
           <form onSubmit={handleFormSubmit}>
             <TextInput withAsterisk label='Tên đăng nhập' {...form.getInputProps('username')} />
-            <PasswordInput
-              withAsterisk
-              label='Mật khẩu'
-              mt='md'
-              {...form.getInputProps('password')}
-            />
+            <PasswordInput withAsterisk label='Mật khẩu' mt='md' {...form.getInputProps('password')} />
             <Group justify='end' mt='sm'>
               <Anchor component='button' size='sm' c={theme.colors.blue[6]}>
                 Quên mật khẩu?

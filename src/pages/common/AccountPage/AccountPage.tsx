@@ -20,7 +20,7 @@ export default function AccountPage() {
         title='Quản lý tài khoản'
         leftSection={<IconUser />}
         rightSection={
-          <Button leftSection={<IconPlus size={'1.125rem'} />} component={Link} to={'/create'}>
+          <Button leftSection={<IconPlus size={'1.125rem'} />} component={Link} to={'create'}>
             Thêm mới
           </Button>
         }
