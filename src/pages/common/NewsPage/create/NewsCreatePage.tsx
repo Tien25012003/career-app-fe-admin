@@ -1,14 +1,14 @@
 import { PageEditor } from '@component/PageEditor/PageEditor';
 import { PageHeader } from '@component/PageHeader/PageHeader';
-import { ActionIcon, Avatar, Button, Checkbox, Divider, Group, MultiSelect, Paper, rem, ScrollArea, Select, SimpleGrid, Stack, Switch, Text, TextInput } from '@mantine/core';
+import { Button, Divider, Group, MultiSelect, Paper, rem, ScrollArea, Select, SimpleGrid, Stack, Switch, Text, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconSearch, IconSettings, IconUser, IconUsersGroup, IconX } from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconNews, IconSearch, IconSettings, IconUser, IconUsersGroup, IconX } from '@tabler/icons-react';
 import { SchemaUtils } from '@util/SchemaUtils';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { z } from 'zod';
 import { IconUpload, IconPhoto } from '@tabler/icons-react';
-import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 const formSchema = z.object({
   groupName: z.string().min(1, SchemaUtils.message.nonempty),
   owner: z.string().min(1, SchemaUtils.message.nonempty),
@@ -69,7 +69,7 @@ const NewsCreatePage = () => {
     <Stack my='1rem' mx='1rem'>
       <PageHeader
         title='Tin tức'
-        leftSection={<IconUser />}
+        leftSection={<IconNews />}
         middleSection={
           <>
             <IconChevronRight size={'20'} />
