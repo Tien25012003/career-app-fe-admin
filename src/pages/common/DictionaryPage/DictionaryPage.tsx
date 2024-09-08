@@ -25,12 +25,7 @@ export default function DictionaryPage() {
       <Group wrap='wrap'>
         {GROUPS.map((btn, index) => {
           return (
-            <Button
-              key={index}
-              variant={selectedGroup === btn ? 'filled' : 'outline'}
-              miw={100}
-              onClick={() => setSelectedGroup(btn)}
-            >
+            <Button key={index} variant={selectedGroup === btn ? 'filled' : 'outline'} miw={100} onClick={() => setSelectedGroup(btn)}>
               {btn}
             </Button>
           );

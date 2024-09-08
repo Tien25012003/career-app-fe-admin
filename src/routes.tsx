@@ -14,13 +14,17 @@ const LoginPage = lazyWithReload(() => import('@page/auth/LoginPage/LoginPage'))
 const SignUpPage = lazyWithReload(() => import('@page/auth/SignUpPage/SignUpPage'));
 const NewsPage = lazyWithReload(() => import('@page/common/NewsPage/NewsPage'));
 const AccountPage = lazyWithReload(() => import('@page/common/AccountPage/AccountPage'));
-const ExamPage = lazyWithReload(() => import('@page/common/ExamPage/ExamPage'));
-const ExamMultipleChoiceCreatePage = lazyWithReload(() => import('@page/common/ExamPage/create/ExamMultipleChoiceCreatePage'));
-const ExamTickboxCreatePage = lazyWithReload(() => import('@page/common/ExamPage/create/ExamTickboxCreatePage'));
-const ExamShortAnswerCreatePage = lazyWithReload(() => import('@page/common/ExamPage/create/ExamShortAnswerCreatePage'));
+// exams
+const ExamSystemPage = lazyWithReload(() => import('@page/common/ExamPage/system_exam/SystemExam'));
+const ExamDesignPage = lazyWithReload(() => import('@page/common/ExamPage/design_exam/DesignExam'));
+const ExamCreatePage = lazyWithReload(() => import('@page/common/ExamPage/create/ExamCreatePage'));
+
+// dictionary
 const DictionaryPage = lazyWithReload(() => import('@page/common/DictionaryPage/DictionaryPage'));
-const ChatbotPage = lazyWithReload(() => import('@page/common/ChatbotPage/ChatbotPage'));
 const DictionaryCreatePage = lazyWithReload(() => import('@page/common/DictionaryPage/create/DictionaryCreatePage'));
+
+// chat bot
+const ChatbotPage = lazyWithReload(() => import('@page/common/ChatbotPage/ChatbotPage'));
 
 export const LoadingWrapper = ({ children }: { children: React.ReactNode }) => (
   <Suspense
@@ -105,34 +109,34 @@ const privateRoutes: RouteObject[] = [
             ),
           },
           {
-            path: '/exams',
+            path: '/exams/system',
             element: (
               <LoadingWrapper>
-                <ExamPage />
+                <ExamSystemPage />
               </LoadingWrapper>
             ),
           },
           {
-            path: '/exams/create/MULTIPLE_CHOICE',
+            path: '/exams/system/create/:allQuestionType',
             element: (
               <LoadingWrapper>
-                <ExamMultipleChoiceCreatePage />
+                <ExamCreatePage />
               </LoadingWrapper>
             ),
           },
           {
-            path: '/exams/create/TICK_BOX',
+            path: '/exams/design',
             element: (
               <LoadingWrapper>
-                <ExamTickboxCreatePage />
+                <ExamDesignPage />
               </LoadingWrapper>
             ),
           },
           {
-            path: '/exams/create/SHORT_ANSWER',
+            path: '/exams/design/create/:allQuestionType',
             element: (
               <LoadingWrapper>
-                <ExamShortAnswerCreatePage />
+                <ExamCreatePage />
               </LoadingWrapper>
             ),
           },

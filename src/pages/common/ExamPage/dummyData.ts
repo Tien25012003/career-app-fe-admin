@@ -2,7 +2,6 @@ export const examDummmyData = [
   {
     _id: '66091e19a2d99a0e298a7e64',
     type: 'R',
-    questionType: 'TICK_BOX',
     createAt: 1725343479,
     updateAt: 1725343479,
     creator: 'Phương Tiên',
@@ -11,6 +10,7 @@ export const examDummmyData = [
     questions: [
       {
         questionTitle: 'Bạn có nhiều sở thích liên quan đến nhóm KỸ THUẬT? Hãy chọn một hoặc nhiều đáp án gần giống với bạn nhất nhé!',
+        questionType: 'TICK_BOX',
         image: '',
         options: [
           {
@@ -97,7 +97,6 @@ export const examDummmyData = [
   {
     _id: '66091e5ea2d99a0e298a7e81',
     type: 'I',
-    questionType: 'TICK_BOX',
     createAt: 1725343479,
     updateAt: 1725343479,
     creator: 'Phương Tiên',
@@ -106,6 +105,7 @@ export const examDummmyData = [
     questions: [
       {
         questionTitle: 'Bạn có nhiều sở thích liên quan đến nhóm NGHIÊN CỨU? Hãy chọn một hoặc nhiều đáp án gần giống với bạn nhất nhé!',
+        questionType: 'TICK_BOX',
         image: '',
         options: [
           {
@@ -192,7 +192,6 @@ export const examDummmyData = [
   {
     _id: '66092074a2d99a0e298a7eab',
     type: 'A',
-    questionType: 'TICK_BOX',
     createAt: 1725343479,
     updateAt: 1725343479,
     creator: 'Phương Tiên',
@@ -201,6 +200,7 @@ export const examDummmyData = [
     questions: [
       {
         questionTitle: 'Bạn có nhiều sở thích liên quan đến nhóm NGHỆ THUẬT? Hãy chọn một hoặc nhiều đáp án gần giống với bạn nhất nhé!',
+        questionType: 'TICK_BOX',
         image: '',
         options: [
           {
@@ -293,7 +293,6 @@ export const examDummmyData = [
   {
     _id: '66092358a2d99a0e298a7ef4',
     type: 'S',
-    questionType: 'TICK_BOX',
     createAt: 1725343479,
     updateAt: 1725343479,
     creator: 'Phương Tiên',
@@ -302,6 +301,7 @@ export const examDummmyData = [
     questions: [
       {
         questionTitle: 'Bạn có nhiều sở thích liên quan đến nhóm XÃ HỘI? Hãy chọn một hoặc nhiều đáp án gần giống với bạn nhất nhé!',
+        questionType: 'TICK_BOX',
         image: '',
         options: [
           {
@@ -403,6 +403,7 @@ export const examDummmyData = [
     questions: [
       {
         questionTitle: 'Bạn có nhiều sở thích liên quan đến nhóm QUẢN LÝ? Hãy chọn một hoặc nhiều đáp án gần giống với bạn nhất nhé!',
+        questionType: 'TICK_BOX',
         image: '',
         options: [
           {
@@ -483,7 +484,6 @@ export const examDummmyData = [
   {
     _id: '660925b8a2d99a0e298a7f9a',
     type: 'C',
-    questionType: 'TICK_BOX',
     createAt: 1725343479,
     updateAt: 1725343479,
     creator: 'Phương Tiên',
@@ -492,6 +492,7 @@ export const examDummmyData = [
     questions: [
       {
         questionTitle: 'Bạn có nhiều sở thích liên quan đến nhóm NGHIỆP VỤ? Hãy chọn một hoặc nhiều đáp án gần giống với bạn nhất nhé!',
+        questionType: 'TICK_BOX',
         image: '',
         options: [
           {
@@ -572,7 +573,6 @@ export const examDummmyData = [
   {
     _id: '660ed9489f5e9ba31cdfbf7c',
     type: 'EQ',
-    questionType: 'MULTIPLE_CHOICE',
     createAt: 1725343479,
     updateAt: 1725343479,
     creator: 'Phương Tiên',
@@ -581,6 +581,7 @@ export const examDummmyData = [
     questions: [
       {
         questionTitle: '1. Khi đang ngồi trên máy bay, đột nhiên máy bay rung động rất mạnh và lắc lư qua trái phải. Lúc đó, bạn sẽ làm gì?',
+        questionType: 'MULTIPLE_CHOICE',
         image: '',
         options: [
           {
@@ -650,7 +651,8 @@ export const examDummmyData = [
         _id: '660ed9489f5e9ba31cdfbf82',
       },
       {
-        questionTitle: '3. Bạn là sinh viên và muốn đạt điểm cao ở môn học A, nhưng kết quả bài thi giữa kỳ môn đó chỉ ở mức trung bình. Bạn sẽ làm gì?',
+        questionTitle:
+          '3. Bạn là sinh viên và muốn đạt điểm cao ở môn học A, nhưng kết quả bài thi giữa kỳ môn đó chỉ ở mức trung bình. Bạn sẽ làm gì?',
         image: '',
         options: [
           {
@@ -685,7 +687,8 @@ export const examDummmyData = [
         _id: '660ed9489f5e9ba31cdfbf87',
       },
       {
-        questionTitle: '4. Bạn là nhân viên bán bảo hiểm và đang tìm kiếm khách hàng mới. Cả 15 người bạn trao đổi đều không có thái độ rõ ràng hoặc không muốn hợp tác. Lúc đó, bạn sẽ làm gì?',
+        questionTitle:
+          '4. Bạn là nhân viên bán bảo hiểm và đang tìm kiếm khách hàng mới. Cả 15 người bạn trao đổi đều không có thái độ rõ ràng hoặc không muốn hợp tác. Lúc đó, bạn sẽ làm gì?',
         image: '',
         options: [
           {
@@ -756,7 +759,8 @@ export const examDummmyData = [
         _id: '660ed9489f5e9ba31cdfbf91',
       },
       {
-        questionTitle: '6. Bạn thân bạn đang lái xe thì đột nhiên bị xe của người khác tông vào, khiến anh ấy rất tức giận. Bạn sẽ làm gì để anh bạn ấy bình tĩnh trở lại?',
+        questionTitle:
+          '6. Bạn thân bạn đang lái xe thì đột nhiên bị xe của người khác tông vào, khiến anh ấy rất tức giận. Bạn sẽ làm gì để anh bạn ấy bình tĩnh trở lại?',
         image: '',
         options: [
           {
@@ -782,7 +786,8 @@ export const examDummmyData = [
           },
           {
             image: '',
-            content: 'D. Kể với anh ấy trải nghiệm tương tự của bạn. Lúc đó bạn cũng rất tức giận, nhưng sau đó bạn thấy tài xế bị tai nạn và được đưa đi cấp cứu.',
+            content:
+              'D. Kể với anh ấy trải nghiệm tương tự của bạn. Lúc đó bạn cũng rất tức giận, nhưng sau đó bạn thấy tài xế bị tai nạn và được đưa đi cấp cứu.',
             isResult: false,
             standardScore: 20,
             _id: '660ed9489f5e9ba31cdfbf9a',
@@ -791,7 +796,8 @@ export const examDummmyData = [
         _id: '660ed9489f5e9ba31cdfbf96',
       },
       {
-        questionTitle: '7. Bạn và chồng/vợ mâu thuẫn dẫn đến cãi nhau gay gắt. Trong lúc nóng nảy, cả hai đã xô xát với nhau, dù hai bạn thực sự không muốn. Lúc đó, bạn sẽ làm gì?',
+        questionTitle:
+          '7. Bạn và chồng/vợ mâu thuẫn dẫn đến cãi nhau gay gắt. Trong lúc nóng nảy, cả hai đã xô xát với nhau, dù hai bạn thực sự không muốn. Lúc đó, bạn sẽ làm gì?',
         image: '',
         options: [
           {
@@ -965,7 +971,6 @@ export const examDummmyData = [
   {
     _id: '6611dc5bceba479b0ce476bf',
     type: 'IQ',
-    questionType: 'MULTIPLE_CHOICE',
     createAt: 1725343479,
     updateAt: 1725343479,
     creator: 'Phương Tiên',
@@ -974,6 +979,7 @@ export const examDummmyData = [
     questions: [
       {
         questionTitle: '1. Trước nửa đêm là bao nhiêu phút nếu trước đó 32 phút thời gian này gấp 3 lần số phút sau 22 giờ ?',
+        questionType: 'MULTIPLE_CHOICE',
         options: [
           {
             content: 'A. 18 phút',
@@ -1508,7 +1514,8 @@ export const examDummmyData = [
         _id: '6611dc5bceba479b0ce47715',
       },
       {
-        questionTitle: '18. Hình lục giác nào trong số các hình A, B, C, D và E có thể thêm vào một dấu chấm sao cho đáp ứng được cùng điều kiện như trong hình lục giác bên trên 5 hình này ?',
+        questionTitle:
+          '18. Hình lục giác nào trong số các hình A, B, C, D và E có thể thêm vào một dấu chấm sao cho đáp ứng được cùng điều kiện như trong hình lục giác bên trên 5 hình này ?',
         image: 'https://i.imghippo.com/files/VAj0A1714707210.jpg',
         options: [
           {

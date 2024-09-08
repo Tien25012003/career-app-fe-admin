@@ -3,12 +3,17 @@ export enum EQuestionType {
   MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
   TICK_BOX = 'TICK_BOX',
   SHORT_ANSWER = 'SHORT_ANSWER',
+  COMBINE = 'COMBINE',
   //SCHOOL_SCORE = 'SCHOOL_SCORE', // Special Type
 }
 export enum EExamStatus {
   UNACTIVATED = 'UNACTIVATED',
   ACTIVE = 'ACTIVE',
   BLOCKED = 'BLOCKED',
+}
+export enum EExamCategory {
+  SYSTEM = 'SYSTEM',
+  DESIGN = 'DESIGN',
 }
 export interface IOption {
   id?: string;
@@ -19,6 +24,7 @@ export interface IOption {
 }
 export interface IQuestion {
   id?: string;
+  questionType?: EQuestionType;
   questionTitle: string;
   image?: string;
   options: IOption[];
@@ -37,7 +43,6 @@ export interface IExam {
 
   // new response
   // new type => TO DO // ADD IN MOBILE SIDE
-  questionType?: EQuestionType;
   createAt?: number;
   creator?: string;
   updateAt?: number;

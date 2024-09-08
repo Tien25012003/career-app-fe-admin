@@ -1,23 +1,24 @@
 import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
 import { PageHeader } from '@component/PageHeader/PageHeader';
-import { Badge, Button, Group, Modal, Radio, Stack, Text } from '@mantine/core';
+import { Badge, Button, Stack } from '@mantine/core';
 import { IconPencil, IconPlus } from '@tabler/icons-react';
-import { examDummmyData } from './dummyData';
-import { ColorExamStatus, TextExamStatus, TextExamType } from './utils';
-import { EExamStatus, EQuestionType } from '@interface/exam';
+import { examDummmyData } from '../dummyData';
+import { ColorExamStatus, TextExamStatus } from '../utils';
+import { EExamStatus } from '@interface/exam';
 import { DATETIME_FORMAT, DateUtils } from '@util/DateUtils';
 import { TableButton } from '@component/TableButton/TableButton';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { QuestionTypeModal } from '../components';
 
-export default function ExamPage() {
+export default function DesignExam() {
   const [openCreateModal, setOpenCreateModal] = useState(false);
-  const [questionType, setQuestionType] = useState<EQuestionType>(EQuestionType.MULTIPLE_CHOICE);
+  const navigate = useNavigate();
   return (
     <Stack my='1rem' mx='1rem'>
       <PageHeader
-        title='Quản lý bài kiểm tra'
+        title='Quản lý bài kiểm tra tự thiết kế'
         leftSection={<IconPencil />}
         rightSection={
           <Button leftSection={<IconPlus size={'1.125rem'} />} onClick={() => setOpenCreateModal(true)}>
@@ -38,13 +39,6 @@ export default function ExamPage() {
             accessor: 'type',
             title: 'Tên',
             width: 100,
-          },
-          {
-            accessor: 'questionType',
-            title: 'Thể loại',
-            textAlign: 'center',
-            width: 200,
-            render: (val) => <Text size='sm'>{TextExamType[val.questionType as EQuestionType]}</Text>,
           },
           {
             accessor: 'status',
@@ -86,36 +80,13 @@ export default function ExamPage() {
           },
         ]}
       />
-      <Modal
+      <QuestionTypeModal
         opened={openCreateModal}
-        onClose={() => setOpenCreateModal(false)}
-        centered
-        size={'md'}
-        title='Vui lòng chọn loại kiểm tra'
-        styles={{
-          title: {
-            fontWeight: 500,
-          },
+        onCancel={() => setOpenCreateModal(false)}
+        onFinish={(allQuestionType) => {
+          navigate(`create/${allQuestionType}`);
         }}
-      >
-        <Stack>
-          <Radio.Group withAsterisk label='Thể loại' value={questionType} onChange={(value) => setQuestionType(value as EQuestionType)}>
-            <Group mt='xs'>
-              {Object.keys(EQuestionType)?.map((item, index) => (
-                <Radio value={item} label={TextExamType[item as EQuestionType]} key={index} />
-              ))}
-            </Group>
-          </Radio.Group>
-          <Group justify='flex-end'>
-            <Button variant='default' onClick={() => setOpenCreateModal(false)}>
-              Huỷ
-            </Button>
-            <Button component={Link} to={`create/${questionType}`}>
-              Thêm
-            </Button>
-          </Group>
-        </Stack>
-      </Modal>
+      />
     </Stack>
   );
 }
