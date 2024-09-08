@@ -1,5 +1,6 @@
 import { Header } from '@component/Header';
 import { NavBar } from '@component/NavBar';
+import PageScrollToTop from '@component/PageScrollToTop/PageScrollToTop';
 import { AppShell, useMantineColorScheme, useMantineTheme } from '@mantine/core';
 import { hideNavbarAtom, miniNavbarAtom } from 'atoms/AppAtoms';
 import { useAtom } from 'jotai';
@@ -34,6 +35,7 @@ export function HomePage() {
       <NavBar />
       <AppShell.Main bg={colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0]}>
         <Outlet />
+        {/* <PageScrollToTop /> */}
       </AppShell.Main>
     </AppShell>
   );
