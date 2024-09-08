@@ -1,7 +1,7 @@
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import { Button, Divider, Grid, Group, Paper, Stack, Text, TextInput } from '@mantine/core';
 import { useFocusTrap, useListState } from '@mantine/hooks';
-import { IconChevronLeft, IconChevronRight, IconHelpOctagon, IconPencil, IconPlus } from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight, IconHelpOctagon, IconPencil, IconPlus, IconTargetArrow } from '@tabler/icons-react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { TextExamCategory, TextQuestionType } from '../utils';
 import { EExamCategory, EQuestionType, IQuestion, IResult } from '@interface/exam';
@@ -11,6 +11,7 @@ import { useForm, zodResolver } from '@mantine/form';
 import { TextUtils } from '@util/TextUtils';
 import { useMemo, useState } from 'react';
 import { QuestionCard, QuestionTypeModal } from '../components';
+import { ResultCard } from '../components/ResultCard';
 
 const formSchema = z.object({
   type: z.string().trim().min(1, SchemaUtils.message.nonempty),
@@ -28,11 +29,20 @@ const formSchema = z.object({
       ),
     }),
   ),
+  results: z.array(
+    z.object({
+      score: z.array(z.number()).nonempty(SchemaUtils.message.nonempty),
+      content: z.string().trim().min(1, SchemaUtils.message.nonempty),
+      image: z.instanceof(File).nullable(),
+      detail: z.string().trim().nullable(),
+    }),
+  ),
 });
 type FormValues = z.infer<typeof formSchema>;
 const initialFormValues: FormValues = {
   type: '',
   questions: [],
+  results: [],
 };
 export default function ExamCreatePage() {
   const focusTrapRef = useFocusTrap();
@@ -68,6 +78,15 @@ export default function ExamCreatePage() {
     });
   };
 
+  const onAddResult = () => {
+    resultsHandler.append({
+      id: TextUtils.slugize('new-result'),
+      score: [],
+      content: '',
+      image: '',
+      detail: '',
+    });
+  };
   return (
     <Stack my='1rem' mx='1rem'>
       <PageHeader
@@ -109,12 +128,12 @@ export default function ExamCreatePage() {
             </Grid>
           </Stack>
 
+          <Group gap={5} mt='md' mb={0}>
+            <IconHelpOctagon />
+            <Text fw={600}>Câu hỏi</Text>
+          </Group>
           {questions?.length > 0 && (
             <Stack>
-              <Group gap={5} mt='md'>
-                <IconHelpOctagon />
-                <Text fw={600}>Câu hỏi</Text>
-              </Group>
               {questions?.map((question, index) => (
                 <QuestionCard
                   key={index}
@@ -143,7 +162,15 @@ export default function ExamCreatePage() {
 
           <Divider variant='dotted' />
 
-          <Button variant='outline' onClick={() => {}} leftSection={<IconPlus />}>
+          <Group gap={5} mt='md' mb={0}>
+            <IconTargetArrow />
+            <Text fw={600}>Kết quả & nhận xét</Text>
+          </Group>
+          {results?.length > 0 && (
+            <Stack>{results?.map((result, index) => <ResultCard key={index} index={index} result={result} resultsHandler={resultsHandler} />)}</Stack>
+          )}
+
+          <Button variant='outline' onClick={onAddResult} leftSection={<IconPlus />}>
             Thêm kết quả & nhận xét
           </Button>
 

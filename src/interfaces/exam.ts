@@ -31,6 +31,7 @@ export interface IQuestion {
   //answer?: number | number[];
 }
 export interface IResult {
+  id?: string;
   score?: null | number[];
   content: string;
   image?: string;
