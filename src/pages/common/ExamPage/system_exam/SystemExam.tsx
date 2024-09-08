@@ -11,10 +11,32 @@ import { TableButton } from '@component/TableButton/TableButton';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { QuestionTypeModal } from '../components';
+import { SchoolScore } from './components/SchoolScore';
+
+type THeader = {
+  name: 'HOLLAND_IQ_EQ' | 'SchoolScore' | 'Conclusion';
+  label: string;
+};
+
+const HEADERS: THeader[] = [
+  {
+    name: 'HOLLAND_IQ_EQ',
+    label: 'Holland - IQ - EQ',
+  },
+  {
+    name: 'SchoolScore',
+    label: 'Điểm học bạ',
+  },
+  {
+    name: 'Conclusion',
+    label: 'Kết luận',
+  },
+];
 
 export default function SystemExam() {
   const [openCreateModal, setOpenCreateModal] = useState(false);
-  const [isSchoolScore, setIsSchoolScore] = useState(false);
+  const [selectedHeader, setSelectedHeader] = useState(HEADERS[0].name);
+  const [openCreateSubjectModal, setOpenCreateSubjectModal] = useState(false);
   const navigate = useNavigate();
   return (
     <Stack my='1rem' mx='1rem'>
@@ -22,21 +44,30 @@ export default function SystemExam() {
         title='Quản lý bài kiểm tra hệ thống'
         leftSection={<IconPencil />}
         rightSection={
-          <Button leftSection={<IconPlus size={'1.125rem'} />} onClick={() => setOpenCreateModal(true)}>
+          <Button
+            leftSection={<IconPlus size={'1.125rem'} />}
+            onClick={() => {
+              if (selectedHeader === 'HOLLAND_IQ_EQ') {
+                setOpenCreateModal(true);
+              }
+              if (selectedHeader === 'SchoolScore') {
+                setOpenCreateSubjectModal(true);
+              }
+            }}
+          >
             Thêm mới
           </Button>
         }
       />
       <Group wrap='wrap'>
-        <Button variant={!isSchoolScore ? 'filled' : 'outline'} onClick={() => setIsSchoolScore(false)}>
-          Holland - EQ - IQ
-        </Button>
-        <Button variant={isSchoolScore ? 'filled' : 'outline'} onClick={() => setIsSchoolScore(true)}>
-          Điểm học bạ
-        </Button>
+        {HEADERS?.map((header, index) => (
+          <Button key={index} variant={selectedHeader === header.name ? 'filled' : 'outline'} onClick={() => setSelectedHeader(header.name)}>
+            {header.label}
+          </Button>
+        ))}
       </Group>
-      {!isSchoolScore && (
-        <>
+      {selectedHeader === 'HOLLAND_IQ_EQ' && (
+        <Stack>
           <AppSearch />
           <AppTable
             data={examDummmyData}
@@ -98,9 +129,12 @@ export default function SystemExam() {
               navigate(`create/${allQuestionType}`);
             }}
           />
-        </>
+        </Stack>
       )}
-      {isSchoolScore && <AppSearch />}
+      {selectedHeader === 'SchoolScore' && (
+        <SchoolScore openCreateSubjectModal={openCreateSubjectModal} setOpenCreateSubjectModal={setOpenCreateSubjectModal} />
+      )}
+      {selectedHeader === 'Conclusion' && <AppSearch />}
     </Stack>
   );
 }

@@ -1635,3 +1635,26 @@ export const examDummmyData = [
     ],
   },
 ];
+
+export const schoolScoreDummyData = [
+  {
+    _id: '661aadd059b35d75bf574b0c',
+    name: 'Literature',
+    vnName: 'Ngữ văn',
+  },
+  {
+    _id: '661aadd059b35d75bf574b0c',
+    name: 'Math',
+    vnName: 'Toán',
+  },
+  {
+    _id: '661aadd059b35d75bf574b0c',
+    name: 'English',
+    vnName: 'Ngoại ngữ',
+  },
+  {
+    _id: '661aadd059b35d75bf574b0c',
+    name: 'Chemistry',
+    vnName: 'Hoá học',
+  },
+];
