@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { QuestionTypeModal } from '../components';
 import { SchoolScore } from './components/SchoolScore';
+import { Conclusion } from './components/Conclusion';
 
 type THeader = {
   name: 'HOLLAND_IQ_EQ' | 'SchoolScore' | 'Conclusion';
@@ -134,7 +135,7 @@ export default function SystemExam() {
       {selectedHeader === 'SchoolScore' && (
         <SchoolScore openCreateSubjectModal={openCreateSubjectModal} setOpenCreateSubjectModal={setOpenCreateSubjectModal} />
       )}
-      {selectedHeader === 'Conclusion' && <AppSearch />}
+      {selectedHeader === 'Conclusion' && <Conclusion />}
     </Stack>
   );
 }

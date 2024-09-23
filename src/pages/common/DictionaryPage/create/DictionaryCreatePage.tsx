@@ -1,27 +1,9 @@
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import { PageUploader } from '@component/PageUploader/PageUploader';
-import {
-  Button,
-  Divider,
-  Grid,
-  Group,
-  MultiSelect,
-  Paper,
-  Select,
-  Stack,
-  Text,
-  Textarea,
-  TextInput,
-} from '@mantine/core';
+import { Button, Divider, Grid, Group, MultiSelect, Paper, Select, Stack, Text, Textarea, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useFocusTrap } from '@mantine/hooks';
-import {
-  IconBook2,
-  IconChevronLeft,
-  IconChevronRight,
-  IconFileDescription,
-  IconInfoCircle,
-} from '@tabler/icons-react';
+import { IconBook2, IconChevronLeft, IconChevronRight, IconFileDescription, IconInfoCircle } from '@tabler/icons-react';
 import { SchemaUtils } from '@util/SchemaUtils';
 import { GROUPS } from 'constants/groups';
 import { Link } from 'react-router-dom';
@@ -31,10 +13,7 @@ const formSchema = z.object({
   group: z.string().trim().min(1, SchemaUtils.message.nonempty),
   name: z.string().trim().min(1, SchemaUtils.message.nonempty),
   subjects: z.array(z.string().trim().min(1, SchemaUtils.message.nonempty)),
-  image: z
-    .instanceof(File)
-    .nullable()
-    .refine(SchemaUtils.vaidator.isNonNullFile, SchemaUtils.message.nonempty),
+  image: z.instanceof(File).nullable().refine(SchemaUtils.vaidator.isNonNullFile, SchemaUtils.message.nonempty),
   pros: z.string().min(1, SchemaUtils.message.nonempty),
   cons: z.string().min(1, SchemaUtils.message.nonempty),
 });
@@ -44,23 +23,12 @@ const initialFormValues: FormValues = {
   group: '',
   name: '',
   subjects: [],
-  image: null,
+  image: '',
   pros: '',
   cons: '',
 };
 
-const SUBJECTS = [
-  'Ngữ văn',
-  'Toán',
-  'Ngoại ngữ',
-  'Lịch sử',
-  'Hoá học',
-  'Tin học',
-  'Địa lí',
-  'Vật lí',
-  'Sinh học',
-  'Giáo dục công dân',
-];
+const SUBJECTS = ['Ngữ văn', 'Toán', 'Ngoại ngữ', 'Lịch sử', 'Hoá học', 'Tin học', 'Địa lí', 'Vật lí', 'Sinh học', 'Giáo dục công dân'];
 export default function DictionaryCreatePage() {
   const focusTrapRef = useFocusTrap();
   const form = useForm({
@@ -82,12 +50,7 @@ export default function DictionaryCreatePage() {
           </>
         }
         rightSection={
-          <Button
-            leftSection={<IconChevronLeft size={'1.125rem'} />}
-            component={Link}
-            to={'/dictionary'}
-            variant='default'
-          >
+          <Button leftSection={<IconChevronLeft size={'1.125rem'} />} component={Link} to={'/dictionary'} variant='default'>
             Trở về
           </Button>
         }
@@ -103,14 +66,7 @@ export default function DictionaryCreatePage() {
                   <Text fw={500}>Thông tin chung</Text>
                 </Group>
                 <Divider />
-                <Select
-                  withAsterisk
-                  comboboxProps={{ withinPortal: false }}
-                  label='Khối'
-                  data={GROUPS}
-                  {...form.getInputProps('group')}
-                  clearable
-                />
+                <Select withAsterisk comboboxProps={{ withinPortal: false }} label='Khối' data={GROUPS} {...form.getInputProps('group')} clearable />
                 <TextInput withAsterisk label='Tên ngành' {...form.getInputProps('name')} />
                 <MultiSelect
                   withAsterisk
@@ -141,20 +97,8 @@ export default function DictionaryCreatePage() {
                   <Text fw={500}>Nội dung</Text>
                 </Group>
                 <Divider />
-                <Textarea
-                  label='Lợi thế'
-                  withAsterisk
-                  autosize
-                  minRows={4}
-                  {...form.getInputProps('pros')}
-                />
-                <Textarea
-                  label='Khó khăn'
-                  withAsterisk
-                  autosize
-                  minRows={4}
-                  {...form.getInputProps('cons')}
-                />
+                <Textarea label='Lợi thế' withAsterisk autosize minRows={4} {...form.getInputProps('pros')} />
+                <Textarea label='Khó khăn' withAsterisk autosize minRows={4} {...form.getInputProps('cons')} />
               </Stack>
             </Grid.Col>
           </Grid>

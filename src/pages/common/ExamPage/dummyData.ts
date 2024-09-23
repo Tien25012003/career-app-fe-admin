@@ -1658,3 +1658,17 @@ export const schoolScoreDummyData = [
     vnName: 'Hoá học',
   },
 ];
+
+export const conclusionDummyData = [
+  {
+    Type: 2,
+    Holland: 'R',
+    SchoolScore: 'A',
+    IQ: '_',
+    EQ: '_',
+    Field: 'Kỹ thuật và khoa học tự nhiên',
+    Jobs: 'Kỹ thuật Sinh học\nKỹ thuật Môi trường\nDược học\nCông nghệ Thực phẩm\nCông nghệ Kỹ thuật Tài nguyên Nước\nKỹ thuật Nông nghiệp',
+    Conclusion:
+      'Nhóm R bao gồm những người yêu thích công việc thực tiễn, thích làm việc với các vật cụ thể như máy móc, công cụ dụng cụ và thường có kỹ năng thủ công, cơ khí tốt. Khối thi B tập trung vào các môn học như Toán, Hóa, và Sinh, cung cấp nền tảng kiến thức tốt cho các ngành khoa học tự nhiên và ứng dụng, vốn đòi hỏi sự hiểu biết về sinh học, hóa học và toán học.',
+  },
+];
