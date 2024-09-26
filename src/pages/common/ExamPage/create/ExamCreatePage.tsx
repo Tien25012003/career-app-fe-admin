@@ -4,7 +4,7 @@ import { useFocusTrap, useListState } from '@mantine/hooks';
 import { IconChevronLeft, IconChevronRight, IconHelpOctagon, IconPencil, IconPlus, IconTargetArrow } from '@tabler/icons-react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { TextExamCategory, TextQuestionType } from '../utils';
-import { EExamCategory, EQuestionType, IQuestion, IResult } from '@interface/exam';
+import { IQuestion, IResult } from '@interface/exam';
 import { z } from 'zod';
 import { SchemaUtils } from '@util/SchemaUtils';
 import { useForm, zodResolver } from '@mantine/form';
@@ -12,6 +12,7 @@ import { TextUtils } from '@util/TextUtils';
 import { useMemo, useState } from 'react';
 import { QuestionCard, QuestionTypeModal } from '../components';
 import { ResultCard } from '../components/ResultCard';
+import { EExamCategory, EQuestionType } from '@enum/exam';
 
 const formSchema = z.object({
   type: z.string().trim().min(1, SchemaUtils.message.nonempty),

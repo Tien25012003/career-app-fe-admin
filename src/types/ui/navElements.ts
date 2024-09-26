@@ -1,4 +1,4 @@
-import { Icon } from "@tabler/icons-react";
+import { Icon } from '@tabler/icons-react';
 
 export type NavElement = {
   label: string;

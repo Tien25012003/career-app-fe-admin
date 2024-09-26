@@ -5,12 +5,12 @@ import { Badge, Button, Stack } from '@mantine/core';
 import { IconPencil, IconPlus } from '@tabler/icons-react';
 import { examDummmyData } from '../dummyData';
 import { ColorExamStatus, TextExamStatus } from '../utils';
-import { EExamStatus } from '@interface/exam';
 import { DATETIME_FORMAT, DateUtils } from '@util/DateUtils';
 import { TableButton } from '@component/TableButton/TableButton';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { QuestionTypeModal } from '../components';
+import { EExamStatus } from '@enum/exam';
 
 export default function DesignExam() {
   const [openCreateModal, setOpenCreateModal] = useState(false);

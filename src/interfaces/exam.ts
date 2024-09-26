@@ -1,20 +1,6 @@
+import { EExamStatus, EQuestionType } from '@enum/exam';
+
 export type TExam = 'R' | 'I' | 'A' | 'S' | 'E' | 'C' | 'IQ' | 'EQ' | 'SchoolScore';
-export enum EQuestionType {
-  MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
-  TICK_BOX = 'TICK_BOX',
-  SHORT_ANSWER = 'SHORT_ANSWER',
-  COMBINE = 'COMBINE',
-  //SCHOOL_SCORE = 'SCHOOL_SCORE', // Special Type
-}
-export enum EExamStatus {
-  UNACTIVATED = 'UNACTIVATED',
-  ACTIVE = 'ACTIVE',
-  BLOCKED = 'BLOCKED',
-}
-export enum EExamCategory {
-  SYSTEM = 'SYSTEM',
-  DESIGN = 'DESIGN',
-}
 export interface IOption {
   id?: string;
   image?: string;

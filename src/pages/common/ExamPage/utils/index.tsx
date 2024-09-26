@@ -1,4 +1,4 @@
-import { EExamStatus, EQuestionType } from '@interface/exam';
+import { EExamStatus, EQuestionType } from '@enum/exam';
 
 export const TextQuestionType = {
   MULTIPLE_CHOICE: 'Multiple choice',

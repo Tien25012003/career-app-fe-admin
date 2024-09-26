@@ -1,11 +1,12 @@
 import { PageEditor } from '@component/PageEditor/PageEditor';
 import { PageUploader } from '@component/PageUploader/PageUploader';
-import { EQuestionType, IOption, IQuestion } from '@interface/exam';
+import { IOption, IQuestion } from '@interface/exam';
 import { Button, Divider, Grid, Group, Paper, Stack, Text, Badge } from '@mantine/core';
 import { useListState, UseListStateHandlers } from '@mantine/hooks';
 import { TextUtils } from '@util/TextUtils';
 import { ColorQuestionType, TextQuestionType } from '../utils';
 import { AnswerCard } from './AnswerCard';
+import { EQuestionType } from '@enum/exam';
 type Props = {
   id?: string;
   position: number;

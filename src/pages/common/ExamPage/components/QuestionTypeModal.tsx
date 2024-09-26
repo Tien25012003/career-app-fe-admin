@@ -1,7 +1,7 @@
-import { EQuestionType } from '@interface/exam';
 import { Button, Group, Modal, Radio, Stack } from '@mantine/core';
 import { TextQuestionType } from '../utils';
 import { useState } from 'react';
+import { EQuestionType } from '@enum/exam';
 type Props = {
   opened: boolean;
   onCancel: () => void;

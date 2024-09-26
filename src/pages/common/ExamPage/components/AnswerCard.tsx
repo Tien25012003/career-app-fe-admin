@@ -1,5 +1,6 @@
 import { PageUploader } from '@component/PageUploader/PageUploader';
-import { EQuestionType, IOption } from '@interface/exam';
+import { EQuestionType } from '@enum/exam';
+import { IOption } from '@interface/exam';
 import { ActionIcon, Checkbox, Divider, Grid, Group, NumberInput, Radio, Stack, TextInput, Tooltip, Text } from '@mantine/core';
 import { UseListStateHandlers } from '@mantine/hooks';
 import { IconArrowBadgeRight, IconTrash } from '@tabler/icons-react';

@@ -2,10 +2,9 @@ import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import { Badge, Button, Group, Stack } from '@mantine/core';
-import { IconPencil, IconPlus } from '@tabler/icons-react';
+import { IconFileUpload, IconPencil, IconPlus } from '@tabler/icons-react';
 import { examDummmyData } from '../dummyData';
 import { ColorExamStatus, TextExamStatus } from '../utils';
-import { EExamStatus, EQuestionType } from '@interface/exam';
 import { DATETIME_FORMAT, DateUtils } from '@util/DateUtils';
 import { TableButton } from '@component/TableButton/TableButton';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +12,7 @@ import { useState } from 'react';
 import { QuestionTypeModal } from '../components';
 import { SchoolScore } from './components/SchoolScore';
 import { Conclusion } from './components/Conclusion';
+import { EExamStatus } from '@enum/exam';
 
 type THeader = {
   name: 'HOLLAND_IQ_EQ' | 'SchoolScore' | 'Conclusion';
@@ -38,6 +38,7 @@ export default function SystemExam() {
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [selectedHeader, setSelectedHeader] = useState(HEADERS[0].name);
   const [openCreateSubjectModal, setOpenCreateSubjectModal] = useState(false);
+  const [openCreateConclusionModal, setOpenCreateConclusionModal] = useState(false);
   const navigate = useNavigate();
   return (
     <Stack my='1rem' mx='1rem'>
@@ -54,18 +55,28 @@ export default function SystemExam() {
               if (selectedHeader === 'SchoolScore') {
                 setOpenCreateSubjectModal(true);
               }
+              if (selectedHeader === 'Conclusion') {
+                setOpenCreateConclusionModal(true);
+              }
             }}
           >
             Thêm mới
           </Button>
         }
       />
-      <Group wrap='wrap'>
-        {HEADERS?.map((header, index) => (
-          <Button key={index} variant={selectedHeader === header.name ? 'filled' : 'outline'} onClick={() => setSelectedHeader(header.name)}>
-            {header.label}
+      <Group wrap='wrap' justify='space-between'>
+        <Group>
+          {HEADERS?.map((header, index) => (
+            <Button key={index} variant={selectedHeader === header.name ? 'filled' : 'outline'} onClick={() => setSelectedHeader(header.name)}>
+              {header.label}
+            </Button>
+          ))}
+        </Group>
+        {selectedHeader === 'Conclusion' && (
+          <Button variant='light' leftSection={<IconFileUpload />}>
+            Upload Excel File
           </Button>
-        ))}
+        )}
       </Group>
       {selectedHeader === 'HOLLAND_IQ_EQ' && (
         <Stack>
@@ -135,7 +146,9 @@ export default function SystemExam() {
       {selectedHeader === 'SchoolScore' && (
         <SchoolScore openCreateSubjectModal={openCreateSubjectModal} setOpenCreateSubjectModal={setOpenCreateSubjectModal} />
       )}
-      {selectedHeader === 'Conclusion' && <Conclusion />}
+      {selectedHeader === 'Conclusion' && (
+        <Conclusion openCreateConclusionModal={openCreateConclusionModal} setOpenCreateConclusionModal={setOpenCreateConclusionModal} />
+      )}
     </Stack>
   );
 }

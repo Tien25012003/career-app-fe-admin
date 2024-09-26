@@ -13,7 +13,8 @@
       "@util/*": ["utils/*"],
       "@type/*": ["types/*"],
       "@helper/*": ["helpers/*"],
-      "@interface/*": ["interfaces/*"]
+      "@interface/*": ["interfaces/*"],
+      "@enum/*": ["enums/*"]
     },
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
