@@ -6,6 +6,46 @@
 @tailwind utilities;
 
 @layer mantine, mantine-datatable;
+@layer utilities {
+  .scrollbar::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    transition: all;
+  }
+
+  .scrollbar:hover::-webkit-scrollbar,
+  .static-scrollbar::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    transition: all;
+  }
+
+  .scrollbar::-webkit-scrollbar-track,
+  .static-scrollbar::-webkit-scrollbar-track {
+    border-radius: 100vh;
+    background: #f8fafc;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb,
+  .static-scrollbar::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 100vh;
+    border: 3px solid #fbfcfd;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb:hover,
+  .static-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #cbd5e1;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+}
 
 .jotai-devtools-trigger-button,
 .jotai-devtools-trigger-button:active {

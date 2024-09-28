@@ -1,5 +1,6 @@
 import { Header } from '@component/Header';
 import { NavBar } from '@component/NavBar';
+import PageChatbot from '@component/PageChatbot/PageChatbot';
 import PageScrollToTop from '@component/PageScrollToTop/PageScrollToTop';
 import { AppShell, useMantineColorScheme, useMantineTheme } from '@mantine/core';
 import { hideNavbarAtom, miniNavbarAtom } from 'atoms/AppAtoms';
@@ -36,6 +37,7 @@ export function HomePage() {
       <AppShell.Main bg={colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0]}>
         <Outlet />
         {/* <PageScrollToTop /> */}
+        <PageChatbot />
       </AppShell.Main>
     </AppShell>
   );
