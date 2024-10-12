@@ -83,7 +83,7 @@ export default function PageChatbot() {
                       bg='white'
                     />
                     <Text fw={600} c='white'>
-                      Real time chat bot
+                      Chat với Career App
                     </Text>
                   </Group>
                   <CloseButton

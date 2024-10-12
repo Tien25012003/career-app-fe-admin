@@ -109,7 +109,7 @@ export default function SystemExam() {
                 accessor: 'createAt',
                 title: 'Ngày tạo',
                 width: 200,
-                render: (val) => DateUtils.fDate(val.createAt, DATETIME_FORMAT),
+                render: (val) => DateUtils.fDate(val.createdAt, DATETIME_FORMAT),
               },
               {
                 accessor: 'creator',
@@ -120,7 +120,7 @@ export default function SystemExam() {
                 accessor: 'updateAt',
                 title: 'Ngày sửa đổi',
                 width: 200,
-                render: (val) => DateUtils.fDate(val.createAt, DATETIME_FORMAT),
+                render: (val) => DateUtils.fDate(val.createdAt, DATETIME_FORMAT),
               },
               {
                 accessor: 'updator',

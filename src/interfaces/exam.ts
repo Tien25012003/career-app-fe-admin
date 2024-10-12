@@ -1,4 +1,4 @@
-import { EExamStatus, EQuestionType } from '@enum/exam';
+import { EExamCategory, EExamStatus, EQuestionType } from '@enum/exam';
 
 export type TExam = 'R' | 'I' | 'A' | 'S' | 'E' | 'C' | 'IQ' | 'EQ' | 'SchoolScore';
 export interface IOption {
@@ -30,9 +30,12 @@ export interface IExam {
 
   // new response
   // new type => TO DO // ADD IN MOBILE SIDE
-  createAt?: number;
+
+  name?: string;
+  category: EExamCategory;
+  createdAt?: number;
   creator?: string;
-  updateAt?: number;
+  updatedAt?: number;
   updator?: string;
   status?: EExamStatus;
 }

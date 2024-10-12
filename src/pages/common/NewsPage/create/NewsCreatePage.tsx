@@ -2,7 +2,7 @@ import { PageEditor } from '@component/PageEditor/PageEditor';
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import { Button, Divider, Group, MultiSelect, Paper, rem, ScrollArea, Select, SimpleGrid, Stack, Switch, Text, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconNews, IconSearch, IconSettings, IconUser, IconUsersGroup, IconX } from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconNews, IconX } from '@tabler/icons-react';
 import { SchemaUtils } from '@util/SchemaUtils';
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -108,7 +108,12 @@ const NewsCreatePage = () => {
                 <Text fw={500} size='sm'>
                   Chọn ảnh kích thước (312x312)
                 </Text>
-                <Dropzone onDrop={(files) => console.log('accepted files', files)} onReject={(files) => console.log('rejected files', files)} maxSize={5 * 1024 ** 2} accept={IMAGE_MIME_TYPE}>
+                <Dropzone
+                  onDrop={(files) => console.log('accepted files', files)}
+                  onReject={(files) => console.log('rejected files', files)}
+                  maxSize={5 * 1024 ** 2}
+                  accept={IMAGE_MIME_TYPE}
+                >
                   <Group justify='center' gap='xl' mih={220} style={{ pointerEvents: 'none' }}>
                     <Dropzone.Accept>
                       <IconUpload style={{ width: rem(52), height: rem(52), color: 'var(--mantine-color-blue-6)' }} stroke={1.5} />
@@ -135,7 +140,12 @@ const NewsCreatePage = () => {
                 <Text fw={500} size='sm'>
                   Chọn ảnh kích thước (512x512)
                 </Text>
-                <Dropzone onDrop={(files) => console.log('accepted files', files)} onReject={(files) => console.log('rejected files', files)} maxSize={5 * 1024 ** 2} accept={IMAGE_MIME_TYPE}>
+                <Dropzone
+                  onDrop={(files) => console.log('accepted files', files)}
+                  onReject={(files) => console.log('rejected files', files)}
+                  maxSize={5 * 1024 ** 2}
+                  accept={IMAGE_MIME_TYPE}
+                >
                   <Group justify='center' gap='xl' mih={220} style={{ pointerEvents: 'none' }}>
                     <Dropzone.Accept>
                       <IconUpload style={{ width: rem(52), height: rem(52), color: 'var(--mantine-color-blue-6)' }} stroke={1.5} />
