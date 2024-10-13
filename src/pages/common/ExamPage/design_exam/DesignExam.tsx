@@ -55,7 +55,7 @@ export default function DesignExam() {
             accessor: 'createAt',
             title: 'Ngày tạo',
             width: 200,
-            render: (val) => DateUtils.fDate(val.createAt, DATETIME_FORMAT),
+            render: (val) => DateUtils.fDate(new Date(val.createdAt), DATETIME_FORMAT),
           },
           {
             accessor: 'creator',
@@ -66,7 +66,7 @@ export default function DesignExam() {
             accessor: 'updateAt',
             title: 'Ngày sửa đổi',
             width: 200,
-            render: (val) => DateUtils.fDate(val.createAt, DATETIME_FORMAT),
+            render: (val) => DateUtils.fDate(new Date(val.createdAt), DATETIME_FORMAT),
           },
           {
             accessor: 'updator',
