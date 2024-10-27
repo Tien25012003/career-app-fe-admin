@@ -26,6 +26,7 @@ export default tseslint.config({
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': 'off', // Disable rule for TypeScript
     'react-refresh/only-export-components': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
     // 'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     'prettier/prettier': [
       'warn',

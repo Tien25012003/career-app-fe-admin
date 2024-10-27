@@ -9,7 +9,7 @@ import '@mantine/dropzone/styles.css';
 import { routes } from './routes';
 import { useNavigate, useRoutes } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from './api/services/queryClient';
+import { queryClient } from './api/config/queryClient';
 import { ModalsProvider } from '@mantine/modals';
 import { Provider as JotaiProvider } from 'jotai';
 import { store } from './atoms/store';

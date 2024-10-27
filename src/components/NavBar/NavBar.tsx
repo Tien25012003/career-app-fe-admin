@@ -1,16 +1,4 @@
-import {
-  AppShell,
-  ScrollArea,
-  useMantineColorScheme,
-  useMantineTheme,
-  NavLink,
-  HoverCard,
-  Stack,
-  Text,
-  Box,
-  Group,
-  ActionIcon,
-} from '@mantine/core';
+import { AppShell, ScrollArea, useMantineColorScheme, useMantineTheme, NavLink, HoverCard, Stack, Text, Box, Group, ActionIcon } from '@mantine/core';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { NavElement } from '@type/ui/navElements';
 import { miniNavbarAtom } from 'atoms/AppAtoms';
@@ -47,9 +35,7 @@ const CustomNavLink = ({ item, children, showLabel = true, active }: TNavLink) =
       label={showLabel ? item.label : ''}
       component={Link}
       to={item.link || ''}
-      leftSection={
-        item.icon && <item.icon size={'1.25rem'} stroke={1.5} style={{ marginRight: 0 }} />
-      }
+      leftSection={item.icon && <item.icon size={'1.25rem'} stroke={1.5} style={{ marginRight: 0 }} />}
       childrenOffset={'1rem'}
       //active={item.link === location.pathname}
       active={active}
@@ -79,12 +65,7 @@ export function NavBar() {
           ? navElements.map((navElement) => (
               <CustomNavLink
                 item={navElement}
-                active={
-                  navElement.link
-                    ? location.pathname.endsWith(navElement.link) ||
-                      location.pathname.startsWith(`${navElement.link}/`)
-                    : false
-                }
+                active={navElement.link ? location.pathname.endsWith(navElement.link) || location.pathname.startsWith(`${navElement.link}/`) : false}
               >
                 {navElement.children?.map((childNavElement) => {
                   return (
@@ -92,8 +73,7 @@ export function NavBar() {
                       item={childNavElement}
                       active={
                         childNavElement.link
-                          ? location.pathname.endsWith(childNavElement.link) ||
-                            location.pathname.startsWith(`${childNavElement.link}/`)
+                          ? location.pathname.endsWith(childNavElement.link) || location.pathname.startsWith(`${childNavElement.link}/`)
                           : false
                       }
                     />
@@ -109,18 +89,12 @@ export function NavBar() {
                       item={navElement}
                       showLabel={false}
                       active={
-                        navElement.link
-                          ? location.pathname.endsWith(navElement.link) ||
-                            location.pathname.startsWith(`${navElement.link}/`)
-                          : false
+                        navElement.link ? location.pathname.endsWith(navElement.link) || location.pathname.startsWith(`${navElement.link}/`) : false
                       }
                     />
                   </Box>
                 </HoverCard.Target>
-                <HoverCard.Dropdown
-                  bg={colorScheme === 'dark' ? theme.colors.dark[7] : theme.white}
-                  pb='0'
-                >
+                <HoverCard.Dropdown bg={colorScheme === 'dark' ? theme.colors.dark[7] : theme.white} pb='0'>
                   <Stack gap={'xs'}>
                     <Text c='dimmed' size='sm'>
                       {navElement.label}
@@ -131,8 +105,7 @@ export function NavBar() {
                           item={childNavElement}
                           active={
                             childNavElement.link
-                              ? location.pathname.endsWith(childNavElement.link) ||
-                                location.pathname.startsWith(`${childNavElement.link}/`)
+                              ? location.pathname.endsWith(childNavElement.link) || location.pathname.startsWith(`${childNavElement.link}/`)
                               : false
                           }
                         />
@@ -147,9 +120,7 @@ export function NavBar() {
         <Group
           py='sm'
           style={{
-            borderTop: `1px solid ${
-              colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
-            }`,
+            borderTop: `1px solid ${colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]}`,
           }}
           mx='lg'
           align='center'
@@ -161,11 +132,7 @@ export function NavBar() {
             </Text>
           )}
           <ActionIcon variant='default' onClick={() => setMiniNavbar(!miniNavbar)}>
-            {miniNavbar ? (
-              <IconChevronRight size='1.125rem' stroke={1.5} />
-            ) : (
-              <IconChevronLeft size='1.125rem' stroke={1.5} />
-            )}
+            {miniNavbar ? <IconChevronRight size='1.125rem' stroke={1.5} /> : <IconChevronLeft size='1.125rem' stroke={1.5} />}
           </ActionIcon>
         </Group>
       </AppShell.Section>

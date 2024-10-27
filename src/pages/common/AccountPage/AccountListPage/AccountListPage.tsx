@@ -74,13 +74,7 @@ const AccountListPage = () => {
                   {groups.slice(0, 4).map((group) => (
                     <Avatar key={Math.random()} name={group} color='initials' />
                   ))}
-                  {groups.length > 5 && (
-                    <Avatar
-                      key={Math.random()}
-                      name={`+${groups.length - 4}`}
-                      color='gray'
-                    ></Avatar>
-                  )}
+                  {groups.length > 5 && <Avatar key={Math.random()} name={`+${groups.length - 4}`} color='gray'></Avatar>}
                 </Avatar.Group>
               </Group>
             ),
