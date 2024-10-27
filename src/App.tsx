@@ -1,35 +1,32 @@
-import '@mantine/core/styles.css';
-import '@mantine/dates/styles.css';
 import '@mantine/charts/styles.css';
+import '@mantine/core/styles.css';
 import '@mantine/core/styles.layer.css';
-import 'mantine-datatable/styles.layer.css';
-import '@mantine/tiptap/styles.css';
+import '@mantine/dates/styles.css';
 import '@mantine/dropzone/styles.css';
+import '@mantine/notifications/styles.css';
+import '@mantine/tiptap/styles.css';
+import 'mantine-datatable/styles.layer.css';
 
-import { routes } from './routes';
-import { useNavigate, useRoutes } from 'react-router-dom';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from './api/config/queryClient';
 import { ModalsProvider } from '@mantine/modals';
-import { Provider as JotaiProvider } from 'jotai';
-import { store } from './atoms/store';
-import { ThemeProvider } from './ThemeProvider';
-import { DevTools as JotaiDevTools } from 'jotai-devtools';
+import { Notifications } from '@mantine/notifications';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { Provider as JotaiProvider } from 'jotai';
+import { DevTools as JotaiDevTools } from 'jotai-devtools';
+import { useRoutes } from 'react-router-dom';
+import { queryClient } from './api/config/queryClient';
+import { store } from './atoms/store';
 import './index.css';
-import { useEffect } from 'react';
+import { routes } from './routes';
+import { ThemeProvider } from './ThemeProvider';
 function App() {
   const appRoutes = useRoutes(routes);
-  // TO DO:  replace with API Authe
-  // const navigate = useNavigate();
-  // useEffect(() => {
-  //   navigate("/login");
-  // }, []);
-  //
+
   return (
     <QueryClientProvider client={queryClient}>
       <JotaiProvider store={store}>
         <ThemeProvider>
+          <Notifications />
           <ModalsProvider>{appRoutes}</ModalsProvider>
         </ThemeProvider>
         <JotaiDevTools />

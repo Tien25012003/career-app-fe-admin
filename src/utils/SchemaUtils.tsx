@@ -5,9 +5,9 @@ export namespace SchemaUtils {
     isNonNullFile: (file: File | null) => file !== null,
   };
   export const message = {
-    nonempty: 'Vui lòng không bỏ trống',
-    invalidEmail: 'Email không hợp lệ',
-    invalidLink: 'Liên kết không hợp lệ',
-    invalidNumber: 'Vui lòng nhập giá trị số',
+    nonempty: 'Vui lòng không bỏ trống!',
+    invalidEmail: 'Email không hợp lệ!',
+    invalidLink: 'Liên kết không hợp lệ!',
+    invalidNumber: 'Vui lòng nhập giá trị số!',
   };
 }

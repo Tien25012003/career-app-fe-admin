@@ -1,1 +1,1 @@
-export * from "./ProtectedRoutes";
+export * from './ProtectedRoutes';

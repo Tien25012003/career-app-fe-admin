@@ -1,7 +1,16 @@
+import { loginAPI } from '@api/services/auth/auth.api';
+import { LoginREQ } from '@api/services/auth/request/login.request';
+import { LoginRESP } from '@api/services/auth/response/login.response';
 import { CareerAppLogo } from '@icon/CareerAppLogo';
-import { Anchor, Box, Button, Container, Group, Paper, PasswordInput, Stack, TextInput, useMantineTheme, getGradient } from '@mantine/core';
+import { Anchor, Box, Button, Container, getGradient, Group, Paper, PasswordInput, Stack, TextInput, useMantineTheme } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
+import { useMutation } from '@tanstack/react-query';
+import { BaseResponse } from '@type/response.type';
+import { NotifyUtils } from '@util/NotificationUtils';
 import { SchemaUtils } from '@util/SchemaUtils';
+import { accessTokenAtom } from 'atoms/auth.store';
+import { AxiosError } from 'axios';
+import { useSetAtom } from 'jotai';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
@@ -19,14 +28,33 @@ const initialFormValues: FormValues = {
 export default function LoginPage() {
   //const { colorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
+  const navigate = useNavigate();
+
+  const setAccessToken = useSetAtom(accessTokenAtom);
+
+  // FORM
   const form = useForm({
     initialValues: initialFormValues,
     validate: zodResolver(formSchema),
   });
-  const navigate = useNavigate();
+
+  // API
+  const { mutate: loginMutation, isPending } = useMutation({
+    mutationFn: (request: LoginREQ) => loginAPI(request),
+    onSuccess: ({ data }: BaseResponse<LoginRESP>) => {
+      NotifyUtils.success('Đăng nhập thành công!');
+      setAccessToken(data.accessToken);
+      navigate('/');
+    },
+    onError: (error: AxiosError) => {
+      console.log('error', error);
+      NotifyUtils.error('Đăng nhập thất bại!');
+    },
+  });
+
+  // METHODS
   const handleFormSubmit = form.onSubmit((formValues) => {
-    //console.log("formValues", formValues);
-    navigate('/');
+    loginMutation({ username: formValues.username, password: formValues.password });
   });
   return (
     <Box
@@ -54,7 +82,7 @@ export default function LoginPage() {
                 Quên mật khẩu?
               </Anchor>
             </Group>
-            <Button type='submit' fullWidth mt='xl'>
+            <Button type='submit' fullWidth mt='xl' loading={isPending}>
               Đăng nhập
             </Button>
           </form>
