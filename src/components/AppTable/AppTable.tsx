@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { DataTable, DataTableColumn, DataTableRowClickHandler } from 'mantine-datatable';
 import { useMantineColorScheme, useMantineTheme } from '@mantine/core';
+import { DataTable, DataTableColumn, DataTableRowClickHandler } from 'mantine-datatable';
+import { useEffect, useState } from 'react';
 
 type TAppTable<T> = {
   data: T[];
@@ -39,7 +39,7 @@ function AppTable<T>({ data, columns, isLoading, onRowClick }: TAppTable<T>) {
       borderRadius={'md'}
       striped
       //minHeight={500}
-      //height={500}
+      height={600}
       noRecordsText='Không có dữ liệu'
       totalRecords={data.length}
       paginationActiveBackgroundColor='grape'
