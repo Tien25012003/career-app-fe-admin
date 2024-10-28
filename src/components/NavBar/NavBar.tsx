@@ -1,7 +1,6 @@
-import { AppShell, ScrollArea, useMantineColorScheme, useMantineTheme, NavLink, HoverCard, Stack, Text, Box, Group, ActionIcon } from '@mantine/core';
-import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { AppShell, Box, Group, HoverCard, NavLink, ScrollArea, Stack, Text, useMantineColorScheme, useMantineTheme } from '@mantine/core';
 import { NavElement } from '@type/ui/navElements';
-import { miniNavbarAtom } from 'atoms/AppAtoms';
+import { hideNavbarAtom, miniNavbarAtom } from 'atoms/AppAtoms';
 import { navElements } from 'constants/navElements';
 import { useLargerThan } from 'hooks';
 import { useAtom } from 'jotai';
@@ -34,7 +33,9 @@ const CustomNavLink = ({ item, children, showLabel = true, active }: TNavLink) =
       }}
       label={showLabel ? item.label : ''}
       component={Link}
-      to={item.link || ''}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      to={item.link || undefined}
       leftSection={item.icon && <item.icon size={'1.25rem'} stroke={1.5} style={{ marginRight: 0 }} />}
       childrenOffset={'1rem'}
       //active={item.link === location.pathname}
@@ -49,14 +50,18 @@ export function NavBar() {
   const { colorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
   const [miniNavbar, setMiniNavbar] = useAtom(miniNavbarAtom);
+  const [hideNavbar] = useAtom(hideNavbarAtom);
   const largerThanMd = useLargerThan('md');
+  const largerThanSm = useLargerThan('sm');
   useEffect(() => {
-    if (largerThanMd !== undefined && !largerThanMd) {
+    if (!largerThanSm) {
+      setMiniNavbar(false);
+    } else if (largerThanMd !== undefined && !largerThanMd) {
       setMiniNavbar(true);
     } else if (largerThanMd) {
       setMiniNavbar(false);
     }
-  }, [largerThanMd]);
+  }, [largerThanMd, largerThanSm]);
 
   return (
     <AppShell.Navbar>
@@ -88,6 +93,7 @@ export function NavBar() {
                     <CustomNavLink
                       item={navElement}
                       showLabel={false}
+                      // showLabel={!largerThanMd && !hideNavbar}
                       active={
                         navElement.link ? location.pathname.endsWith(navElement.link) || location.pathname.startsWith(`${navElement.link}/`) : false
                       }
@@ -131,9 +137,9 @@ export function NavBar() {
               version 1.1
             </Text>
           )}
-          <ActionIcon variant='default' onClick={() => setMiniNavbar(!miniNavbar)}>
+          {/* <ActionIcon variant='default' onClick={() => setMiniNavbar(!miniNavbar)}>
             {miniNavbar ? <IconChevronRight size='1.125rem' stroke={1.5} /> : <IconChevronLeft size='1.125rem' stroke={1.5} />}
-          </ActionIcon>
+          </ActionIcon> */}
         </Group>
       </AppShell.Section>
     </AppShell.Navbar>

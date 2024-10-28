@@ -1,8 +1,8 @@
 import { ActionButton } from '@component/ActionButton';
 import { HeaderLogo } from '@icon/HeaderLogo';
-import { AppShell, useMantineColorScheme, useMantineTheme, alpha, Group, Flex, Box, Burger, Menu, Button } from '@mantine/core';
+import { alpha, AppShell, Box, Burger, Button, Flex, Group, Menu, useMantineColorScheme, useMantineTheme } from '@mantine/core';
 import { IconLogout, IconMoonStars, IconSun, IconUserCircle } from '@tabler/icons-react';
-import { hideNavbarAtom } from 'atoms/AppAtoms';
+import { hideNavbarAtom, miniNavbarAtom } from 'atoms/AppAtoms';
 import { useAtom } from 'jotai';
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
@@ -11,6 +11,7 @@ export function Header() {
   const { colorScheme, setColorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
   const [hideNavbar, setHideNavbar] = useAtom(hideNavbarAtom);
+  const [miniNavbar, setMiniNavbar] = useAtom(miniNavbarAtom);
 
   const handleChangeColorScheme = () => setColorScheme(colorScheme === 'dark' ? 'light' : 'dark');
 
@@ -27,8 +28,17 @@ export function Header() {
     <AppShell.Header h={65} px={10} style={mantineHeaderStyles}>
       <Group justify='space-between'>
         <Flex align={'center'} h='100%'>
-          <Box hiddenFrom='sm'>
-            <Burger opened={!hideNavbar} onClick={() => setHideNavbar((o: boolean) => !o)} size='sm' color={theme.colors.gray[6]} mr='sm' />
+          <Box>
+            <Burger
+              opened={!hideNavbar}
+              onClick={() => {
+                setMiniNavbar((m: boolean) => !m);
+                setHideNavbar((o: boolean) => !o);
+              }}
+              size='sm'
+              color={theme.colors.gray[6]}
+              mr='sm'
+            />
           </Box>
           <Group gap={'md'}>
             <Box component={Link} to='/' className='hover:scale-110 hover:brightness-110 transition duration-300'>
