@@ -5,3 +5,9 @@ export type ChatBotREQ = {
   page?: number;
   size?: number;
 };
+
+export type AddPromptREQ = {
+  question?: string;
+  answer?: string;
+  keywords?: string;
+};
