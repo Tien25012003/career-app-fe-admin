@@ -1,7 +1,7 @@
 import { api } from '@api/config';
 import { BaseResponse, TPagingResponse } from '@type/response.type';
-import { AddPromptREQ, ChatBotREQ, EditPromptREQ } from './request/chat-bot.request';
-import { ChatBotRESP } from './response/chat-bot.response';
+import { AddPromptREQ, ChatBotREQ, EditPromptREQ } from './chat-bot.request';
+import { ChatBotRESP } from './chat-bot.response';
 
 const BASE_URL = '/chat-bot';
 

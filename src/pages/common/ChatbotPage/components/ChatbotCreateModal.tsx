@@ -1,5 +1,5 @@
 import { addPromptAPI, editPromptAPI, getPromptDetailAPI } from '@api/services/chat-bot/chat-bot.api';
-import { AddPromptREQ, EditPromptREQ } from '@api/services/chat-bot/request/chat-bot.request';
+import { AddPromptREQ, EditPromptREQ } from '@api/services/chat-bot/chat-bot.request';
 import { onError } from '@helper/error.helpers';
 import { Button, Group, Loader, LoadingOverlay, Modal, Stack, TagsInput, Textarea } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
@@ -87,7 +87,6 @@ export default function ChatbotCreateModal({ open, onClose, selectedId }: Chatbo
     form.reset();
   };
 
-  console.log('selectedId', selectedId);
   // EFFECTS
   useEffect(() => {
     if (!open) return;

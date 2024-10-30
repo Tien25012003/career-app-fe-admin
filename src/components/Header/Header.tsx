@@ -3,6 +3,7 @@ import { HeaderLogo } from '@icon/HeaderLogo';
 import { alpha, AppShell, Box, Burger, Button, Flex, Group, Menu, useMantineColorScheme, useMantineTheme } from '@mantine/core';
 import { IconLogout, IconMoonStars, IconSun, IconUserCircle } from '@tabler/icons-react';
 import { hideNavbarAtom, miniNavbarAtom } from 'atoms/AppAtoms';
+import useLogout from 'hooks/useLogout';
 import { useAtom } from 'jotai';
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
@@ -12,6 +13,8 @@ export function Header() {
   const theme = useMantineTheme();
   const [hideNavbar, setHideNavbar] = useAtom(hideNavbarAtom);
   const [miniNavbar, setMiniNavbar] = useAtom(miniNavbarAtom);
+
+  const { handleLogout, isLoading: isLoggingOut } = useLogout();
 
   const handleChangeColorScheme = () => setColorScheme(colorScheme === 'dark' ? 'light' : 'dark');
 
@@ -54,7 +57,7 @@ export function Header() {
               icon={colorScheme === 'dark' ? IconSun : IconMoonStars}
               onClick={handleChangeColorScheme}
             />
-            <ActionButton tooltip='Đăng xuất' icon={IconLogout} onClick={() => {}} />
+            <ActionButton tooltip='Đăng xuất' icon={IconLogout} onClick={handleLogout} loading={isLoggingOut} />
           </Group>
         </Flex>
         <Flex align={'center'} hiddenFrom='sm'>
@@ -70,7 +73,7 @@ export function Header() {
               >
                 {colorScheme === 'dark' ? 'Chế độ sáng' : 'Chế độ tối'}
               </Menu.Item>
-              <Menu.Item leftSection={<IconLogout size='1.125rem' stroke={1.5} />} onClick={() => {}}>
+              <Menu.Item leftSection={<IconLogout size='1.125rem' stroke={1.5} />} onClick={handleLogout} disabled={isLoggingOut}>
                 Đăng xuất
               </Menu.Item>
             </Menu.Dropdown>

@@ -1,6 +1,6 @@
 import { loginAPI } from '@api/services/auth/auth.api';
-import { LoginREQ } from '@api/services/auth/request/login.request';
-import { LoginRESP } from '@api/services/auth/response/login.response';
+import { LoginREQ } from '@api/services/auth/auth.request';
+import { LoginRESP } from '@api/services/auth/auth.response';
 import { CareerAppLogo } from '@icon/CareerAppLogo';
 import { Anchor, Box, Button, Container, getGradient, Group, Paper, PasswordInput, Stack, TextInput, useMantineTheme } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';

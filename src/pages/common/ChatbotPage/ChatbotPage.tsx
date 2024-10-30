@@ -1,6 +1,6 @@
 import { deletePromptAPI, getChatBotListAPI } from '@api/services/chat-bot/chat-bot.api';
-import { ChatBotREQ } from '@api/services/chat-bot/request/chat-bot.request';
-import { ChatBotRESP } from '@api/services/chat-bot/response/chat-bot.response';
+import { ChatBotREQ } from '@api/services/chat-bot/chat-bot.request';
+import { ChatBotRESP } from '@api/services/chat-bot/chat-bot.response';
 import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
 import { PageHeader } from '@component/PageHeader/PageHeader';
