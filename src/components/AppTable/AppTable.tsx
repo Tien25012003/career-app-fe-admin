@@ -1,38 +1,40 @@
 import { useMantineColorScheme, useMantineTheme } from '@mantine/core';
+import { PaginationConfigsProps } from 'hooks/useFilter';
 import { DataTable, DataTableColumn, DataTableRowClickHandler } from 'mantine-datatable';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 type TAppTable<T> = {
   data: T[];
   columns: DataTableColumn<T>[];
   isLoading?: boolean;
   onRowClick?: DataTableRowClickHandler<T>;
+  paginationConfigs?: PaginationConfigsProps;
 };
-const PAGE_SIZES = [10, 15, 20];
-function AppTable<T>({ data, columns, isLoading, onRowClick }: TAppTable<T>) {
+const PAGE_SIZES = [10];
+function AppTable<T>({ data, columns, isLoading, onRowClick, paginationConfigs }: TAppTable<T>) {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
 
-  const [pageSize, setPageSize] = useState(PAGE_SIZES[1]);
+  const { totalCounts, page, size, onChange } = paginationConfigs || {};
 
-  useEffect(() => {
-    setPage(1);
-  }, [pageSize]);
+  // useEffect(() => {
+  //   setPage(1);
+  // }, [pageSize]);
 
-  const [page, setPage] = useState(1);
-  const [records, setRecords] = useState(data.slice(0, pageSize));
+  // const [page, setPage] = useState(1);
+  //const [records, setRecords] = useState(data.slice(0, pageSize));
 
-  useEffect(() => {
-    const from = (page - 1) * pageSize;
-    const to = from + pageSize;
-    setRecords(data.slice(from, to));
-  }, [page, pageSize, data]);
+  // useEffect(() => {
+  //   const from = (page - 1) * pageSize;
+  //   const to = from + pageSize;
+  //   setRecords(data.slice(from, to));
+  // }, [page, pageSize, data]);
 
   const [selectedRecords, setSelectedRecords] = useState([]);
   return (
     <DataTable
       columns={columns}
-      records={records}
+      records={data}
       withRowBorders
       withTableBorder
       withColumnBorders
@@ -41,13 +43,6 @@ function AppTable<T>({ data, columns, isLoading, onRowClick }: TAppTable<T>) {
       //minHeight={500}
       height={600}
       noRecordsText='Không có dữ liệu'
-      totalRecords={data.length}
-      paginationActiveBackgroundColor='grape'
-      recordsPerPage={pageSize}
-      page={page}
-      onPageChange={(p) => setPage(p)}
-      recordsPerPageOptions={PAGE_SIZES}
-      onRecordsPerPageChange={setPageSize}
       fetching={isLoading}
       onRowClick={onRowClick}
       highlightOnHover
@@ -66,6 +61,15 @@ function AppTable<T>({ data, columns, isLoading, onRowClick }: TAppTable<T>) {
       recordsPerPageLabel='Số items mỗi trang'
       // selectedRecords={selectedRecords}
       // onSelectedRecordsChange={setSelectedRecords}
+
+      // PAGINATION
+      // paginationActiveBackgroundColor='grape'
+      recordsPerPage={size || 1}
+      page={page || 1}
+      onPageChange={(p) => onChange?.(p, size)}
+      recordsPerPageOptions={PAGE_SIZES}
+      totalRecords={totalCounts}
+      onRecordsPerPageChange={() => {}}
     />
   );
 }

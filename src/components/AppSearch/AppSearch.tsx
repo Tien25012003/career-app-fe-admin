@@ -1,24 +1,20 @@
 import { Button, Group, Input, Paper, useMantineColorScheme, useMantineTheme } from '@mantine/core';
-import { IconAdjustmentsHorizontal, IconPlus, IconSearch } from '@tabler/icons-react';
-import React from 'react';
+import { IconAdjustmentsHorizontal, IconSearch } from '@tabler/icons-react';
+import { useState } from 'react';
 
-const AppSearch = () => {
+type AppSearchProps = {
+  onSearch?: (value?: string) => void;
+  onReset?: () => void;
+};
+const AppSearch = ({ onSearch, onReset }: AppSearchProps) => {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
+
+  const [search, setSearch] = useState('');
   return (
-    <Paper
-      p={'xs'}
-      shadow='md'
-      radius={'md'}
-      bg={colorScheme === 'light' ? theme.colors.gray[0] : theme.colors.gray[9]}
-      withBorder
-    >
+    <Paper p={'xs'} shadow='md' radius={'md'} bg={colorScheme === 'light' ? theme.colors.gray[0] : theme.colors.gray[9]} withBorder>
       <Group>
-        <Button
-          variant='light'
-          leftSection={<IconAdjustmentsHorizontal size={'1.125rem'} />}
-          color='grape'
-        >
+        <Button variant='light' leftSection={<IconAdjustmentsHorizontal size={'1.125rem'} />} color='grape'>
           Lọc
         </Button>
         <Input
@@ -28,13 +24,24 @@ const AppSearch = () => {
           styles={{
             input: {
               borderWidth: 1,
-              backgroundColor:
-                colorScheme === 'light' ? theme.colors.gray[0] : theme.colors.gray[9],
+              backgroundColor: colorScheme === 'light' ? theme.colors.gray[0] : theme.colors.gray[9],
             },
           }}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
-        <Button variant='outline'>Tìm kiếm</Button>
-        {/* <Button leftSection={<IconPlus size={'1.125rem'} />}>Thêm mới</Button> */}
+        <Button variant='outline' onClick={() => onSearch?.(search)}>
+          Tìm kiếm
+        </Button>
+        <Button
+          variant='outline'
+          onClick={() => {
+            onReset?.();
+            setSearch('');
+          }}
+        >
+          Reset
+        </Button>
       </Group>
     </Paper>
   );

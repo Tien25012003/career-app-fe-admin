@@ -1,63 +1,113 @@
-import { getChatBotListAPI } from '@api/services/chat-bot/chat-bot.api';
+import { deletePromptAPI, getChatBotListAPI } from '@api/services/chat-bot/chat-bot.api';
 import { ChatBotREQ } from '@api/services/chat-bot/request/chat-bot.request';
+import { ChatBotRESP } from '@api/services/chat-bot/response/chat-bot.response';
 import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import { TableButton } from '@component/TableButton/TableButton';
-import { Button, Modal, Stack } from '@mantine/core';
+import { onError } from '@helper/error.helpers';
+import { Button, Stack } from '@mantine/core';
 import { IconBrandWechat, IconPlus } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { DATETIME_FORMAT, DateUtils } from '@util/DateUtils';
+import { NotifyUtils } from '@util/NotificationUtils';
 import { QUERY_KEYS } from 'constants/query-key.constants';
 import { useFilter } from 'hooks/useFilter';
-import { useState } from 'react';
+import useInvalidate from 'hooks/useInvalidate';
+import { DataTableColumn } from 'mantine-datatable';
+import { useCallback, useMemo, useState } from 'react';
 import { ChatbotCreateModal } from './components';
-
-const chatbotDummyData = [
-  {
-    id: 1,
-    question: 'Career App là gì?',
-    answer: 'Career App là phần mềm hướng nghiệp cho học sinh THPT',
-    keywords: 'Career App, tên, chức năng',
-  },
-  {
-    id: 2,
-    question: 'Career App là gì?',
-    answer: 'Career App là phần mềm hướng nghiệp cho học sinh THPT',
-    keywords: 'Career App, tên, chức năng',
-  },
-  {
-    id: 3,
-    question: 'Career App là gì?',
-    answer: 'Career App là phần mềm hướng nghiệp cho học sinh THPT',
-    keywords: 'Career App, tên, chức năng',
-  },
-  {
-    id: 4,
-    question: 'Career App là gì?',
-    answer: 'Career App là phần mềm hướng nghiệp cho học sinh THPT',
-    keywords: 'Career App, tên, chức năng',
-  },
-  {
-    id: 5,
-    question: 'Career App là gì?',
-    answer: 'Career App là phần mềm hướng nghiệp cho học sinh THPT',
-    keywords: 'Career App, tên, chức năng',
-  },
-];
 
 export default function ChatbotPage() {
   const [openCreateModal, setOpenCreateModal] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const { queries, hasNone, onSearch, onReset } = useFilter<ChatBotREQ>();
+  const { queries, hasNone, onSearch, onReset, getPaginationConfigs } = useFilter<ChatBotREQ>();
+
+  const invalidate = useInvalidate();
 
   // APIS
   const { data: chatbots, isFetching: isFetchingChatBots } = useQuery({
     queryKey: [QUERY_KEYS.CHAT_BOT.LIST, queries],
     queryFn: () => getChatBotListAPI(queries),
     enabled: !hasNone,
-    select: ({ data }) => data,
   });
+
+  const { mutate: deletePromptMutation, isPending: isDeleting } = useMutation({
+    mutationFn: (id: string) => deletePromptAPI(id),
+    onSuccess: () => {
+      invalidate({
+        queryKey: [QUERY_KEYS.CHAT_BOT.LIST],
+      });
+      NotifyUtils.success('Xoá câu hỏi thành công');
+    },
+    onError,
+  });
+
+  // METHODS
+  const onDelete = useCallback(
+    (id: string) => {
+      deletePromptMutation(id);
+    },
+    [deletePromptMutation],
+  );
+
+  const renderRow = useMemo<DataTableColumn<ChatBotRESP>[]>(
+    () => [
+      {
+        accessor: '',
+        title: 'STT',
+        textAlign: 'center',
+        render: (val, index) => <div>{index + 1}</div>,
+      },
+      {
+        accessor: '_id',
+        title: 'ID',
+        // width: 600,
+        textAlign: 'center',
+      },
+      {
+        accessor: 'question',
+        title: 'Câu hỏi',
+        width: 400,
+      },
+      {
+        accessor: 'answer',
+        title: 'Câu trả lời',
+        width: 400,
+      },
+      {
+        accessor: 'keywords',
+        title: 'Từ khoá',
+        width: 100,
+      },
+      {
+        accessor: 'creator',
+        title: 'Người tạo',
+      },
+      {
+        accessor: 'createdAt',
+        title: 'Ngày tạo',
+        width: 200,
+        render: (val) => DateUtils.fDate(new Date(val.createdAt), DATETIME_FORMAT),
+      },
+      {
+        accessor: 'actions',
+        title: 'Thao tác',
+        textAlign: 'center',
+        render: (val) => (
+          <TableButton
+            onEdit={() => {
+              setOpenCreateModal(true);
+              setSelectedId(val._id);
+            }}
+            onDelete={() => onDelete(val._id)}
+          />
+        ),
+      },
+    ],
+    [onDelete],
+  );
 
   return (
     <Stack my='1rem' mx='1rem'>
@@ -70,61 +120,23 @@ export default function ChatbotPage() {
           </Button>
         }
       />
-      <AppSearch />
+      <AppSearch onSearch={(val) => onSearch({ question: val })} onReset={onReset} />
       <AppTable
-        isLoading={isFetchingChatBots}
-        data={chatbots || []}
-        columns={[
-          {
-            accessor: '_id',
-            title: 'ID',
-            // width: 600,
-            textAlign: 'center',
-          },
-          {
-            accessor: 'question',
-            title: 'Câu hỏi',
-          },
-          {
-            accessor: 'answer',
-            title: 'Câu trả lời',
-          },
-          {
-            accessor: 'keywords',
-            title: 'Từ khoá',
-          },
-          {
-            accessor: 'creator',
-            title: 'Người tạo',
-          },
-          {
-            accessor: 'createdAt',
-            title: 'Ngày tạo',
-            width: 300,
-            render: (val) => DateUtils.fDate(new Date(val.createdAt), DATETIME_FORMAT),
-          },
-          {
-            accessor: 'actions',
-            title: 'Thao tác',
-            textAlign: 'center',
-            render: () => <TableButton onView={() => {}} onEdit={() => {}} onDelete={() => {}} />,
-          },
-        ]}
+        isLoading={isFetchingChatBots || isDeleting}
+        data={chatbots?.data || []}
+        paginationConfigs={getPaginationConfigs(chatbots?.pagination?.totalPages, chatbots?.pagination?.totalCounts)}
+        columns={renderRow}
       />
-      <Modal
-        opened={openCreateModal}
-        onClose={() => setOpenCreateModal(!openCreateModal)}
-        centered
-        size={'lg'}
-        title='Thêm mới câu hỏi'
-        styles={{
-          title: {
-            fontWeight: 500,
-          },
+      <ChatbotCreateModal
+        open={openCreateModal}
+        onClose={() => {
+          setOpenCreateModal(!openCreateModal);
+          if (selectedId !== null) {
+            setSelectedId(null);
+          }
         }}
-      >
-        <ChatbotCreateModal />
-      </Modal>
+        selectedId={selectedId}
+      />
     </Stack>
   );
 }

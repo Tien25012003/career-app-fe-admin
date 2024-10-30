@@ -12,6 +12,14 @@ export type QueriesParams = {
   size: number;
 };
 
+export type PaginationConfigsProps = {
+  size?: number; // ? / page
+  totalPages: number; // total pages
+  totalCounts: number; // total counts
+  page: number; // currentPage
+  onChange?: (page?: number, size?: number) => void;
+};
+
 export const useFilter = <T>(initialQuery?: Omit<T, 'page' | 'size'>) => {
   // HOOKS
   const location = useLocation();
@@ -33,45 +41,55 @@ export const useFilter = <T>(initialQuery?: Omit<T, 'page' | 'size'>) => {
 
   // Handle Search
   const onSearch = (value: Partial<T>) => {
-    navigate({
-      search: qs.stringify(
-        omitFalsy({
-          ...initQueries,
-          ...(value as Partial<T>),
-          page: 1,
-        }),
-      ),
-    });
+    navigate(
+      {
+        search: qs.stringify(
+          omitFalsy({
+            ...initQueries,
+            ...(value as Partial<T>),
+            page: 1,
+          }),
+        ),
+      },
+      { replace: true },
+    );
   };
 
   // Handle Reset
   const onReset = () => {
-    navigate({
-      search: qs.stringify({
-        ...initialQuery,
-        page: initQueries.page,
-        size: initQueries.size,
-      }),
-    });
+    navigate(
+      {
+        search: qs.stringify({
+          ...initialQuery,
+          page: initQueries.page,
+          size: initQueries.size,
+        }),
+      },
+      { replace: true },
+    );
   };
 
   // Handle Pagination
-  //   const getPaginationConfigs = (total?: number) => {
-  //     return {
-  //       total: total || 0,
-  //       page: initQueries.page,
-  //       size: initQueries.size,
-  //       onChange: (page: number, size: number) => {
-  //         navigate({
-  //           search: qs.stringify({
-  //             ...initQueries,
-  //             page: page || 1,
-  //             size: size || RECORDS_PER_PAGE,
-  //           }),
-  //         });
-  //       },
-  //     } as SecondPaginationConfigsProps;
-  //   };
+  const getPaginationConfigs = (totalPages?: number, totalCounts?: number) => {
+    return {
+      totalPages: totalPages || 0,
+      totalCounts: totalCounts || 0,
+      page: initQueries.page,
+      size: initQueries.size,
+      onChange: (page: number, size: number) => {
+        navigate(
+          {
+            search: qs.stringify({
+              ...initQueries,
+              page: page || 1,
+              size: size || RECORDS_PER_PAGE,
+            }),
+          },
+          { replace: true },
+        );
+      },
+    } as PaginationConfigsProps;
+  };
 
   // Ensure page and size are set in query string
   useEffect(() => {
@@ -82,9 +100,12 @@ export const useFilter = <T>(initialQuery?: Omit<T, 'page' | 'size'>) => {
     if (!newQuery.size) {
       newQuery.size = RECORDS_PER_PAGE;
     }
-    navigate({
-      search: qs.stringify(newQuery),
-    });
+    navigate(
+      {
+        search: qs.stringify(newQuery),
+      },
+      { replace: true },
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initQueries]);
 
@@ -93,6 +114,6 @@ export const useFilter = <T>(initialQuery?: Omit<T, 'page' | 'size'>) => {
     hasNone: !Object.keys(initQueries).length,
     onSearch,
     onReset,
-    //getPaginationConfigs,
+    getPaginationConfigs,
   };
 };

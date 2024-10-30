@@ -11,3 +11,9 @@ export type AddPromptREQ = {
   answer?: string;
   keywords?: string;
 };
+
+export type EditPromptREQ = {
+  question?: string;
+  answer?: string;
+  keywords?: string;
+};

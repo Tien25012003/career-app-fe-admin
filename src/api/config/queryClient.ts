@@ -6,4 +6,9 @@ export const queryClient = new QueryClient({
       NotifyUtils.error((query.meta?.errorMessage as string) || 'Lấy dữ liệu không thành công');
     },
   }),
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
 });
