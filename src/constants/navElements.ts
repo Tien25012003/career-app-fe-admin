@@ -1,5 +1,5 @@
+import { IconBook2, IconBrandWechat, IconHome, IconNews, IconPencil, IconUser } from '@tabler/icons-react';
 import { NavElement } from '@type/ui/navElements';
-import { IconHome, IconUser, IconNews, IconPencil, IconBook2, IconBrandWechat } from '@tabler/icons-react';
 
 export const navElements: NavElement[] = [
   {
@@ -18,11 +18,11 @@ export const navElements: NavElement[] = [
     icon: IconPencil,
     children: [
       {
-        label: 'Hệ thống',
+        label: 'Bài kiểm tra của hệ thống',
         link: '/exams/system',
       },
       {
-        label: 'Tự thiết kế',
+        label: 'Bài kiểm tra tự thiết kế',
         link: '/exams/design',
       },
     ],

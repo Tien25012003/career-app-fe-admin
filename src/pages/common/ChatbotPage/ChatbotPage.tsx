@@ -52,13 +52,13 @@ export default function ChatbotPage() {
     [deletePromptMutation],
   );
 
-  const renderRow = useMemo<DataTableColumn<ChatBotRESP>[]>(
+  const columns = useMemo<DataTableColumn<ChatBotRESP>[]>(
     () => [
       {
         accessor: '',
         title: 'STT',
         textAlign: 'center',
-        render: (val, index) => <div>{index + 1}</div>,
+        render: (_, index) => <div>{index + 1}</div>,
       },
       {
         accessor: '_id',
@@ -125,7 +125,7 @@ export default function ChatbotPage() {
         isLoading={isFetchingChatBots || isDeleting}
         data={chatbots?.data || []}
         paginationConfigs={getPaginationConfigs(chatbots?.pagination?.totalPages, chatbots?.pagination?.totalCounts)}
-        columns={renderRow}
+        columns={columns}
       />
       <ChatbotCreateModal
         open={openCreateModal}

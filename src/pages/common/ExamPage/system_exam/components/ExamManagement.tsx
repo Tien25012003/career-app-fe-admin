@@ -3,37 +3,39 @@ import { ExamREQ } from '@api/services/exam/exam.request';
 import { ExamRESP } from '@api/services/exam/exam.response';
 import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
-import { PageHeader } from '@component/PageHeader/PageHeader';
 import { TableButton } from '@component/TableButton/TableButton';
 import { EExamCategory, EExamStatus } from '@enum/exam';
-import { Badge, Button, Stack } from '@mantine/core';
-import { IconPencil, IconPlus } from '@tabler/icons-react';
+import { Badge, Stack } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { DATETIME_FORMAT, DateUtils } from '@util/DateUtils';
 import { QUERY_KEYS } from 'constants/query-key.constants';
 import { useFilter } from 'hooks/useFilter';
 import { DataTableColumn } from 'mantine-datatable';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { QuestionTypeModal } from '../components';
-import { ColorExamStatus, TextExamStatus } from '../utils';
-
+import { QuestionTypeModal } from '../../components';
+import { ColorExamStatus, TextExamStatus } from '../../utils';
+type Props = {
+  openCreateExamModal: boolean;
+  setOpenCreateExamModal: (openCreateExamModal: boolean) => void;
+};
 export const initialQuery = {
-  category: EExamCategory.DESIGN,
+  category: EExamCategory.SYSTEM,
 };
 
-export default function DesignExam() {
-  const [openCreateModal, setOpenCreateModal] = useState(false);
+export default function ExamManagement({ openCreateExamModal, setOpenCreateExamModal }: Props) {
   const navigate = useNavigate();
 
   const { queries, hasNone, onSearch, onReset, getPaginationConfigs } = useFilter<ExamREQ>(initialQuery);
 
   // APIS
   const { data: exams, isFetching: isFetchingExam } = useQuery({
-    queryKey: [QUERY_KEYS.EXAM.DESIGN_LIST, queries],
+    queryKey: [QUERY_KEYS.EXAM.LIST, queries],
     queryFn: () => getExamListAPI(queries),
-    //enabled: !hasNone,
+    enabled: !hasNone,
   });
+
+  // METHODS
 
   const columns = useMemo<DataTableColumn<ExamRESP>[]>(
     () => [
@@ -93,17 +95,8 @@ export default function DesignExam() {
     [],
   );
   return (
-    <Stack my='1rem' mx='1rem'>
-      <PageHeader
-        title='Quản lý bài kiểm tra tự thiết kế'
-        leftSection={<IconPencil />}
-        rightSection={
-          <Button leftSection={<IconPlus size={'1.125rem'} />} onClick={() => setOpenCreateModal(true)}>
-            Thêm mới
-          </Button>
-        }
-      />
-      <AppSearch />
+    <Stack>
+      <AppSearch onSearch={(val) => onSearch({ name: val })} onReset={onReset} />
       <AppTable
         data={exams?.data || []}
         columns={columns}
@@ -111,8 +104,8 @@ export default function DesignExam() {
         paginationConfigs={getPaginationConfigs(exams?.pagination?.totalPages, exams?.pagination?.totalCounts)}
       />
       <QuestionTypeModal
-        opened={openCreateModal}
-        onCancel={() => setOpenCreateModal(false)}
+        opened={openCreateExamModal}
+        onCancel={() => setOpenCreateExamModal(false)}
         onFinish={(allQuestionType) => {
           navigate(`create/${allQuestionType}`);
         }}

@@ -1,14 +1,14 @@
-import { RouteObject } from 'react-router-dom';
 import { ProtectedRoutes } from '@component/ProtectedRoutes/ProtectedRoutes';
-import { HomePage } from '@page/common/HomePage';
-import { NotFoundPage } from '@page/common/NotFoundPage/NotFoundPage';
-import { Suspense } from 'react';
-import { Skeleton } from '@mantine/core';
 import { lazyWithReload } from '@helper/lazyWithReload';
+import { Skeleton } from '@mantine/core';
+import AccountCreateGroupPage from '@page/common/AccountPage/create/AccountCreateGroupPage';
 import AccountCreatePage from '@page/common/AccountPage/create/AccountCreatePage';
 import AccountDetailPage from '@page/common/AccountPage/detail/AccountDetailPage';
-import AccountCreateGroupPage from '@page/common/AccountPage/create/AccountCreateGroupPage';
+import { HomePage } from '@page/common/HomePage';
 import NewsCreatePage from '@page/common/NewsPage/create/NewsCreatePage';
+import { NotFoundPage } from '@page/common/NotFoundPage/NotFoundPage';
+import { Suspense } from 'react';
+import { RouteObject } from 'react-router-dom';
 const DashboardPage = lazyWithReload(() => import('@page/common/DashboardPage/DashboardPage'));
 const LoginPage = lazyWithReload(() => import('@page/auth/LoginPage/LoginPage'));
 const SignUpPage = lazyWithReload(() => import('@page/auth/SignUpPage/SignUpPage'));
@@ -137,6 +137,14 @@ const privateRoutes: RouteObject[] = [
             element: (
               <LoadingWrapper>
                 <ExamCreatePage />
+              </LoadingWrapper>
+            ),
+          },
+          {
+            path: '/subjects',
+            element: (
+              <LoadingWrapper>
+                <ExamSystemPage />
               </LoadingWrapper>
             ),
           },

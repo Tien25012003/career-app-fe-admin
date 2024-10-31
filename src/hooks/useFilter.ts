@@ -25,6 +25,8 @@ export const useFilter = <T>(initialQuery?: Omit<T, 'page' | 'size'>) => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  console.log('initialQuery', initialQuery);
+
   // CONST
   const initQueries = useMemo(() => {
     const parsedQuery = qs.parse(location.search, {
@@ -106,8 +108,7 @@ export const useFilter = <T>(initialQuery?: Omit<T, 'page' | 'size'>) => {
       },
       { replace: true },
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initQueries]);
+  }, [initQueries, navigate]);
 
   return {
     queries: initQueries,

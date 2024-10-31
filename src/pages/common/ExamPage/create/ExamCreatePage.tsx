@@ -1,21 +1,22 @@
 import { PageHeader } from '@component/PageHeader/PageHeader';
+import { EExamCategory, EQuestionType } from '@enum/exam';
+import { IQuestion, IResult } from '@interface/exam';
 import { Button, Divider, Grid, Group, Paper, Stack, Text, TextInput } from '@mantine/core';
+import { useForm, zodResolver } from '@mantine/form';
 import { useFocusTrap, useListState } from '@mantine/hooks';
 import { IconChevronLeft, IconChevronRight, IconHelpOctagon, IconPencil, IconPlus, IconTargetArrow } from '@tabler/icons-react';
-import { Link, useLocation, useParams } from 'react-router-dom';
-import { TextExamCategory, TextQuestionType } from '../utils';
-import { IQuestion, IResult } from '@interface/exam';
-import { z } from 'zod';
 import { SchemaUtils } from '@util/SchemaUtils';
-import { useForm, zodResolver } from '@mantine/form';
 import { TextUtils } from '@util/TextUtils';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import { z } from 'zod';
 import { QuestionCard, QuestionTypeModal } from '../components';
 import { ResultCard } from '../components/ResultCard';
-import { EExamCategory, EQuestionType } from '@enum/exam';
+import { TextExamCategory, TextQuestionType } from '../utils';
 
 const formSchema = z.object({
-  type: z.string().trim().min(1, SchemaUtils.message.nonempty),
+  //type: z.string().trim().min(1, SchemaUtils.message.nonempty),
+  name: z.string().trim().min(1, SchemaUtils.message.nonempty),
   questions: z.array(
     z.object({
       questionTitle: z.string().trim().min(1, SchemaUtils.message.nonempty),
@@ -41,7 +42,7 @@ const formSchema = z.object({
 });
 type FormValues = z.infer<typeof formSchema>;
 const initialFormValues: FormValues = {
-  type: '',
+  name: '',
   questions: [],
   results: [],
 };
@@ -68,6 +69,7 @@ export default function ExamCreatePage() {
     return null;
   }, [location?.pathname]);
 
+  // METHODS
   const onAddQuestion = (questionType: EQuestionType) => {
     if (!questionType) return;
     questionsHandler.append({
@@ -88,6 +90,21 @@ export default function ExamCreatePage() {
       detail: '',
     });
   };
+
+  const handleSubmit = form.onSubmit((formValues) => {
+    console.log('formValues', formValues);
+  });
+
+  console.log('form error', form.errors);
+
+  useEffect(() => {
+    form.setFieldValue('questions', questions);
+  }, [form, questions]);
+
+  useEffect(() => {
+    form.setFieldValue('results', results);
+  }, [form, results]);
+
   return (
     <Stack my='1rem' mx='1rem'>
       <PageHeader
@@ -118,7 +135,7 @@ export default function ExamCreatePage() {
           <Stack>
             <Grid>
               <Grid.Col span={{ sm: 12, lg: 4 }}>
-                <TextInput withAsterisk label='Tên bài kiểm tra' data-autofocus {...form.getInputProps('type')} />
+                <TextInput withAsterisk label='Tên bài kiểm tra' data-autofocus {...form.getInputProps('name')} />
               </Grid.Col>
               <Grid.Col span={{ sm: 12, lg: 4 }}>
                 <TextInput label='Thể loại chung' value={TextQuestionType[allQuestionType as EQuestionType]} disabled={true} />
@@ -181,7 +198,9 @@ export default function ExamCreatePage() {
             <Button variant='default' onClick={() => {}}>
               Mặc định
             </Button>
-            <Button onClick={() => {}}>Lưu</Button>
+            <Button onClick={() => handleSubmit()} disabled={!form.isDirty()}>
+              Lưu
+            </Button>
           </Group>
         </Stack>
       </Paper>

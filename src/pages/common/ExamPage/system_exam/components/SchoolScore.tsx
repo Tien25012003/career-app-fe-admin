@@ -1,11 +1,21 @@
+import { addSubjectAPI, deleteSubjectAPI, getSchoolSubjectsAPI } from '@api/services/subject/subject.api';
+import { SubjectREQ } from '@api/services/subject/subject.request';
+import { SubjectRESP } from '@api/services/subject/subject.response';
 import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
-import { Button, Group, Input, Modal, Stack, TextInput } from '@mantine/core';
-import { schoolScoreDummyData } from '../../dummyData';
 import { TableButton } from '@component/TableButton/TableButton';
-import { z } from 'zod';
-import { SchemaUtils } from '@util/SchemaUtils';
+import { onError } from '@helper/error.helpers';
+import { Button, Group, Modal, Stack, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { NotifyUtils } from '@util/NotificationUtils';
+import { SchemaUtils } from '@util/SchemaUtils';
+import { QUERY_KEYS } from 'constants/query-key.constants';
+import { useFilter } from 'hooks/useFilter';
+import useInvalidate from 'hooks/useInvalidate';
+import { DataTableColumn } from 'mantine-datatable';
+import { useCallback, useMemo } from 'react';
+import { z } from 'zod';
 type Props = {
   openCreateSubjectModal: boolean;
   setOpenCreateSubjectModal: (openCreateSubjectModal: boolean) => void;
@@ -25,34 +35,93 @@ export function SchoolScore({ openCreateSubjectModal, setOpenCreateSubjectModal 
     initialValues: initialFormValues,
     validate: zodResolver(formSchema),
   });
-  const handleSubmit = form.onSubmit((formValues) => {});
+
+  const { queries, hasNone, onSearch, onReset, getPaginationConfigs } = useFilter<SubjectREQ>();
+  const invalidate = useInvalidate();
+
+  // APIS
+  const { data: subjects, isFetching: isFetchingSubjects } = useQuery({
+    queryKey: [QUERY_KEYS.SCHOOL_SUBJECT.LIST, queries],
+    queryFn: () => getSchoolSubjectsAPI(queries),
+    enabled: !hasNone,
+  });
+
+  const { mutate: addSubjectMutation, isPending: isAdding } = useMutation({
+    mutationFn: (request: SubjectREQ[]) => addSubjectAPI(request),
+    onSuccess: () => {
+      invalidate({
+        queryKey: [QUERY_KEYS.SCHOOL_SUBJECT.LIST],
+      });
+      NotifyUtils.success('Tạo mới môn học mới thành công!');
+      setOpenCreateSubjectModal(false);
+      form.reset();
+    },
+    onError,
+  });
+
+  const { mutate: deleteSubjectMutation, isPending: isDeleting } = useMutation({
+    mutationFn: (id: string) => deleteSubjectAPI(id),
+    onSuccess: () => {
+      invalidate({
+        queryKey: [QUERY_KEYS.SCHOOL_SUBJECT.LIST],
+      });
+      NotifyUtils.success('Xoá môn học thành công!');
+    },
+    onError,
+  });
+
+  // METHODS
+  const handleSubmit = form.onSubmit((formValues) => {
+    const request: SubjectREQ[] = [formValues];
+    addSubjectMutation(request);
+  });
+
+  const handleDelete = useCallback(
+    (id: string) => {
+      deleteSubjectMutation(id);
+    },
+    [deleteSubjectMutation],
+  );
+
+  const columns = useMemo<DataTableColumn<SubjectRESP>[]>(
+    () => [
+      {
+        accessor: '',
+        title: 'STT',
+        textAlign: 'center',
+        render: (_, index) => <div>{index + 1}</div>,
+      },
+      {
+        accessor: '_id',
+        title: 'ID',
+        width: 300,
+      },
+      {
+        accessor: 'name',
+        title: 'Tên biến',
+        width: 300,
+      },
+      {
+        accessor: 'vnName',
+        title: 'Tên hiển thị',
+        width: 300,
+      },
+      {
+        accessor: 'actions',
+        title: 'Thao tác',
+        render: (val) => <TableButton onView={() => {}} onEdit={() => {}} onDelete={() => handleDelete(val._id)} />,
+      },
+    ],
+    [handleDelete],
+  );
   return (
     <Stack>
-      <AppSearch />
+      <AppSearch onSearch={(val) => onSearch({ vnName: val })} onReset={onReset} />
       <AppTable
-        data={schoolScoreDummyData}
-        columns={[
-          {
-            accessor: '_id',
-            title: 'ID',
-            width: 300,
-          },
-          {
-            accessor: 'name',
-            title: 'Tên biến',
-            width: 300,
-          },
-          {
-            accessor: 'vnName',
-            title: 'Tên hiển thị',
-            width: 300,
-          },
-          {
-            accessor: 'actions',
-            title: 'Thao tác',
-            render: () => <TableButton onView={() => {}} onEdit={() => {}} onDelete={() => {}} />,
-          },
-        ]}
+        data={subjects?.data || []}
+        columns={columns}
+        isLoading={isFetchingSubjects || isAdding || isDeleting}
+        paginationConfigs={getPaginationConfigs(subjects?.pagination?.totalPages, subjects?.pagination?.totalCounts)}
       />
       <Modal
         opened={openCreateSubjectModal}

@@ -17,3 +17,12 @@ export type TPagingResponse<T> = {
   code?: string;
   pagination?: TPaginationRESP;
 };
+
+export type TTracking = {
+  creatorId?: string;
+  groupId?: string[];
+  createdAt?: Date;
+  creator?: string; // email
+  updatedAt?: Date;
+  updator?: string; // email
+};
