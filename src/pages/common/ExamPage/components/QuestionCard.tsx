@@ -1,19 +1,22 @@
 import { PageEditor } from '@component/PageEditor/PageEditor';
 import { PageUploader } from '@component/PageUploader/PageUploader';
-import { IOption, IQuestion } from '@interface/exam';
-import { Button, Divider, Grid, Group, Paper, Stack, Text, Badge } from '@mantine/core';
+import { EQuestionType } from '@enum/exam';
+import { EFileType } from '@enum/file.enum';
+import { IOption } from '@interface/exam';
+import { Badge, Button, Divider, Grid, Group, Paper, Stack, Text } from '@mantine/core';
 import { useListState, UseListStateHandlers } from '@mantine/hooks';
 import { TextUtils } from '@util/TextUtils';
+import { IQuestionHandler } from '../create/ExamCreatePage';
 import { ColorQuestionType, TextQuestionType } from '../utils';
 import { AnswerCard } from './AnswerCard';
-import { EQuestionType } from '@enum/exam';
 type Props = {
   id?: string;
   position: number;
-  questionsHandler: UseListStateHandlers<IQuestion>;
+  question: IQuestionHandler;
+  questionsHandler: UseListStateHandlers<IQuestionHandler>;
   questionType: EQuestionType;
 };
-export function QuestionCard({ id, position, questionType, questionsHandler }: Props) {
+export function QuestionCard({ id, position, questionType, questionsHandler, question }: Props) {
   const [options, optionsHandler] = useListState<IOption>([
     {
       id: TextUtils.slugize('new-option'),
@@ -23,9 +26,12 @@ export function QuestionCard({ id, position, questionType, questionsHandler }: P
       standardScore: 0,
     },
   ]);
+
+  // METHODS
   const onDeleteQuestion = () => {
     questionsHandler?.filter((question) => question.id !== id);
   };
+
   const onAddOption = () => {
     optionsHandler.append({
       id: TextUtils.slugize('new-option'),
@@ -34,6 +40,33 @@ export function QuestionCard({ id, position, questionType, questionsHandler }: P
       isResult: false,
       standardScore: 0,
     });
+  };
+
+  const handleChangeQuestionImages = (file: File | null) => {
+    if (file) {
+      const fileReader = new FileReader();
+      new Promise((resolve) => {
+        fileReader.onloadend = () => {
+          resolve(fileReader.result);
+        };
+        fileReader.readAsDataURL(file);
+      }).then((result) => {
+        const newImage = new Image();
+        newImage.src = result as string;
+
+        if (typeof result === 'string') {
+          questionsHandler.applyWhere(
+            (question) => question.id === id,
+            (question) => ({ ...question, imageFile: file, imageBase64: newImage }),
+          );
+        }
+      });
+    } else {
+      questionsHandler.applyWhere(
+        (question) => question.id === id,
+        (question) => ({ ...question, imageFile: null, imageBase64: null }),
+      );
+    }
   };
 
   return (
@@ -58,13 +91,16 @@ export function QuestionCard({ id, position, questionType, questionsHandler }: P
           <Grid.Col span={{ sm: 12, lg: 6 }}>
             <PageUploader
               previewProps={{
-                image: false,
+                image: true,
                 isLoading: false,
               }}
               placeholder='Chọn hình'
-              withAsterisk
+              // withAsterisk
               label='Hình ảnh'
               clearable
+              onChange={(file) => handleChangeQuestionImages(file)}
+              value={question?.imageFile}
+              accept={[EFileType.JPEG, EFileType.PNG].join(',')}
             />
           </Grid.Col>
         </Grid>

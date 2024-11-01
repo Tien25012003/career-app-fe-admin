@@ -46,6 +46,11 @@ const initialFormValues: FormValues = {
   questions: [],
   results: [],
 };
+
+export interface IQuestionHandler extends IQuestion {
+  imageFile: File | null;
+  imageBase64: HTMLImageElement | null;
+}
 export default function ExamCreatePage() {
   const focusTrapRef = useFocusTrap();
   const form = useForm({
@@ -54,7 +59,7 @@ export default function ExamCreatePage() {
   });
   const { allQuestionType } = useParams();
 
-  const [questions, questionsHandler] = useListState<IQuestion>([]);
+  const [questions, questionsHandler] = useListState<IQuestionHandler>([]);
   const [results, resultsHandler] = useListState<IResult>([]);
   const [openQuestionTypeModal, setOpenQuestionTypeModal] = useState(false);
 
@@ -78,6 +83,8 @@ export default function ExamCreatePage() {
       questionTitle: '',
       image: '',
       options: [],
+      imageFile: null,
+      imageBase64: null,
     });
   };
 
@@ -98,12 +105,20 @@ export default function ExamCreatePage() {
   console.log('form error', form.errors);
 
   useEffect(() => {
-    form.setFieldValue('questions', questions);
-  }, [form, questions]);
+    form.setFieldValue(
+      'questions',
+      questions?.map((question) => ({
+        questionTitle: question.questionTitle,
+        questionType: question.questionType!,
+        image: null,
+        options: [],
+      })),
+    );
+  }, [questions]);
 
-  useEffect(() => {
-    form.setFieldValue('results', results);
-  }, [form, results]);
+  // useEffect(() => {
+  //   form.setFieldValue('results', results);
+  // }, [form, results])
 
   return (
     <Stack my='1rem' mx='1rem'>
@@ -159,6 +174,7 @@ export default function ExamCreatePage() {
                   questionsHandler={questionsHandler}
                   position={index}
                   questionType={question.questionType!}
+                  question={question}
                 />
               ))}
             </Stack>
