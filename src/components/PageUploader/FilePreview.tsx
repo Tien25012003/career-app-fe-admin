@@ -1,12 +1,13 @@
 import { Card, Flex, Group, Image, Loader, Stack, Text, Transition, useMantineTheme } from '@mantine/core';
+import { FileWithPath } from '@mantine/dropzone';
 import { IconFileText, IconPhoto } from '@tabler/icons-react';
 import { TextUtils } from '@util/TextUtils';
 import { useEffect, useState } from 'react';
 
-export type FileAndPath = File & { path?: string };
+// export type FileAndPath = File & { path?: string };
 export type FilePreviewProps = {
   image: boolean;
-  files: FileAndPath[];
+  files: FileWithPath[];
   isLoading?: boolean;
   height?: number;
 };

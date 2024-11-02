@@ -1,14 +1,13 @@
 import { PageEditor } from '@component/PageEditor/PageEditor';
 import { PageHeader } from '@component/PageHeader/PageHeader';
-import { Button, Divider, Group, MultiSelect, Paper, rem, ScrollArea, Select, SimpleGrid, Stack, Switch, Text, TextInput } from '@mantine/core';
+import { Button, Divider, Group, Paper, rem, Select, SimpleGrid, Stack, Text } from '@mantine/core';
+import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { useForm, zodResolver } from '@mantine/form';
-import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconNews, IconX } from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconNews, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { SchemaUtils } from '@util/SchemaUtils';
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { z } from 'zod';
-import { IconUpload, IconPhoto } from '@tabler/icons-react';
-import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 const formSchema = z.object({
   groupName: z.string().min(1, SchemaUtils.message.nonempty),
   owner: z.string().min(1, SchemaUtils.message.nonempty),

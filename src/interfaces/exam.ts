@@ -3,7 +3,7 @@ import { EExamCategory, EExamStatus, EQuestionType } from '@enum/exam';
 export type TExam = 'R' | 'I' | 'A' | 'S' | 'E' | 'C' | 'IQ' | 'EQ' | 'SchoolScore';
 export interface IOption {
   id?: string;
-  image?: string;
+  image?: string | null;
   content: string;
   isResult?: boolean;
   standardScore?: number;

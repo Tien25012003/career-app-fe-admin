@@ -1,0 +1,188 @@
+import { PageUploader } from '@component/PageUploader/PageUploader';
+import { EQuestionType } from '@enum/exam';
+import { EFileType } from '@enum/file.enum';
+import { IOption } from '@interface/exam';
+import { ActionIcon, Checkbox, Divider, Grid, Group, NumberInput, Radio, Stack, Text, TextInput, Tooltip } from '@mantine/core';
+import { FileWithPath } from '@mantine/dropzone';
+import { FormErrors } from '@mantine/form';
+import { UseListStateHandlers } from '@mantine/hooks';
+import { IconArrowBadgeRight, IconTrash } from '@tabler/icons-react';
+import { useCallback, useState } from 'react';
+import { IOptionHandler } from './QuestionCard';
+type Props = {
+  index: number;
+  option: IOptionHandler;
+  optionsHandler: UseListStateHandlers<IOptionHandler>;
+  questionType: EQuestionType;
+  errors?: FormErrors;
+  questionIndex?: number;
+};
+
+export function OptionCard({ index, option, optionsHandler, questionType, errors, questionIndex }: Props) {
+  // STATES
+  const [content, setContent] = useState('');
+  const [standardScore, setStandardScore] = useState('');
+
+  // METHODS
+  const onDeleteOption = (id: string) => {
+    optionsHandler?.filter((option) => option.id !== id);
+  };
+
+  const handelChangeOptionImage = (files: File | FileWithPath | null) => {
+    const file = Array.isArray(files) ? files[0] : files;
+
+    if (file) {
+      const fileReader = new FileReader();
+      new Promise((resolve) => {
+        fileReader.onloadend = () => {
+          resolve(fileReader.result);
+        };
+        fileReader.readAsDataURL(file);
+      }).then((result) => {
+        const newImage = new Image();
+        newImage.src = result as string;
+
+        if (typeof result === 'string') {
+          optionsHandler.applyWhere(
+            (item) => item.id === option.id,
+            (item) => ({ ...item, imageFile: file, imageBase64: newImage }),
+          );
+        }
+      });
+    } else {
+      optionsHandler.applyWhere(
+        (item) => item.id === option.id,
+        (item) => ({ ...item, imageFile: null, imageBase64: null }),
+      );
+    }
+  };
+
+  const handleChangeOptionValues = (attributeName: keyof IOption, value: any) => {
+    optionsHandler.applyWhere(
+      (item) => item.id === option.id,
+      (item) => ({ ...item, [attributeName]: value }),
+    );
+  };
+
+  const renderIcon = useCallback(() => {
+    switch (questionType) {
+      case EQuestionType.MULTIPLE_CHOICE:
+        return (
+          <Tooltip label='Tích chọn nếu đây là đáp án đúng'>
+            <Radio
+              label={`Lựa chọn ${index + 1}`}
+              name={option.id}
+              value={option.id}
+              //icon={CheckIcon}
+              checked={option.isResult}
+              onClick={() => {
+                optionsHandler.applyWhere(
+                  () => true, // Apply the update for all items
+                  (item) => ({
+                    ...item,
+                    isResult: item.id === option.id, // Set isResult to true if item id matches the option id, otherwise false
+                  }),
+                );
+              }}
+            />
+          </Tooltip>
+        );
+      case EQuestionType.TICK_BOX:
+        return (
+          <Tooltip label='Tích chọn nếu đây là đáp án đúng' withArrow>
+            <Checkbox
+              label={`Lựa chọn ${index + 1}`}
+              name={option.id}
+              value={option.id}
+              checked={option.isResult}
+              onChange={() => {
+                optionsHandler.applyWhere(
+                  (item) => item.id === option.id,
+                  (item) => ({
+                    ...item,
+                    isResult: !option.isResult,
+                  }),
+                );
+              }}
+            />
+          </Tooltip>
+        );
+      case EQuestionType.SHORT_ANSWER:
+        return (
+          <Group gap={0}>
+            <IconArrowBadgeRight />
+            <Text>{`Câu trả lời số ${index + 1}`}</Text>
+          </Group>
+        );
+      default:
+        return <></>;
+    }
+  }, [index, option.id, option.isResult, optionsHandler, questionType]);
+
+  return (
+    <Stack key={index}>
+      <Group className='-mb-3 mt-2'>
+        {renderIcon()}
+        <Tooltip label='Xoá lựa chọn'>
+          <ActionIcon color='red.5' variant='subtle' onClick={() => onDeleteOption(option.id as string)}>
+            <IconTrash size='1.125rem' />
+          </ActionIcon>
+        </Tooltip>
+      </Group>
+      <Divider variant='dotted' p={0} />
+      <Grid mt={-5} my={'md'}>
+        <Grid.Col span={{ sm: 12, lg: 6 }}>
+          <TextInput
+            withAsterisk
+            styles={{
+              input: {
+                color: 'black', // Forces text color to stay black
+              },
+            }}
+            label='Nội dung'
+            value={content}
+            onChange={(val) => {
+              setContent(val.target.value);
+              handleChangeOptionValues('content', val.target.value);
+            }}
+            error={errors![`questions.${questionIndex}.options.${index}.content`] || ''}
+          />
+        </Grid.Col>
+        <Grid.Col span={{ sm: 12, lg: 6 }}>
+          <NumberInput
+            withAsterisk
+            label='Điểm'
+            min={0}
+            placeholder='0'
+            value={standardScore}
+            onChange={(val) => {
+              setStandardScore(val as string);
+              handleChangeOptionValues('standardScore', Number(val));
+            }}
+            styles={{
+              input: {
+                color: 'black', // Forces text color to stay black
+              },
+            }}
+            error={errors![`questions.${questionIndex}.options.${index}.standardScore`] || ''}
+          />
+        </Grid.Col>
+        <Grid.Col span={{ sm: 12, lg: 6 }}>
+          <PageUploader
+            previewProps={{
+              image: true,
+              isLoading: false,
+              height: 80,
+            }}
+            placeholder='Chọn hình'
+            label='Hình ảnh'
+            clearable
+            value={option.imageFile}
+            onChange={(file) => handelChangeOptionImage(file)}
+            accept={[EFileType.JPEG, EFileType.PNG].join(',')}
+          />
+        </Grid.Col>
+      </Grid>
+    </Stack>
+  );
+}

@@ -1,21 +1,19 @@
 import { FileInput, FileInputProps, Stack } from '@mantine/core';
+import { FileWithPath } from '@mantine/dropzone';
 import { IconUpload } from '@tabler/icons-react';
-import FilePreview, { FileAndPath } from './FilePreview';
+import FilePreview, { FilePreviewProps } from './FilePreview';
 
-type TPageUploader = FileInputProps & {
-  previewProps: {
-    image: boolean;
-    isLoading: boolean;
-  };
+interface PageUploaderProps extends FileInputProps {
+  previewProps: Omit<FilePreviewProps, 'files'>;
   onClear?: () => void;
-};
-export function PageUploader({ previewProps, onClear, ...props }: TPageUploader) {
-  const files: FileAndPath[] = Array.isArray(props.value) ? props.value : props.value ? [props.value] : [];
+}
+export function PageUploader({ previewProps, onClear, ...props }: PageUploaderProps) {
+  const files: FileWithPath[] = Array.isArray(props.value) ? props.value : props.value ? [props.value] : [];
 
   return (
     <Stack gap={'xs'}>
       <FileInput {...props} leftSection={<IconUpload size='1.25rem' />} clearable />
-      <FilePreview image={previewProps.image} files={files} isLoading={previewProps.isLoading} />
+      <FilePreview files={files} {...previewProps} />
     </Stack>
   );
 }

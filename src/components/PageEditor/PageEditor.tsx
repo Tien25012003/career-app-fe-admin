@@ -1,12 +1,12 @@
+import { Box, Input, InputWrapperProps, ScrollArea, Stack, useMantineTheme } from '@mantine/core';
+import { Link, RichTextEditor } from '@mantine/tiptap';
+import Highlight from '@tiptap/extension-highlight';
+import SubScript from '@tiptap/extension-subscript';
+import Superscript from '@tiptap/extension-superscript';
+import TextAlign from '@tiptap/extension-text-align';
+import Underline from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
-import { Link, RichTextEditor } from '@mantine/tiptap';
-import Superscript from '@tiptap/extension-superscript';
-import SubScript from '@tiptap/extension-subscript';
-import Highlight from '@tiptap/extension-highlight';
-import TextAlign from '@tiptap/extension-text-align';
-import { Box, Input, InputWrapperProps, ScrollArea, Stack, useMantineTheme } from '@mantine/core';
 interface PageEditorProps extends InputWrapperProps {
   value?: string;
   onChange?: (value: string) => void;
@@ -15,7 +15,7 @@ interface PageEditorProps extends InputWrapperProps {
   stickyOffset?: number;
   editAble?: boolean;
 }
-export function PageEditor({ value = '<p></p>', onChange, error, sticky, stickyOffset, editAble, ...rest }: PageEditorProps) {
+export function PageEditor({ value = '', onChange, error, sticky, stickyOffset, editAble, ...rest }: PageEditorProps) {
   const theme = useMantineTheme();
   const editor = useEditor({
     extensions: [StarterKit, Underline, Link, Superscript, SubScript, Highlight, TextAlign.configure({ types: ['heading', 'paragraph'] })],

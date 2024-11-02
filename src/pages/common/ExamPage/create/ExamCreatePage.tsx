@@ -1,6 +1,6 @@
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import { EExamCategory, EQuestionType } from '@enum/exam';
-import { IQuestion, IResult } from '@interface/exam';
+import { IOption, IQuestion, IResult } from '@interface/exam';
 import { Button, Divider, Grid, Group, Paper, Stack, Text, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useFocusTrap, useListState } from '@mantine/hooks';
@@ -24,18 +24,23 @@ const formSchema = z.object({
       image: z.instanceof(File).nullable(),
       options: z.array(
         z.object({
-          image: z.instanceof(File).nullable(),
+          image: z.string().trim().nullable(),
+          imageFile: z.instanceof(File).nullable(),
+          imageBase64: z.instanceof(HTMLImageElement).nullable(),
           content: z.string().trim().min(1, SchemaUtils.message.nonempty),
           isResult: z.boolean(),
+          standardScore: z.number().min(0, { message: SchemaUtils.message.nonempty }),
         }),
       ),
     }),
   ),
   results: z.array(
     z.object({
-      score: z.array(z.number()).nonempty(SchemaUtils.message.nonempty),
+      score: z.array(z.number()).min(2, { message: SchemaUtils.message.nonempty }), // This enforces that the array must have at least one element
       content: z.string().trim().min(1, SchemaUtils.message.nonempty),
-      image: z.instanceof(File).nullable(),
+      image: z.string().trim().nullable(),
+      imageFile: z.instanceof(File).nullable(),
+      imageBase64: z.instanceof(HTMLImageElement).nullable(),
       detail: z.string().trim().nullable(),
     }),
   ),
@@ -50,7 +55,21 @@ const initialFormValues: FormValues = {
 export interface IQuestionHandler extends IQuestion {
   imageFile: File | null;
   imageBase64: HTMLImageElement | null;
+  options: IOptionHandler[];
 }
+
+export interface IOptionHandler extends IOption {
+  imageFile?: File | null | undefined;
+  imageBase64?: HTMLImageElement | null | undefined;
+}
+
+export interface IResultHandler extends IResult {
+  scoreFrom?: number;
+  scoreTo?: number;
+  imageFile?: File | null | undefined;
+  imageBase64?: HTMLImageElement | null | undefined;
+}
+
 export default function ExamCreatePage() {
   const focusTrapRef = useFocusTrap();
   const form = useForm({
@@ -60,7 +79,7 @@ export default function ExamCreatePage() {
   const { allQuestionType } = useParams();
 
   const [questions, questionsHandler] = useListState<IQuestionHandler>([]);
-  const [results, resultsHandler] = useListState<IResult>([]);
+  const [results, resultsHandler] = useListState<IResultHandler>([]);
   const [openQuestionTypeModal, setOpenQuestionTypeModal] = useState(false);
 
   const location = useLocation();
@@ -95,6 +114,8 @@ export default function ExamCreatePage() {
       content: '',
       image: '',
       detail: '',
+      imageFile: null,
+      imageBase64: null,
     });
   };
 
@@ -102,23 +123,37 @@ export default function ExamCreatePage() {
     console.log('formValues', formValues);
   });
 
-  console.log('form error', form.errors);
-
+  // EFFECTS
   useEffect(() => {
+    console.log('set question');
     form.setFieldValue(
       'questions',
       questions?.map((question) => ({
         questionTitle: question.questionTitle,
         questionType: question.questionType!,
         image: null,
-        options: [],
+        imageFile: question.imageFile,
+        imageBase64: question.imageBase64,
+        options: question.options as any,
       })),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questions]);
 
-  // useEffect(() => {
-  //   form.setFieldValue('results', results);
-  // }, [form, results])
+  useEffect(() => {
+    form.setFieldValue(
+      'results',
+      results?.map((result) => ({
+        score: [result.scoreFrom as number, result.scoreTo as number],
+        content: result?.content || '',
+        detail: result?.detail || '',
+        image: '',
+        imageBase64: null,
+        imageFile: null,
+      })),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [results]);
 
   return (
     <Stack my='1rem' mx='1rem'>
@@ -175,6 +210,8 @@ export default function ExamCreatePage() {
                   position={index}
                   questionType={question.questionType!}
                   question={question}
+                  errors={form.errors}
+                  index={index}
                 />
               ))}
             </Stack>
@@ -201,7 +238,11 @@ export default function ExamCreatePage() {
             <Text fw={600}>Kết quả & nhận xét</Text>
           </Group>
           {results?.length > 0 && (
-            <Stack>{results?.map((result, index) => <ResultCard key={index} index={index} result={result} resultsHandler={resultsHandler} />)}</Stack>
+            <Stack>
+              {results?.map((result, index) => (
+                <ResultCard key={index} index={index} result={result} resultsHandler={resultsHandler} errors={form.errors} />
+              ))}
+            </Stack>
           )}
 
           <Button variant='outline' onClick={onAddResult} leftSection={<IconPlus />}>
