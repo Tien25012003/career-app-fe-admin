@@ -1,6 +1,7 @@
 import { PageEditor } from '@component/PageEditor/PageEditor';
 import { PageUploader } from '@component/PageUploader/PageUploader';
 import { EFileType } from '@enum/file.enum';
+import { convertImageToBase64 } from '@helper/file.helpers';
 import { isValidContentWithHTML } from '@helper/string.helpers';
 import { Button, Grid, Group, NumberInput, Paper, Stack, Text, Tooltip } from '@mantine/core';
 import { FileWithPath } from '@mantine/dropzone';
@@ -25,12 +26,7 @@ export function ResultCard({ index, result, resultsHandler, errors }: Props) {
 
     if (file) {
       const fileReader = new FileReader();
-      new Promise((resolve) => {
-        fileReader.onloadend = () => {
-          resolve(fileReader.result);
-        };
-        fileReader.readAsDataURL(file);
-      }).then((imgResult) => {
+      convertImageToBase64(file).then((imgResult) => {
         const newImage = new Image();
         newImage.src = imgResult as string;
 

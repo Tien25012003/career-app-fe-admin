@@ -2,6 +2,7 @@ import { PageEditor } from '@component/PageEditor/PageEditor';
 import { PageUploader } from '@component/PageUploader/PageUploader';
 import { EQuestionType } from '@enum/exam';
 import { EFileType } from '@enum/file.enum';
+import { convertImageToBase64 } from '@helper/file.helpers';
 import { isValidContentWithHTML } from '@helper/string.helpers';
 import { IOption, IQuestion } from '@interface/exam';
 import { Badge, Button, Divider, Grid, Group, Paper, Stack, Text } from '@mantine/core';
@@ -65,13 +66,7 @@ export function QuestionCard({ id, position, questionType, questionsHandler, que
     const file = Array.isArray(files) ? files[0] : files;
 
     if (file) {
-      const fileReader = new FileReader();
-      new Promise((resolve) => {
-        fileReader.onloadend = () => {
-          resolve(fileReader.result);
-        };
-        fileReader.readAsDataURL(file);
-      }).then((result) => {
+      convertImageToBase64(file).then((result) => {
         const newImage = new Image();
         newImage.src = result as string;
 

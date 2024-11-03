@@ -6,3 +6,8 @@ export interface ITracking {
   updatedAt?: Date;
   updator?: string; // email
 }
+
+export interface IImage {
+  url: string;
+  key: string;
+}

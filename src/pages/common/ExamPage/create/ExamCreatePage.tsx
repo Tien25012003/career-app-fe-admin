@@ -1,14 +1,24 @@
+import { addExamAPI } from '@api/services/exam/exam.api';
+import { AddExamREQ } from '@api/services/exam/exam.request';
+import { UploadRESP } from '@api/services/uploads/upload.response';
+import { uploadAPI } from '@api/services/uploads/uploads.api';
 import { PageHeader } from '@component/PageHeader/PageHeader';
-import { EExamCategory, EQuestionType } from '@enum/exam';
+import { EExamCategory, EExamStatus, EQuestionType } from '@enum/exam';
+import { onError } from '@helper/error.helpers';
 import { IOption, IQuestion, IResult } from '@interface/exam';
-import { Button, Divider, Grid, Group, Paper, Stack, Text, TextInput } from '@mantine/core';
+import { Box, Button, Divider, Grid, Group, Loader, Paper, Stack, Text, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useFocusTrap, useListState } from '@mantine/hooks';
 import { IconChevronLeft, IconChevronRight, IconHelpOctagon, IconPencil, IconPlus, IconTargetArrow } from '@tabler/icons-react';
+import { useMutation } from '@tanstack/react-query';
+import { NotifyUtils } from '@util/NotificationUtils';
 import { SchemaUtils } from '@util/SchemaUtils';
 import { TextUtils } from '@util/TextUtils';
+import { QUERY_KEYS } from 'constants/query-key.constants';
+import { ROUTES } from 'constants/routes.constants';
+import useInvalidate from 'hooks/useInvalidate';
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { z } from 'zod';
 import { QuestionCard, QuestionTypeModal } from '../components';
 import { ResultCard } from '../components/ResultCard';
@@ -53,8 +63,8 @@ const initialFormValues: FormValues = {
 };
 
 export interface IQuestionHandler extends IQuestion {
-  imageFile: File | null;
-  imageBase64: HTMLImageElement | null;
+  imageFile?: File | null;
+  imageBase64?: HTMLImageElement | null;
   options: IOptionHandler[];
 }
 
@@ -81,6 +91,9 @@ export default function ExamCreatePage() {
   const [questions, questionsHandler] = useListState<IQuestionHandler>([]);
   const [results, resultsHandler] = useListState<IResultHandler>([]);
   const [openQuestionTypeModal, setOpenQuestionTypeModal] = useState(false);
+  const [isUploadingFiles, setIsUploadingFiles] = useState(false);
+
+  const navigate = useNavigate();
 
   const location = useLocation();
   const category = useMemo(() => {
@@ -92,6 +105,24 @@ export default function ExamCreatePage() {
     }
     return null;
   }, [location?.pathname]);
+
+  const invalidate = useInvalidate();
+
+  // APIS
+  const { mutate: addExamMutation, isPending: isAddingExam } = useMutation({
+    mutationFn: (request: AddExamREQ) => addExamAPI(request),
+    onSuccess: () => {
+      invalidate({
+        queryKey: [QUERY_KEYS.EXAM.DESIGN_LIST],
+      });
+      NotifyUtils.success('Tạo bài kiểm tra mới thành công!');
+      form.reset();
+      navigate(category === EExamCategory.SYSTEM ? ROUTES.EXAMS.SYSTEM : ROUTES.EXAMS.DESIGN);
+    },
+    onError,
+  });
+
+  const isLoading = useMemo(() => isUploadingFiles || isAddingExam, [isAddingExam, isUploadingFiles]);
 
   // METHODS
   const onAddQuestion = (questionType: EQuestionType) => {
@@ -119,8 +150,135 @@ export default function ExamCreatePage() {
     });
   };
 
-  const handleSubmit = form.onSubmit((formValues) => {
+  const handleUploadQuestionImages = async (questions: IQuestionHandler[]) => {
+    const uploadPromises = questions?.map(async (question) => {
+      const questionFormData = new FormData();
+
+      // Check if question image exists and upload if it does
+      let questionImageResp: UploadRESP = {
+        url: null,
+        key: null,
+      };
+      if (question?.imageFile) {
+        questionFormData.append('file', question?.imageFile);
+        questionFormData.append('folderName', 'exam');
+        const questionResponse = await uploadAPI(questionFormData);
+        questionImageResp = questionResponse.data;
+      }
+
+      // Prepare options for the current question
+      const optionsPromises = question?.options?.map(async (option) => {
+        const optionFormData = new FormData();
+        let optionImageResp: UploadRESP = {
+          url: null,
+          key: null,
+        };
+
+        if (option?.imageFile) {
+          optionFormData.append('file', option.imageFile);
+          optionFormData.append('folderName', 'exam');
+          const optionResponse = await uploadAPI(optionFormData);
+          optionImageResp = optionResponse.data;
+        }
+
+        return {
+          ...option,
+          image: optionImageResp.url,
+          imageKey: optionImageResp.key,
+        };
+      });
+
+      // Wait for all option uploads to complete
+      const uploadedOptions = await Promise.all(optionsPromises);
+
+      return {
+        ...question,
+        image: questionImageResp.url,
+        imageKey: questionImageResp.key,
+        options: uploadedOptions,
+      };
+    });
+
+    return await Promise.all(uploadPromises);
+  };
+
+  const handleUploadResultImages = async (results: IResultHandler[]) => {
+    const uploadPromises = results?.map(async (item) => {
+      let resultImageResp: UploadRESP = {
+        url: null,
+        key: null,
+      };
+      if (item?.imageFile) {
+        const resultFormData = new FormData();
+        resultFormData.append('file', item?.imageFile);
+        resultFormData.append('folderName', 'exam');
+        const resultResponse = await uploadAPI(resultFormData);
+        resultImageResp = resultResponse?.data;
+      }
+
+      return { ...item, image: resultImageResp.url, imageKey: resultImageResp.key };
+    });
+
+    return Promise.all(uploadPromises);
+  };
+
+  // SUBMITS
+  const handleSubmit = form.onSubmit(async (formValues) => {
     console.log('formValues', formValues);
+    setIsUploadingFiles(true);
+    try {
+      // Upload Questions
+      const uploadedQuestionImages = await handleUploadQuestionImages(formValues.questions as IQuestionHandler[]);
+      form.setFieldValue('questions', uploadedQuestionImages as any);
+
+      // Upload Results
+      const uploadResultImages = await handleUploadResultImages(formValues.results as IResult[]);
+      form.setFieldValue('results', uploadResultImages as any);
+
+      // Request
+      const requestedQuestions: IQuestion[] = (uploadedQuestionImages as IQuestionHandler[])?.map((item) => ({
+        questionTitle: item.questionTitle,
+        questionType: item.questionType,
+        image: item.image,
+        imageKey: item.imageKey,
+        options: item?.options?.map((option: IOption) => ({
+          content: option.content,
+          isResult: option.isResult,
+          image: option.image,
+          imageKey: option.imageKey,
+          standardScore: option.standardScore,
+        })),
+      }));
+
+      const requestedResults: IResult[] = (uploadResultImages as IResultHandler[])?.map((item) => ({
+        score: (item.score as number[]) || null,
+        content: item.content,
+        detail: item.detail,
+        image: item.image || null,
+        imageKey: item.imageKey || null,
+      }));
+
+      const request: AddExamREQ = {
+        name: formValues.name,
+        type: null,
+        category: category || EExamCategory.DESIGN,
+        status: EExamStatus.UNACTIVATED,
+        questions: requestedQuestions,
+        results: requestedResults,
+      };
+
+      console.log('REQUEST', request);
+
+      addExamMutation(request);
+    } catch (error) {
+      console.log('error add exam', error);
+      NotifyUtils.error('Lỗi upload hình ảnh!');
+      setIsUploadingFiles(false);
+    } finally {
+      setIsUploadingFiles(false);
+    }
+
+    // console.log('processedForm', form.getValues());
   });
 
   // EFFECTS
@@ -147,9 +305,9 @@ export default function ExamCreatePage() {
         score: [result.scoreFrom as number, result.scoreTo as number],
         content: result?.content || '',
         detail: result?.detail || '',
-        image: '',
-        imageBase64: null,
-        imageFile: null,
+        image: null,
+        imageBase64: result?.imageBase64 || null,
+        imageFile: result?.imageFile || null,
       })),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -180,7 +338,7 @@ export default function ExamCreatePage() {
         }
       />
 
-      <Paper withBorder shadow='sm' radius={'md'} p='md'>
+      <Paper withBorder shadow='sm' radius={'md'} p='md' className='relative'>
         <Stack ref={focusTrapRef}>
           <Stack>
             <Grid>
@@ -255,11 +413,16 @@ export default function ExamCreatePage() {
             <Button variant='default' onClick={() => {}}>
               Mặc định
             </Button>
-            <Button onClick={() => handleSubmit()} disabled={!form.isDirty()}>
+            <Button onClick={() => handleSubmit()} disabled={!form.isDirty()} loading={isLoading}>
               Lưu
             </Button>
           </Group>
         </Stack>
+        {isLoading && (
+          <Box className='absolute left-0 right-0 top-0 bottom-0 bg-white opacity-70 rounded-md items-center justify-center flex'>
+            <Loader />
+          </Box>
+        )}
       </Paper>
       <QuestionTypeModal
         opened={openQuestionTypeModal}

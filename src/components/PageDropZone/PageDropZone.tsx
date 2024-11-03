@@ -17,7 +17,7 @@ interface PageDropZoneProps extends DropzoneProps {
   placeHolder?: string;
 }
 export default function PageDropZone({
-  maxSize,
+  maxSize = 500 * 1024, // 500 KB in bytes
   acceptType,
   previewProps,
   onClear,

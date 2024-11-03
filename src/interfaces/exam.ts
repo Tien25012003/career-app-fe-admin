@@ -7,21 +7,28 @@ export interface IOption {
   content: string;
   isResult?: boolean;
   standardScore?: number;
+
+  // new response
+  imageKey?: string | null;
 }
 export interface IQuestion {
   id?: string;
   questionType?: EQuestionType;
   questionTitle: string;
-  image?: string;
+  image?: string | null;
   options: IOption[];
   //answer?: number | number[];
+  imageKey?: string | null;
 }
 export interface IResult {
   id?: string;
-  score?: null | number[];
+  score?: number[] | null;
   content: string;
-  image?: string;
+  image?: string | null;
   detail?: string;
+
+  // new response
+  imageKey?: string | null;
 }
 export interface IExam {
   type: TExam;
