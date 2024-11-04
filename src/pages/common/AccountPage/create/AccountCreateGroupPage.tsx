@@ -1,5 +1,21 @@
 import { PageHeader } from '@component/PageHeader/PageHeader';
-import { ActionIcon, Avatar, Button, Checkbox, Divider, Group, MultiSelect, Paper, ScrollArea, Select, SimpleGrid, Stack, Switch, Text, TextInput } from '@mantine/core';
+import {
+  ActionIcon,
+  Avatar,
+  Button,
+  Checkbox,
+  Divider,
+  Group,
+  MultiSelect,
+  Paper,
+  ScrollArea,
+  Select,
+  SimpleGrid,
+  Stack,
+  Switch,
+  Text,
+  TextInput,
+} from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconSearch, IconSettings, IconUser, IconUsersGroup, IconX } from '@tabler/icons-react';
 import { SchemaUtils } from '@util/SchemaUtils';
@@ -110,7 +126,12 @@ const AccountCreateGroupPage = () => {
               <Text fw={500}>Chọn thành viên</Text>
             </Group>
             <Group>
-              <TextInput flex={1} placeholder='Nhập tên thành viên' leftSection={<IconSearch size={'1.125rem'} />} {...form.getInputProps('groupName')} />
+              <TextInput
+                flex={1}
+                placeholder='Nhập tên thành viên'
+                leftSection={<IconSearch size={'1.125rem'} />}
+                {...form.getInputProps('groupName')}
+              />
               <Button>Tìm kiếm</Button>
             </Group>
             <Group gap={'xs'}>

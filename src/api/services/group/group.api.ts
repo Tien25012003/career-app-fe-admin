@@ -1,0 +1,8 @@
+import { api } from '@api/config';
+import { TPagingResponse } from '@type/response.type';
+import { GroupREQ } from './group.request';
+import { IGroup } from './group.response';
+
+const BASE_URL = '/groups';
+
+export const getGroupListAPI = (data: Partial<GroupREQ>): Promise<TPagingResponse<IGroup[]>> => api.get(`${BASE_URL}/all`, { params: data });

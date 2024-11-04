@@ -4,6 +4,7 @@ export const QUERY_KEYS = {
   },
   ACCOUNT: {
     USER_INFO: 'USER_INFO',
+    LIST: 'ACCOUNT_LIST',
   },
   EXAM: {
     LIST: 'EXAM_LIST',
@@ -11,5 +12,8 @@ export const QUERY_KEYS = {
   },
   SCHOOL_SUBJECT: {
     LIST: 'SCHOOL_SUBJECT_LIST',
+  },
+  GROUP: {
+    LIST: 'GROUP_LIST',
   },
 };

@@ -1,8 +1,8 @@
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import { Button, Group, Stack } from '@mantine/core';
 import { IconPlus, IconUser } from '@tabler/icons-react';
-import { startTransition, Suspense, useState } from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { startTransition, useState } from 'react';
+import { Link } from 'react-router-dom';
 import AccountListPage from './AccountListPage/AccountListPage';
 import AccountGroupListPage from './AccountGroupListPage/AccountGroupListPage';
 

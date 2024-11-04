@@ -101,7 +101,7 @@ const privateRoutes: RouteObject[] = [
             ),
           },
           {
-            path: '/accounts/view',
+            path: '/accounts/view/:id',
             element: (
               <LoadingWrapper>
                 <AccountDetailPage />

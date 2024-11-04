@@ -1,26 +1,7 @@
 import { PageHeader } from '@component/PageHeader/PageHeader';
-import {
-  Button,
-  Checkbox,
-  Divider,
-  Group,
-  MultiSelect,
-  Paper,
-  Select,
-  SimpleGrid,
-  Stack,
-  Switch,
-  Text,
-  TextInput,
-} from '@mantine/core';
+import { Button, Checkbox, Divider, Group, MultiSelect, Paper, Select, SimpleGrid, Stack, Switch, Text, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import {
-  IconChevronLeft,
-  IconChevronRight,
-  IconInfoCircle,
-  IconSettings,
-  IconUser,
-} from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconSettings, IconUser } from '@tabler/icons-react';
 import { SchemaUtils } from '@util/SchemaUtils';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -76,12 +57,7 @@ const AccountCreatePage = () => {
           </>
         }
         rightSection={
-          <Button
-            leftSection={<IconChevronLeft size={'1.125rem'} />}
-            component={Link}
-            to={'/accounts'}
-            variant='default'
-          >
+          <Button leftSection={<IconChevronLeft size={'1.125rem'} />} component={Link} to={'/accounts'} variant='default'>
             Trở về
           </Button>
         }
@@ -93,25 +69,9 @@ const AccountCreatePage = () => {
               <IconInfoCircle />
               <Text fw={500}>Thông tin chung</Text>
             </Group>
-            <TextInput
-              placeholder='Nhập tên tài khoản'
-              withAsterisk
-              label='Tên tài khoản'
-              {...form.getInputProps('username')}
-            />
-            <TextInput
-              placeholder='Nhập tên'
-              withAsterisk
-              label='Tên chủ tài khoản'
-              {...form.getInputProps('name')}
-            />
-            <TextInput
-              placeholder='Nhập địa chỉ email'
-              withAsterisk
-              label='Email'
-              type='email'
-              {...form.getInputProps('email')}
-            />
+            <TextInput placeholder='Nhập tên tài khoản' withAsterisk label='Tên tài khoản' {...form.getInputProps('username')} />
+            <TextInput placeholder='Nhập tên' withAsterisk label='Tên chủ tài khoản' {...form.getInputProps('name')} />
+            <TextInput placeholder='Nhập địa chỉ email' withAsterisk label='Email' type='email' {...form.getInputProps('email')} />
             <MultiSelect
               withAsterisk
               comboboxProps={{ withinPortal: false }}
@@ -130,11 +90,7 @@ const AccountCreatePage = () => {
               {...form.getInputProps('role')}
               clearable
             />
-            <Switch
-              label='Kích hoạt tài khoản'
-              fw={500}
-              {...form.getInputProps('status', { type: 'checkbox' })}
-            />
+            <Switch label='Kích hoạt tài khoản' fw={500} {...form.getInputProps('status', { type: 'checkbox' })} />
           </Stack>
         </Paper>
         <Paper withBorder shadow='sm' radius={'md'} p='md'>

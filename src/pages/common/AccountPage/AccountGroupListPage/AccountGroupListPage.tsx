@@ -1,52 +1,58 @@
+import { getGroupListAPI } from '@api/services/group/group.api';
+import { GroupREQ } from '@api/services/group/group.request';
 import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
 import { TableButton } from '@component/TableButton/TableButton';
-import { Avatar, Badge, Group, Stack } from '@mantine/core';
+import { Avatar, Badge, Group, Stack, Tooltip } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
 import { DateUtils } from '@util/DateUtils';
-import React from 'react';
+import { QUERY_KEYS } from 'constants/query-key.constants';
+import { useFilter } from 'hooks/useFilter';
 import { useNavigate } from 'react-router-dom';
-type TAccount = {
-  id: number;
-  groupName: string;
-  members: string[];
-  owner: string;
-  createdAt: Date;
-  updatedAt: Date;
-  status: number; //0: deactive ; 1: active
-};
-const ACCOUNTS = Array.from<TAccount>({ length: 10 }).fill({
-  id: Math.floor(Math.random() * 10000),
-  groupName: 'Nhóm học tập',
-  members: ['Khang', 'Tiên', 'Tiền', 'Đình', 'Binh', 'La', 'Binh', 'La'],
-  owner: 'Đoàn Tấn Khang',
-  updatedAt: new Date(),
-  createdAt: new Date(),
-  status: 0,
-});
 
 const BadgeStatus = (status: number) => {
   switch (status) {
     case 0:
       return (
-        <Badge color='red' size='sm'>
-          Tạm dừng
-        </Badge>
+        <Tooltip label='Tạm dừng'>
+          <Badge color='red' size='sm'>
+            Tạm dừng
+          </Badge>
+        </Tooltip>
       );
     case 2:
-      return <Badge size='sm'>Đang hoạt động</Badge>;
+      return (
+        <Tooltip label='Đang hoạt động'>
+          <Badge size='sm'>Đang hoạt động</Badge>
+        </Tooltip>
+      );
     default:
       return (
-        <Badge color='red' size='sm'>
-          Tạm dừng
-        </Badge>
+        <Tooltip label='Tạm dừng'>
+          <Badge color='red' size='sm'>
+            Tạm dừng
+          </Badge>
+        </Tooltip>
       );
   }
 };
+export const initialQuery: Partial<GroupREQ> = {
+  page: 1,
+  size: 10,
+};
 const AccountGroupListPage = () => {
   const navigate = useNavigate();
+  const { queries, hasNone, onSearch, onReset, getPaginationConfigs } = useFilter<Partial<GroupREQ>>(initialQuery);
+
+  // APIS
+  const { data: groups, isFetching: isFetchingGroup } = useQuery({
+    queryKey: [QUERY_KEYS.GROUP.LIST, queries],
+    queryFn: () => getGroupListAPI(queries),
+    enabled: !hasNone,
+  });
   return (
     <Stack>
-      <AppSearch />
+      <AppSearch onSearch={(value) => onSearch({ ...queries, groupName: value })} onReset={onReset} />
       <AppTable
         columns={[
           {
@@ -104,8 +110,9 @@ const AccountGroupListPage = () => {
             ),
           },
         ]}
-        data={ACCOUNTS}
-        isLoading={false}
+        data={groups?.data || []}
+        isLoading={isFetchingGroup}
+        paginationConfigs={getPaginationConfigs(groups?.pagination?.totalPages, groups?.pagination?.totalCounts)}
       />
     </Stack>
   );

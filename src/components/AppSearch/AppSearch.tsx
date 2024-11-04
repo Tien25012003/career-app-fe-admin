@@ -29,6 +29,11 @@ const AppSearch = ({ onSearch, onReset }: AppSearchProps) => {
           }}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              onSearch?.(search);
+            }
+          }}
         />
         <Button variant='outline' onClick={() => onSearch?.(search)}>
           Tìm kiếm
