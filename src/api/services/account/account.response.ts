@@ -28,7 +28,7 @@ export type TACCOUNT = {
   name: string;
   email: string;
   role: string;
-  groups: string[];
+  groups: { _id: string; groupName: string }[];
   createdAt: Date;
   updatedAt: Date;
   accessToken?: string;

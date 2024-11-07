@@ -15,5 +15,6 @@ export const QUERY_KEYS = {
   },
   GROUP: {
     LIST: 'GROUP_LIST',
+    SELECT: 'GROUP_SELECT',
   },
 };

@@ -9,5 +9,6 @@ export namespace SchemaUtils {
     invalidEmail: 'Email không hợp lệ!',
     invalidLink: 'Liên kết không hợp lệ!',
     invalidNumber: 'Vui lòng nhập giá trị số!',
+    invalidPassword: 'Mật khẩu có ít nhất 8 ký tự',
   };
 }

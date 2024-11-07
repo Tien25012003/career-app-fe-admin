@@ -56,7 +56,7 @@ const AccountGroupListPage = () => {
       <AppTable
         columns={[
           {
-            accessor: 'id',
+            accessor: '_id',
             title: 'ID',
           },
           {
@@ -64,7 +64,7 @@ const AccountGroupListPage = () => {
             title: 'Tên nhóm',
           },
           {
-            accessor: 'owner',
+            accessor: 'owner.name',
             title: 'Trường nhóm',
           },
           {
@@ -74,7 +74,7 @@ const AccountGroupListPage = () => {
               <Group gap={'xs'}>
                 <Avatar.Group>
                   {members.slice(0, 4).map((member) => (
-                    <Avatar key={Math.random()} name={member} color='initials' />
+                    <Avatar key={Math.random()} name={member.name} color='initials' />
                   ))}
                   {members.length > 5 && <Avatar key={Math.random()} name={`+${members.length - 4}`} color='gray'></Avatar>}
                 </Avatar.Group>

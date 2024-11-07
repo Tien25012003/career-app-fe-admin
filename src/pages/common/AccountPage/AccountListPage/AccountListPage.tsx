@@ -74,7 +74,9 @@ const AccountListPage = () => {
               <Group gap={'xs'}>
                 <Avatar.Group>
                   {groups.slice(0, 4).map((group) => (
-                    <Avatar key={Math.random()} name={group} color='initials' />
+                    <Tooltip label={group.groupName}>
+                      <Avatar key={Math.random()} name={group.groupName} color='initials' />
+                    </Tooltip>
                   ))}
                   {groups.length > 5 && <Avatar key={Math.random()} name={`+${groups.length - 4}`} color='gray'></Avatar>}
                 </Avatar.Group>

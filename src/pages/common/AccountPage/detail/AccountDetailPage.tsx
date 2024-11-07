@@ -1,4 +1,5 @@
 import { getAccount } from '@api/services/account/account.api';
+import { getGroupSelectAPI } from '@api/services/group/group.api';
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import {
   Button,
@@ -20,7 +21,6 @@ import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconSettings, IconUs
 import { useQuery } from '@tanstack/react-query';
 import { SchemaUtils } from '@util/SchemaUtils';
 import { QUERY_KEYS } from 'constants/query-key.constants';
-import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { z } from 'zod';
 const formSchema = z.object({
@@ -29,8 +29,8 @@ const formSchema = z.object({
   email: z.string().email(SchemaUtils.message.invalidEmail),
   role: z.string().min(1, SchemaUtils.message.nonempty),
   groups: z.string().array().min(1, SchemaUtils.message.nonempty),
-  permissions: z
-    .object({
+  permissions: z.array(
+    z.object({
       code: z.string(),
       name: z.string(),
       permission: z.object({
@@ -39,28 +39,21 @@ const formSchema = z.object({
         delete: z.boolean(),
         view: z.boolean(),
       }),
-    })
-    .array(),
-  status: z.number().default(0),
+    }),
+  ),
+  status: z.any(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
-
-const GROUPS = [
-  {
-    label: 'Group A',
-    value: 'A',
-  },
-  {
-    label: 'Group B',
-    value: 'B',
-  },
-];
 
 const AccountForm = (value: FormValues) => {
   const form = useForm({
     initialValues: value,
     validate: zodResolver(formSchema),
+  });
+  const { data: groupSelect } = useQuery({
+    queryKey: [QUERY_KEYS.GROUP.SELECT],
+    queryFn: () => getGroupSelectAPI(),
   });
   const handleSubmit = form.onSubmit((formValues) => {});
 
@@ -77,18 +70,20 @@ const AccountForm = (value: FormValues) => {
           <TextInput placeholder='Nhập địa chỉ email' withAsterisk label='Email' type='email' {...form.getInputProps('email')} />
           <MultiSelect
             withAsterisk
-            comboboxProps={{ withinPortal: false }}
             label='Danh sách nhóm'
-            data={GROUPS}
+            data={groupSelect?.data?.map((group) => ({ label: group.groupName, value: group._id }))}
             placeholder='Chọn danh sách nhóm'
             {...form.getInputProps('groups')}
             clearable
           />
           <Select
             withAsterisk
-            comboboxProps={{ withinPortal: false }}
             label='Vai trò'
-            data={['Admin', 'Giáo viên']}
+            data={[
+              { label: 'Admin', value: 'ADMIN' },
+              { label: 'Giáo viên', value: 'TEACHER' },
+              { label: 'Học sinh', value: 'STUDENT' },
+            ]}
             placeholder='Chọn vai trò'
             {...form.getInputProps('role')}
             clearable
@@ -127,7 +122,6 @@ const AccountDetailPage = () => {
     queryKey: [QUERY_KEYS.ACCOUNT.LIST, id],
     queryFn: () => getAccount({ userId: id! }),
   });
-  console.log(id);
   return (
     <Stack my='1rem' mx='1rem'>
       <LoadingOverlay visible={isFetchingAccount} zIndex={1000} overlayProps={{ radius: 'sm', blur: 2 }} />
