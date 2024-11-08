@@ -1,14 +1,11 @@
+import { TAccountName } from '@api/services/account/account.request';
 import { Avatar, Group, Paper, Stack, Text } from '@mantine/core';
 import { IconChecks } from '@tabler/icons-react';
-type TMember = {
-  key: number;
-  name: string;
-  email: string;
-};
+
 type TMemberItem = {
-  member: TMember;
+  member: TAccountName;
   checked: boolean;
-  onClick: (member: TMember) => void;
+  onClick: (member: TAccountName) => void;
 };
 const MemberItem = ({ member, onClick, checked }: TMemberItem) => {
   return (

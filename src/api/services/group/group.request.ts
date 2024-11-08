@@ -5,3 +5,9 @@ export type GroupREQ = {
   size: number;
   page: number;
 };
+export type TGroupREQ = {
+  groupName: string;
+  members: string[];
+  owner: string;
+  status: number;
+};

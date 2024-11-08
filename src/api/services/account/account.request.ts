@@ -23,3 +23,9 @@ export type TAccountREQ = {
   permissions?: TPermission[];
   deviceId: string;
 };
+
+export type TAccountName = {
+  _id: string;
+  name: string;
+  email: string;
+};

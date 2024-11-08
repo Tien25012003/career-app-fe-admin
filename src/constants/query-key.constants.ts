@@ -5,6 +5,7 @@ export const QUERY_KEYS = {
   ACCOUNT: {
     USER_INFO: 'USER_INFO',
     LIST: 'ACCOUNT_LIST',
+    NAME: 'ACCOUNT_NAME',
   },
   EXAM: {
     LIST: 'EXAM_LIST',
