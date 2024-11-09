@@ -14,8 +14,9 @@ type Props = {
   result: IResultHandler;
   resultsHandler: UseListStateHandlers<IResultHandler>;
   errors: FormErrors;
+  isCreate?: boolean;
 };
-export function ResultCard({ index, result, resultsHandler, errors }: Props) {
+export function ResultCard({ index, result, resultsHandler, errors, isCreate = true }: Props) {
   // METHODS
   const onDeleteResult = (id: string) => {
     resultsHandler?.filter((result) => result.id !== id);
@@ -57,11 +58,13 @@ export function ResultCard({ index, result, resultsHandler, errors }: Props) {
       <Stack>
         <Group justify='space-between'>
           <Text fw={500}>Kết quả & nhận xét số {index + 1}</Text>
-          <Tooltip label='Xoá lựa chọn'>
-            <Button color='red' onClick={() => onDeleteResult(result.id as string)}>
-              Xoá kết quả & nhận xét
-            </Button>
-          </Tooltip>
+          {isCreate && (
+            <Tooltip label='Xoá lựa chọn'>
+              <Button color='red' onClick={() => onDeleteResult(result.id as string)}>
+                Xoá kết quả & nhận xét
+              </Button>
+            </Tooltip>
+          )}
         </Group>
         <Grid>
           <Grid.Col span={{ sm: 12, lg: 6 }}>
@@ -70,30 +73,32 @@ export function ResultCard({ index, result, resultsHandler, errors }: Props) {
               placeholder='0'
               label={'Từ điểm'}
               withAsterisk
-              value={result?.scoreFrom === 0 ? '' : result?.scoreFrom}
+              value={result?.scoreFrom}
               onChange={(val) => handleChangeResultValues('scoreFrom', Number(val))}
-              error={errors[`results.${index}.score.0`] ? 'Vui lòng không bỏ trống!' : ''}
               styles={{
                 input: {
                   color: 'black', // Forces text color to stay black
                 },
               }}
+              disabled={!isCreate}
+              error={errors[`results.${index}.score.0`] ? 'Vui lòng không bỏ trống!' : ''}
             />
           </Grid.Col>
           <Grid.Col span={{ sm: 12, lg: 6 }}>
             <NumberInput
+              withAsterisk
+              label={'Đến điểm'}
               min={0}
               placeholder='0'
-              label={'Đến điểm'}
-              withAsterisk
-              value={result?.scoreTo === 0 ? '' : result?.scoreTo}
+              value={result?.scoreTo}
               onChange={(val) => handleChangeResultValues('scoreTo', Number(val))}
-              error={errors[`results.${index}.score.1`] ? 'Vui lòng không bỏ trống!' : ''}
               styles={{
                 input: {
                   color: 'black', // Forces text color to stay black
                 },
               }}
+              disabled={!isCreate}
+              error={errors[`results.${index}.score.1`] ? 'Vui lòng không bỏ trống!' : ''}
             />
           </Grid.Col>
           <Grid.Col span={{ sm: 12, lg: 6 }}>
@@ -109,6 +114,7 @@ export function ResultCard({ index, result, resultsHandler, errors }: Props) {
                 }
               }}
               error={(errors[`results.${index}.content`] as string) || ''}
+              editAble={isCreate}
             />
           </Grid.Col>
           <Grid.Col span={{ sm: 12, lg: 6 }}>
@@ -122,6 +128,7 @@ export function ResultCard({ index, result, resultsHandler, errors }: Props) {
                   handleChangeResultValues('detail', '');
                 }
               }}
+              editAble={isCreate}
             />
           </Grid.Col>
           <Grid.Col span={{ sm: 12, lg: 6 }}>

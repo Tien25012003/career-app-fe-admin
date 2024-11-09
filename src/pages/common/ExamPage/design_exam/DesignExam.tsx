@@ -1,19 +1,23 @@
-import { getExamListAPI } from '@api/services/exam/exam.api';
+import { deleteExamAPI, getExamListAPI } from '@api/services/exam/exam.api';
 import { ExamREQ } from '@api/services/exam/exam.request';
 import { ExamRESP } from '@api/services/exam/exam.response';
 import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import { TableButton } from '@component/TableButton/TableButton';
-import { EExamCategory, EExamStatus } from '@enum/exam';
+import { EExamCategory, EExamStatus, EQuestionType } from '@enum/exam';
+import { onError } from '@helper/error.helpers';
 import { Badge, Button, Stack } from '@mantine/core';
 import { IconPencil, IconPlus } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { DATETIME_FORMAT, DateUtils } from '@util/DateUtils';
+import { NotifyUtils } from '@util/NotificationUtils';
 import { QUERY_KEYS } from 'constants/query-key.constants';
+import { ROUTES } from 'constants/routes.constants';
 import { useFilter } from 'hooks/useFilter';
+import useInvalidate from 'hooks/useInvalidate';
 import { DataTableColumn } from 'mantine-datatable';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { QuestionTypeModal } from '../components';
 import { ColorExamStatus, TextExamStatus } from '../utils';
@@ -28,12 +32,33 @@ export default function DesignExam() {
 
   const { queries, hasNone, onSearch, onReset, getPaginationConfigs } = useFilter<ExamREQ>(initialQuery);
 
+  const invalidate = useInvalidate();
+
   // APIS
   const { data: exams, isFetching: isFetchingExam } = useQuery({
     queryKey: [QUERY_KEYS.EXAM.DESIGN_LIST, queries],
     queryFn: () => getExamListAPI(queries),
-    //enabled: !hasNone,
+    enabled: !hasNone,
   });
+
+  const { mutate: deleteExamMutation, isPending: isDeleting } = useMutation({
+    mutationFn: (id: string) => deleteExamAPI(id),
+    onSuccess: () => {
+      invalidate({
+        queryKey: [QUERY_KEYS.EXAM.DESIGN_LIST],
+      });
+      NotifyUtils.success('Xoá bài kiểm tra thành công!');
+    },
+    onError,
+  });
+
+  // METHODS
+  const onDelete = useCallback(
+    (id: string) => {
+      deleteExamMutation(id);
+    },
+    [deleteExamMutation],
+  );
 
   const columns = useMemo<DataTableColumn<ExamRESP>[]>(
     () => [
@@ -87,10 +112,16 @@ export default function DesignExam() {
       {
         accessor: 'actions',
         title: 'Thao tác',
-        render: () => <TableButton onView={() => {}} onEdit={() => {}} onDelete={() => {}} />,
+        render: (val) => (
+          <TableButton
+            onView={() => navigate(`${ROUTES.EXAMS.DESIGN}/${val._id}/${EQuestionType.COMBINE}`)}
+            onEdit={() => {}}
+            onDelete={() => onDelete(val._id)}
+          />
+        ),
       },
     ],
-    [],
+    [navigate, onDelete],
   );
   return (
     <Stack my='1rem' mx='1rem'>
@@ -107,7 +138,7 @@ export default function DesignExam() {
       <AppTable
         data={exams?.data || []}
         columns={columns}
-        isLoading={isFetchingExam}
+        isLoading={isFetchingExam || isDeleting}
         paginationConfigs={getPaginationConfigs(exams?.pagination?.totalPages, exams?.pagination?.totalCounts)}
       />
       <QuestionTypeModal

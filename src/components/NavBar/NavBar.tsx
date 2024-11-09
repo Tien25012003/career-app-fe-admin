@@ -12,8 +12,9 @@ type TNavLink = {
   children?: React.ReactNode;
   showLabel?: boolean;
   active?: boolean;
+  className?: string;
 };
-const CustomNavLink = ({ item, children, showLabel = true, active }: TNavLink) => {
+const CustomNavLink = ({ item, children, showLabel = true, active, className }: TNavLink) => {
   const location = useLocation();
   const theme = useMantineTheme();
   const [miniNavbar] = useAtom(miniNavbarAtom);
@@ -31,6 +32,7 @@ const CustomNavLink = ({ item, children, showLabel = true, active }: TNavLink) =
           marginRight: miniNavbar ? 0 : 10,
         },
       }}
+      className={className}
       label={showLabel ? item.label : ''}
       component={Link}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -106,8 +108,9 @@ export function NavBar() {
                       {navElement.label}
                     </Text>
                     <Box>
-                      {navElement.children?.map((childNavElement) => (
+                      {navElement.children?.map((childNavElement, childIndex) => (
                         <CustomNavLink
+                          className={'mb-2'}
                           item={childNavElement}
                           active={
                             childNavElement.link

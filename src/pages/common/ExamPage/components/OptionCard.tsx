@@ -8,7 +8,7 @@ import { FileWithPath } from '@mantine/dropzone';
 import { FormErrors } from '@mantine/form';
 import { UseListStateHandlers } from '@mantine/hooks';
 import { IconArrowBadgeRight, IconTrash } from '@tabler/icons-react';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { IOptionHandler } from './QuestionCard';
 type Props = {
   index: number;
@@ -17,13 +17,10 @@ type Props = {
   questionType: EQuestionType;
   errors?: FormErrors;
   questionIndex?: number;
+  isCreate?: boolean;
 };
 
-export function OptionCard({ index, option, optionsHandler, questionType, errors, questionIndex }: Props) {
-  // STATES
-  const [content, setContent] = useState('');
-  const [standardScore, setStandardScore] = useState('');
-
+export function OptionCard({ index, option, optionsHandler, questionType, errors, questionIndex, isCreate = true }: Props) {
   // METHODS
   const onDeleteOption = (id: string) => {
     optionsHandler?.filter((option) => option.id !== id);
@@ -118,11 +115,13 @@ export function OptionCard({ index, option, optionsHandler, questionType, errors
     <Stack key={index}>
       <Group className='-mb-3 mt-2'>
         {renderIcon()}
-        <Tooltip label='Xoá lựa chọn'>
-          <ActionIcon color='red.5' variant='subtle' onClick={() => onDeleteOption(option.id as string)}>
-            <IconTrash size='1.125rem' />
-          </ActionIcon>
-        </Tooltip>
+        {isCreate && (
+          <Tooltip label='Xoá lựa chọn'>
+            <ActionIcon color='red.5' variant='subtle' onClick={() => onDeleteOption(option.id as string)}>
+              <IconTrash size='1.125rem' />
+            </ActionIcon>
+          </Tooltip>
+        )}
       </Group>
       <Divider variant='dotted' p={0} />
       <Grid mt={-5} my={'md'}>
@@ -135,9 +134,10 @@ export function OptionCard({ index, option, optionsHandler, questionType, errors
               },
             }}
             label='Nội dung'
-            value={content}
+            value={option?.content}
+            disabled={!isCreate}
             onChange={(val) => {
-              setContent(val.target.value);
+              //setContent(val.target.value);
               handleChangeOptionValues('content', val.target.value);
             }}
             error={errors![`questions.${questionIndex}.options.${index}.content`] || ''}
@@ -149,9 +149,8 @@ export function OptionCard({ index, option, optionsHandler, questionType, errors
             label='Điểm'
             min={0}
             placeholder='0'
-            value={standardScore}
+            value={option?.standardScore}
             onChange={(val) => {
-              setStandardScore(val as string);
               handleChangeOptionValues('standardScore', Number(val));
             }}
             styles={{
@@ -159,6 +158,7 @@ export function OptionCard({ index, option, optionsHandler, questionType, errors
                 color: 'black', // Forces text color to stay black
               },
             }}
+            disabled={!isCreate}
             error={errors![`questions.${questionIndex}.options.${index}.standardScore`] || ''}
           />
         </Grid.Col>
