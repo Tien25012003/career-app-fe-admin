@@ -62,6 +62,7 @@ export function OptionCard({ index, option, optionsHandler, questionType, errors
         return (
           <Tooltip label='Tích chọn nếu đây là đáp án đúng'>
             <Radio
+              disabled={!isCreate}
               label={`Lựa chọn ${index + 1}`}
               name={option.id}
               value={option.id}
@@ -83,6 +84,7 @@ export function OptionCard({ index, option, optionsHandler, questionType, errors
         return (
           <Tooltip label='Tích chọn nếu đây là đáp án đúng' withArrow>
             <Checkbox
+              disabled={!isCreate}
               label={`Lựa chọn ${index + 1}`}
               name={option.id}
               value={option.id}
@@ -175,6 +177,7 @@ export function OptionCard({ index, option, optionsHandler, questionType, errors
             value={option.imageFile}
             onChange={(file) => handelChangeOptionImage(file)}
             accept={[EFileType.JPEG, EFileType.PNG].join(',')}
+            disabled={!isCreate}
           />
         </Grid.Col>
       </Grid>

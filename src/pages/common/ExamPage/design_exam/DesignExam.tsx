@@ -1,4 +1,4 @@
-import { deleteExamAPI, getExamListAPI } from '@api/services/exam/exam.api';
+import { getExamListAPI, updateStatusAPI } from '@api/services/exam/exam.api';
 import { ExamREQ } from '@api/services/exam/exam.request';
 import { ExamRESP } from '@api/services/exam/exam.response';
 import AppSearch from '@component/AppSearch/AppSearch';
@@ -41,8 +41,19 @@ export default function DesignExam() {
     enabled: !hasNone,
   });
 
-  const { mutate: deleteExamMutation, isPending: isDeleting } = useMutation({
-    mutationFn: (id: string) => deleteExamAPI(id),
+  // const { mutate: deleteExamMutation, isPending: isDeleting } = useMutation({
+  //   mutationFn: (id: string) => deleteExamAPI(id),
+  //   onSuccess: () => {
+  //     invalidate({
+  //       queryKey: [QUERY_KEYS.EXAM.DESIGN_LIST],
+  //     });
+  //     NotifyUtils.success('Xoá bài kiểm tra thành công!');
+  //   },
+  //   onError,
+  // });
+
+  const { mutate: updateStatusMutation, isPending: isUpdatingStatus } = useMutation({
+    mutationFn: (data: { id: string; status: EExamStatus }) => updateStatusAPI(data.id, data.status),
     onSuccess: () => {
       invalidate({
         queryKey: [QUERY_KEYS.EXAM.DESIGN_LIST],
@@ -55,9 +66,9 @@ export default function DesignExam() {
   // METHODS
   const onDelete = useCallback(
     (id: string) => {
-      deleteExamMutation(id);
+      updateStatusMutation({ id, status: EExamStatus.BLOCKED });
     },
-    [deleteExamMutation],
+    [updateStatusMutation],
   );
 
   const columns = useMemo<DataTableColumn<ExamRESP>[]>(
@@ -138,8 +149,9 @@ export default function DesignExam() {
       <AppTable
         data={exams?.data || []}
         columns={columns}
-        isLoading={isFetchingExam || isDeleting}
+        isLoading={isFetchingExam || isUpdatingStatus}
         paginationConfigs={getPaginationConfigs(exams?.pagination?.totalPages, exams?.pagination?.totalCounts)}
+        //onRowClick={(row) => navigate(`${ROUTES.EXAMS.DESIGN}/${row.record._id}/${EQuestionType.COMBINE}`)}
       />
       <QuestionTypeModal
         opened={openCreateModal}

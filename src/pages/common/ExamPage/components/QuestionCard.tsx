@@ -9,6 +9,7 @@ import { Badge, Button, Divider, Grid, Group, Paper, Stack, Text } from '@mantin
 import { FileWithPath } from '@mantine/dropzone';
 import { FormErrors } from '@mantine/form';
 import { useListState, UseListStateHandlers } from '@mantine/hooks';
+import { FileUtils } from '@util/FileUtils';
 import { TextUtils } from '@util/TextUtils';
 import { useEffect } from 'react';
 import { IQuestionHandler } from '../create/ExamCreatePage';
@@ -102,12 +103,26 @@ export function QuestionCard({ id, position, questionType, questionsHandler, que
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, options]);
 
+  const fetchFilesForOptions = async () => {
+    const optionsWithFiles = await Promise.all(
+      question?.options.map(async (o) => {
+        // Fetch the image file using imageKey URL
+        let imageFile;
+        if (o.image) {
+          imageFile = await FileUtils.fetchFileFromPath(o.image as string);
+        }
+        return { ...o, imageFile, imageKey: o.imageKey || null };
+      }) || [],
+    );
+    optionsHandler.setState(optionsWithFiles);
+  };
+
   // EFFECTS FOR DETAIL
   useEffect(() => {
     console.log('question card detail');
     if (!isCreate) {
       if (question?.options) {
-        optionsHandler?.setState(question?.options);
+        fetchFilesForOptions();
       }
     }
   }, [isCreate]);
@@ -161,6 +176,7 @@ export function QuestionCard({ id, position, questionType, questionsHandler, que
               onChange={(file) => handleChangeQuestionImages(file)}
               value={question?.imageFile}
               accept={[EFileType.JPEG, EFileType.PNG].join(',')}
+              disabled={!isCreate}
             />
             {/* <PageDropZone
               onDrop={(files) => handleChangeQuestionImages(files as unknown as File)}

@@ -145,6 +145,7 @@ export function ResultCard({ index, result, resultsHandler, errors, isCreate = t
               accept={[EFileType.JPEG, EFileType.PNG].join(',')}
               value={result?.imageFile}
               onChange={(file) => handleChangeResultImages(file)}
+              disabled={!isCreate}
             />
           </Grid.Col>
         </Grid>

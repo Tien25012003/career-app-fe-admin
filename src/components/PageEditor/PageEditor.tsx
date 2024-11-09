@@ -17,7 +17,7 @@ interface PageEditorProps extends InputWrapperProps {
   editAble?: boolean;
   initialValue?: string;
 }
-export function PageEditor({ value = '', initialValue, onChange, error, sticky, stickyOffset, editAble, ...rest }: PageEditorProps) {
+export function PageEditor({ value = '', initialValue, onChange, error, sticky, stickyOffset, editAble = true, ...rest }: PageEditorProps) {
   const theme = useMantineTheme();
   const editor = useEditor({
     extensions: [StarterKit, Underline, Link, Superscript, SubScript, Highlight, TextAlign.configure({ types: ['heading', 'paragraph'] })],
@@ -34,9 +34,9 @@ export function PageEditor({ value = '', initialValue, onChange, error, sticky, 
     <Input.Wrapper error={error} {...rest}>
       <Box
         style={{
-          cursor: editAble ? 'allowed' : 'not-allowed',
-          opacity: editAble ? 0.5 : 1,
-          pointerEvents: editAble ? 'none' : 'auto',
+          cursor: editAble ? 'text' : 'not-allowed',
+          opacity: !editAble ? 0.5 : 1,
+          pointerEvents: !editAble ? 'none' : 'auto',
         }}
       >
         <RichTextEditor

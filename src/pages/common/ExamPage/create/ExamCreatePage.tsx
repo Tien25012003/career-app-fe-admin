@@ -11,6 +11,7 @@ import { useForm, zodResolver } from '@mantine/form';
 import { useFocusTrap, useListState } from '@mantine/hooks';
 import { IconChevronLeft, IconChevronRight, IconHelpOctagon, IconPencil, IconPlus, IconTargetArrow } from '@tabler/icons-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { FileUtils } from '@util/FileUtils';
 import { NotifyUtils } from '@util/NotificationUtils';
 import { SchemaUtils } from '@util/SchemaUtils';
 import { TextUtils } from '@util/TextUtils';
@@ -334,13 +335,42 @@ export default function ExamCreatePage() {
   //console.log('question', questions);
 
   // EFFECTS FOR DETAILS
+
+  const fetchFilesForQuestions = async () => {
+    const questionsWithFiles = await Promise.all(
+      detail?.questions?.map(async (q) => {
+        // Fetch the image file using imageKey URL
+        let imageFile;
+        if (q.image) {
+          imageFile = await FileUtils.fetchFileFromPath(q.image as string);
+        }
+        return { ...q, imageFile, imageKey: q.imageKey || null };
+      }) || [],
+    );
+    questionsHandler.setState(questionsWithFiles);
+  };
+
+  const fetchFilesForResults = async () => {
+    const resultsWithFiles = await Promise.all(
+      detail?.results?.map(async (r) => {
+        // Fetch the image file using imageKey URL
+        let imageFile;
+        if (r.image) {
+          imageFile = await FileUtils.fetchFileFromPath(r.image as string);
+        }
+        return { ...r, imageFile, imageKey: r.imageKey || null };
+      }) || [],
+    );
+    resultsHandler.setState(resultsWithFiles || []);
+  };
+
   useEffect(() => {
     console.log('set detail');
     if (id) {
       if (detail) {
         form.setFieldValue('name', detail?.name || '');
-        questionsHandler.setState(detail?.questions || []);
-        resultsHandler.setState(detail?.results || []);
+        fetchFilesForQuestions();
+        fetchFilesForResults();
       }
     }
   }, [detail, id]);
