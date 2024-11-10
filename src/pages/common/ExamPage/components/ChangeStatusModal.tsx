@@ -8,7 +8,7 @@ import { useMutation } from '@tanstack/react-query';
 import { NotifyUtils } from '@util/NotificationUtils';
 import { QUERY_KEYS } from 'constants/query-key.constants';
 import useInvalidate from 'hooks/useInvalidate';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { z } from 'zod';
 import { TextExamStatus } from '../utils';
 
@@ -32,12 +32,16 @@ export default function ChangeStatusModal({ open = false, onCancel, initialValue
     validate: zodResolver(formSchema),
   });
 
-  const items: ComboboxItem[] = Object.values(EExamStatus)
-    .filter((item) => item !== EExamStatus.BLOCKED)
-    .map((key) => ({
-      value: key,
-      label: TextExamStatus[key],
-    }));
+  const items = useMemo<ComboboxItem[]>(
+    () =>
+      Object.values(EExamStatus)
+        .filter((item) => item !== EExamStatus.BLOCKED)
+        .map((key) => ({
+          value: key,
+          label: TextExamStatus[key],
+        })),
+    [],
+  );
 
   // APIS
 

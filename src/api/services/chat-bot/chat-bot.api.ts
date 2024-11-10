@@ -14,3 +14,5 @@ export const deletePromptAPI = (id: string): Promise<BaseResponse<void>> => api.
 export const getPromptDetailAPI = (id: string): Promise<BaseResponse<ChatBotRESP>> => api.get(`${BASE_URL}/detail`, { params: { id } });
 
 export const editPromptAPI = (id: string, data: EditPromptREQ): Promise<BaseResponse<void>> => api.put(`${BASE_URL}`, data, { params: { id } });
+
+export const executePromptAPI = (data: { prompt: string }): Promise<BaseResponse<string>> => api.post(`${BASE_URL}/execute`, data);

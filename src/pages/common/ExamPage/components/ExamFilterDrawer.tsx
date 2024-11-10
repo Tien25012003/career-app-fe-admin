@@ -1,10 +1,12 @@
 import { ExamREQ } from '@api/services/exam/exam.request';
 import { EExamStatus } from '@enum/exam';
-import { Button, Drawer, Group, Stack, TextInput } from '@mantine/core';
+import { Button, ComboboxItem, Drawer, Group, Select, Stack, TextInput } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { useForm, zodResolver } from '@mantine/form';
 import { IconCalendarMonth } from '@tabler/icons-react';
+import { useMemo } from 'react';
 import { z } from 'zod';
+import { TextExamStatus } from '../utils';
 
 type ExamFilterDrawerProps = {
   opened?: boolean;
@@ -36,6 +38,17 @@ export default function ExamFilterDrawer({ opened = false, onClose, onSubmitFilt
     validate: zodResolver(formSchema),
   });
 
+  const items = useMemo<ComboboxItem[]>(
+    () =>
+      Object.values(EExamStatus)
+        .filter((item) => item !== EExamStatus.BLOCKED)
+        .map((key) => ({
+          value: key,
+          label: TextExamStatus[key],
+        })),
+    [],
+  );
+
   // METHODS
   const handleSubmit = form.onSubmit((formValues) => {
     // console.log('formValues', new Date(formValues.createdAt[0]).getTime());
@@ -55,6 +68,7 @@ export default function ExamFilterDrawer({ opened = false, onClose, onSubmitFilt
         <TextInput label='ID' {...form.getInputProps('id')} data-autofocus />
         <TextInput label='Tên bài kiểm tra' {...form.getInputProps('name')} />
         <TextInput label='Người tạo' {...form.getInputProps('creator')} />
+        <Select withAsterisk label='Trạng thái' placeholder='' data={items} {...form.getInputProps('status')} clearable />
         <DatePickerInput
           placeholder='Ngày tạo'
           label='Ngày tạo'
@@ -72,7 +86,6 @@ export default function ExamFilterDrawer({ opened = false, onClose, onSubmitFilt
             onClick={() => {
               onResetFilter?.();
               form.reset();
-              onClose?.();
             }}
           >
             Reset
