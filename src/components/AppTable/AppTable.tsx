@@ -41,7 +41,7 @@ function AppTable<T>({ data, columns, isLoading, onRowClick, paginationConfigs }
       borderRadius={'md'}
       striped
       //minHeight={500}
-      height={600}
+      height={500}
       noRecordsText='Không có dữ liệu'
       fetching={isLoading}
       onRowClick={onRowClick}

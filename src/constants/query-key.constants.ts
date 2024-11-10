@@ -21,4 +21,7 @@ export const QUERY_KEYS = {
   NEWS: {
     ALL: 'ALL',
   },
+  CONCLUSION: {
+    LIST: 'CONCLUSION_LIST',
+  },
 };

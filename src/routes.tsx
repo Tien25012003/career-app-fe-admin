@@ -202,7 +202,15 @@ const privateRoutes: RouteObject[] = [
             ),
           },
           {
-            path: '/subjects',
+            path: '/exams/system/subjects',
+            element: (
+              <LoadingWrapper>
+                <ExamSystemPage />
+              </LoadingWrapper>
+            ),
+          },
+          {
+            path: '/exams/system/conclusion',
             element: (
               <LoadingWrapper>
                 <ExamSystemPage />

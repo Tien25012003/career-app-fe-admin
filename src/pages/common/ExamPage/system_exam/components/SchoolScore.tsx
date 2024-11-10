@@ -7,6 +7,7 @@ import { TableButton } from '@component/TableButton/TableButton';
 import { onError } from '@helper/error.helpers';
 import { Button, Group, Modal, Stack, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { NotifyUtils } from '@util/NotificationUtils';
 import { SchemaUtils } from '@util/SchemaUtils';
@@ -16,6 +17,7 @@ import useInvalidate from 'hooks/useInvalidate';
 import { DataTableColumn } from 'mantine-datatable';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
+import SubjectFilterDrawer from '../../components/SubjectFilterDrawer';
 type Props = {
   openCreateSubjectModal: boolean;
   setOpenCreateSubjectModal: (openCreateSubjectModal: boolean) => void;
@@ -33,6 +35,7 @@ const initialFormValues: FormValues = {
 export function SchoolScore({ openCreateSubjectModal, setOpenCreateSubjectModal }: Props) {
   // STATES
   const [selectedItem, setSelectedItem] = useState<SubjectRESP | null>(null);
+  const [opened, { open: openFilter, close: closeFilter }] = useDisclosure(false);
 
   const form = useForm({
     initialValues: initialFormValues,
@@ -153,7 +156,7 @@ export function SchoolScore({ openCreateSubjectModal, setOpenCreateSubjectModal 
   }, [openCreateSubjectModal, selectedItem]);
   return (
     <Stack>
-      <AppSearch onSearch={(val) => onSearch({ vnName: val })} onReset={onReset} />
+      <AppSearch onSearch={(val) => onSearch({ vnName: val })} onReset={onReset} onFilter={openFilter} />
       <AppTable
         data={subjects?.data || []}
         columns={columns}
@@ -188,6 +191,14 @@ export function SchoolScore({ openCreateSubjectModal, setOpenCreateSubjectModal 
           </Group>
         </Stack>
       </Modal>
+      <SubjectFilterDrawer
+        opened={opened}
+        onClose={closeFilter}
+        onSubmitFilter={(value) => {
+          onSearch(value);
+        }}
+        onResetFilter={onReset}
+      />
     </Stack>
   );
 }

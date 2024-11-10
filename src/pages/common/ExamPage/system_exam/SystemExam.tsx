@@ -22,12 +22,13 @@ const HEADERS: THeader[] = [
   {
     name: 'SchoolScore',
     label: 'Điểm học bạ',
-    link: '/subjects',
+    link: '/exams/system/subjects',
   },
-  // {
-  //   name: 'Conclusion',
-  //   label: 'Kết luận',
-  // },
+  {
+    name: 'Conclusion',
+    label: 'Kết luận',
+    link: '/exams/system/conclusion',
+  },
 ];
 
 export default function SystemExam() {

@@ -1,12 +1,23 @@
+import { addConclusionAPI, deleteConclusionAPI, editConclusionAPI, getListConclusionAPI } from '@api/services/conclusion/conclusion.api';
+import { AddConclusionREQ, ConclusionREQ } from '@api/services/conclusion/conclusion.request';
+import { ConclusionRESP } from '@api/services/conclusion/conclusion.response';
 import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
-import { Button, Group, Modal, NumberInput, Radio, Stack, TagsInput, Text, Textarea, TextInput } from '@mantine/core';
-import { conclusionDummyData } from '../../dummyData';
-import { z } from 'zod';
+import { TableButton } from '@component/TableButton/TableButton';
 import { EHolland, ESchoolScore } from '@enum/exam';
-import { SchemaUtils } from '@util/SchemaUtils';
-import { useFocusTrap } from '@mantine/hooks';
+import { onError } from '@helper/error.helpers';
+import { Button, Group, Modal, NumberInput, Radio, Stack, TagsInput, Textarea, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
+import { useFocusTrap } from '@mantine/hooks';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { NotifyUtils } from '@util/NotificationUtils';
+import { SchemaUtils } from '@util/SchemaUtils';
+import { QUERY_KEYS } from 'constants/query-key.constants';
+import { useFilter } from 'hooks/useFilter';
+import useInvalidate from 'hooks/useInvalidate';
+import { DataTableColumn } from 'mantine-datatable';
+import { useEffect, useMemo, useState } from 'react';
+import { z } from 'zod';
 
 type Props = {
   openCreateConclusionModal: boolean;
@@ -16,18 +27,18 @@ type Props = {
 const formSchema = z.object({
   Holland: z.nativeEnum(EHolland),
   SchoolScore: z.nativeEnum(ESchoolScore),
-  IQ: z.number(),
-  EQ: z.number(),
+  IQ: z.number().nullable(),
+  EQ: z.number().nullable(),
   Field: z.string().min(1, SchemaUtils.message.nonempty),
-  Jobs: z.array(z.string().min(1, SchemaUtils.message.nonempty)),
+  Jobs: z.array(z.string()).min(1, SchemaUtils.message.nonempty),
   Conclusion: z.string().min(1, SchemaUtils.message.nonempty),
 });
 type FormValues = z.infer<typeof formSchema>;
 const initialFormValues: FormValues = {
   Holland: EHolland.R,
   SchoolScore: ESchoolScore.A,
-  IQ: 0,
-  EQ: 0,
+  IQ: null,
+  EQ: null,
   Field: '',
   Jobs: ['Cơ khí'],
   Conclusion: '',
@@ -38,66 +49,175 @@ export function Conclusion({ openCreateConclusionModal, setOpenCreateConclusionM
     initialValues: initialFormValues,
     validate: zodResolver(formSchema),
   });
-  const handleSubmit = form.onSubmit((formValues) => {});
+
+  const { queries, hasNone, onSearch, onReset, getPaginationConfigs } = useFilter<ConclusionREQ>();
+  const invalidate = useInvalidate();
+
+  const [selectedItem, setSelectedItem] = useState<ConclusionRESP | null>(null);
+
+  // APIS
+  const { data: conclusions, isFetching: isFetchingConclusion } = useQuery({
+    queryKey: [QUERY_KEYS.CONCLUSION.LIST, queries],
+    queryFn: () => getListConclusionAPI(queries),
+    enabled: !hasNone,
+  });
+
+  const { mutate: addConclusionMutation, isPending: isAdding } = useMutation({
+    mutationFn: (request: AddConclusionREQ) => addConclusionAPI(request),
+    onSuccess: () => {
+      invalidate({
+        queryKey: [QUERY_KEYS.CONCLUSION.LIST],
+      });
+      NotifyUtils.success('Tạo mới thành công!');
+      setOpenCreateConclusionModal(false);
+      form.reset();
+    },
+    onError,
+  });
+
+  const { mutate: editConclusionMutation, isPending: isEditing } = useMutation({
+    mutationFn: (request: AddConclusionREQ) => editConclusionAPI(selectedItem?._id as string, request),
+    onSuccess: () => {
+      invalidate({
+        queryKey: [QUERY_KEYS.CONCLUSION.LIST],
+      });
+      NotifyUtils.success('Lưu thay đổi thành công!');
+      setOpenCreateConclusionModal(false);
+      form.reset();
+      setSelectedItem(null);
+    },
+    onError,
+  });
+
+  const { mutate: deleteConclusionMutation, isPending: isDeleting } = useMutation({
+    mutationFn: (id: string) => deleteConclusionAPI(id),
+    onSuccess: () => {
+      invalidate({
+        queryKey: [QUERY_KEYS.CONCLUSION.LIST],
+      });
+      NotifyUtils.success('Xoá kết luận thành công!');
+    },
+    onError,
+  });
+
+  // METHODS
+  const handleSubmit = form.onSubmit((formValues) => {
+    const request: AddConclusionREQ = {
+      ...formValues,
+      Jobs: formValues?.Jobs?.join('\n'),
+      Type: '',
+      Schools: '',
+      IQ: formValues?.IQ?.toString() || '-',
+      EQ: formValues?.EQ?.toString() || '-',
+    };
+    if (selectedItem) {
+      editConclusionMutation(request);
+    } else {
+      addConclusionMutation(request);
+    }
+  });
+
+  // EFFECTS
+  useEffect(() => {
+    if (selectedItem && openCreateConclusionModal) {
+      form.setValues({
+        ...selectedItem,
+        Holland: selectedItem?.Holland as EHolland,
+        SchoolScore: selectedItem?.SchoolScore as ESchoolScore,
+        Jobs: selectedItem?.Jobs?.split('\n') || [],
+        IQ: Number(selectedItem?.IQ),
+        EQ: Number(selectedItem?.EQ),
+      });
+    }
+  }, [selectedItem, openCreateConclusionModal]);
+
+  const columns = useMemo<DataTableColumn<ConclusionRESP>[]>(
+    () => [
+      {
+        accessor: '',
+        title: 'STT',
+        textAlign: 'center',
+        render: (_, index) => <div>{index + 1}</div>,
+        width: 50,
+      },
+      {
+        accessor: '_id',
+        title: 'ID',
+      },
+      {
+        accessor: 'Holland',
+        title: 'Holland',
+        width: 80,
+        textAlign: 'center',
+      },
+      {
+        accessor: 'IQ',
+        title: 'IQ',
+        width: 50,
+        textAlign: 'center',
+      },
+      {
+        accessor: 'EQ',
+        title: 'EQ',
+        width: 50,
+        textAlign: 'center',
+      },
+      {
+        accessor: 'SchoolScore',
+        title: 'Khối',
+        width: 50,
+        textAlign: 'center',
+      },
+      {
+        accessor: 'Field',
+        title: 'Lĩnh vực',
+        width: 100,
+      },
+      {
+        accessor: 'Jobs',
+        title: 'Ngành nghề phù hợp',
+        width: 300,
+        render: (val) => <div style={{ whiteSpace: 'pre-wrap' }}>{val.Jobs}</div>,
+      },
+      {
+        accessor: 'Conclusion',
+        title: 'Kết luận chung',
+        width: 300,
+      },
+      {
+        accessor: 'actions',
+        width: 100,
+        title: 'Thao tác',
+        render: (val) => (
+          <TableButton
+            onEdit={() => {
+              setSelectedItem(val);
+              setOpenCreateConclusionModal(true);
+            }}
+            onDelete={() => deleteConclusionMutation(val._id as string)}
+            isConfirmDelete={true}
+          />
+        ),
+      },
+    ],
+    [deleteConclusionMutation],
+  );
+
   return (
     <Stack>
-      <AppSearch />
+      <AppSearch onSearch={(val) => onSearch({ Field: val })} onReset={onReset} />
       <AppTable
-        data={conclusionDummyData}
-        columns={[
-          {
-            accessor: 'Type',
-            title: 'Thứ tự',
-            width: 50,
-            textAlign: 'center',
-          },
-          {
-            accessor: 'Holland',
-            title: 'Holland',
-            width: 50,
-            textAlign: 'center',
-          },
-          {
-            accessor: 'IQ',
-            title: 'IQ',
-            width: 50,
-            textAlign: 'center',
-          },
-          {
-            accessor: 'EQ',
-            title: 'EQ',
-            width: 50,
-            textAlign: 'center',
-          },
-          {
-            accessor: 'SchoolScore',
-            title: 'Khối',
-            width: 50,
-            textAlign: 'center',
-          },
-          {
-            accessor: 'Field',
-            title: 'Lĩnh vực',
-            width: 100,
-          },
-          {
-            accessor: 'Jobs',
-            title: 'Ngành nghề phù hợp',
-            width: 300,
-            render: (val) => <div style={{ whiteSpace: 'pre-wrap' }}>{val.Jobs}</div>,
-          },
-          {
-            accessor: 'Conclusion',
-            title: 'Kết luận chung',
-            width: 300,
-          },
-        ]}
+        data={conclusions?.data || []}
+        columns={columns}
+        isLoading={isFetchingConclusion}
+        paginationConfigs={getPaginationConfigs(conclusions?.pagination?.totalPages, conclusions?.pagination?.totalCounts)}
       />
       <Modal
         opened={openCreateConclusionModal}
         onClose={() => {
           setOpenCreateConclusionModal(false);
           form.reset();
+          setSelectedItem(null);
         }}
         centered
         size={'md'}
@@ -120,17 +240,19 @@ export function Conclusion({ openCreateConclusionModal, setOpenCreateConclusionM
             </Group>
           </Radio.Group>
           <Group>
-            <NumberInput withAsterisk label='IQ' {...form.getInputProps('IQ')} />
-            <NumberInput withAsterisk label='EQ' {...form.getInputProps('EQ')} />
+            <NumberInput label='IQ' {...form.getInputProps('IQ')} placeholder='0' min={0} />
+            <NumberInput label='EQ' {...form.getInputProps('EQ')} placeholder='0' min={0} />
           </Group>
           <TextInput withAsterisk label='Lĩnh vực' {...form.getInputProps('Field')} />
           <TagsInput withAsterisk label='Công việc thích hợp' {...form.getInputProps('Jobs')} clearable />
-          <Textarea withAsterisk label='Kết luận' {...form.getInputProps('Conclusion')} autosize />
+          <Textarea withAsterisk label='Kết luận' {...form.getInputProps('Conclusion')} autosize minRows={4} />
           <Group justify='flex-end'>
             <Button variant='default' onClick={() => setOpenCreateConclusionModal(false)}>
               Huỷ
             </Button>
-            <Button onClick={() => handleSubmit()}>Thêm</Button>
+            <Button onClick={() => handleSubmit()} loading={isAdding || isDeleting || isEditing}>
+              {selectedItem ? 'Lưu thay đổi' : 'Thêm'}
+            </Button>
           </Group>
         </Stack>
       </Modal>
