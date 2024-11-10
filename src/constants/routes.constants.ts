@@ -3,6 +3,6 @@ export const ROUTES = {
   SIGNUP: '/signup',
   EXAMS: {
     DESIGN: '/exams/design',
-    SYSTEM: '/exams/design',
+    SYSTEM: '/exams/system',
   },
 };

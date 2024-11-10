@@ -1,4 +1,4 @@
-import { addExamAPI } from '@api/services/exam/exam.api';
+import { addExamAPI, getExamDetailAPI } from '@api/services/exam/exam.api';
 import { AddExamREQ } from '@api/services/exam/exam.request';
 import { UploadRESP } from '@api/services/uploads/upload.response';
 import { uploadAPI } from '@api/services/uploads/uploads.api';
@@ -10,7 +10,8 @@ import { Box, Button, Divider, Grid, Group, Loader, Paper, Stack, Text, TextInpu
 import { useForm, zodResolver } from '@mantine/form';
 import { useFocusTrap, useListState } from '@mantine/hooks';
 import { IconChevronLeft, IconChevronRight, IconHelpOctagon, IconPencil, IconPlus, IconTargetArrow } from '@tabler/icons-react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { FileUtils } from '@util/FileUtils';
 import { NotifyUtils } from '@util/NotificationUtils';
 import { SchemaUtils } from '@util/SchemaUtils';
 import { TextUtils } from '@util/TextUtils';
@@ -22,7 +23,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { z } from 'zod';
 import { QuestionCard, QuestionTypeModal } from '../components';
 import { ResultCard } from '../components/ResultCard';
-import { TextExamCategory, TextQuestionType } from '../utils';
+import { TextExamCategory } from '../utils';
 
 const formSchema = z.object({
   //type: z.string().trim().min(1, SchemaUtils.message.nonempty),
@@ -86,7 +87,7 @@ export default function ExamCreatePage() {
     initialValues: initialFormValues,
     validate: zodResolver(formSchema),
   });
-  const { allQuestionType } = useParams();
+  const { allQuestionType, id } = useParams();
 
   const [questions, questionsHandler] = useListState<IQuestionHandler>([]);
   const [results, resultsHandler] = useListState<IResultHandler>([]);
@@ -122,7 +123,19 @@ export default function ExamCreatePage() {
     onError,
   });
 
-  const isLoading = useMemo(() => isUploadingFiles || isAddingExam, [isAddingExam, isUploadingFiles]);
+  // APIS GET DETAILS
+  const { data: detail, isFetching: isFetchingDetail } = useQuery({
+    queryKey: [QUERY_KEYS.CHAT_BOT.LIST, id],
+    queryFn: () => getExamDetailAPI(id!),
+    enabled: !!id,
+    select: ({ data }) => data,
+  });
+
+  const isCreate = useMemo(() => !id, [id]);
+
+  const isView = useMemo(() => id && !location?.pathname?.includes('edit'), [id, location?.pathname]);
+
+  const isLoading = useMemo(() => isUploadingFiles || isAddingExam || isFetchingDetail, [isAddingExam, isFetchingDetail, isUploadingFiles]);
 
   // METHODS
   const onAddQuestion = (questionType: EQuestionType) => {
@@ -281,6 +294,12 @@ export default function ExamCreatePage() {
     // console.log('processedForm', form.getValues());
   });
 
+  const onReset = () => {
+    form.reset();
+    questionsHandler.setState([]);
+    resultsHandler.setState([]);
+  };
+
   // EFFECTS
   useEffect(() => {
     console.log('set question');
@@ -313,6 +332,49 @@ export default function ExamCreatePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [results]);
 
+  //console.log('question', questions);
+
+  // EFFECTS FOR DETAILS
+
+  const fetchFilesForQuestions = async () => {
+    const questionsWithFiles = await Promise.all(
+      detail?.questions?.map(async (q) => {
+        // Fetch the image file using imageKey URL
+        let imageFile;
+        if (q.image) {
+          imageFile = await FileUtils.fetchFileFromPath(q.image as string);
+        }
+        return { ...q, imageFile, imageKey: q.imageKey || null };
+      }) || [],
+    );
+    questionsHandler.setState(questionsWithFiles);
+  };
+
+  const fetchFilesForResults = async () => {
+    const resultsWithFiles = await Promise.all(
+      detail?.results?.map(async (r) => {
+        // Fetch the image file using imageKey URL
+        let imageFile;
+        if (r.image) {
+          imageFile = await FileUtils.fetchFileFromPath(r.image as string);
+        }
+        return { ...r, imageFile, imageKey: r.imageKey || null };
+      }) || [],
+    );
+    resultsHandler.setState(resultsWithFiles || []);
+  };
+
+  useEffect(() => {
+    console.log('set detail');
+    if (id) {
+      if (detail) {
+        form.setFieldValue('name', detail?.name || '');
+        fetchFilesForQuestions();
+        fetchFilesForResults();
+      }
+    }
+  }, [detail, id]);
+
   return (
     <Stack my='1rem' mx='1rem'>
       <PageHeader
@@ -322,7 +384,7 @@ export default function ExamCreatePage() {
           <>
             <IconChevronRight size={'20'} />
             <Text size='xl' fw={500}>
-              Thêm mới
+              {id ? id : `Thêm mới`}
             </Text>
           </>
         }
@@ -339,17 +401,37 @@ export default function ExamCreatePage() {
       />
 
       <Paper withBorder shadow='sm' radius={'md'} p='md' className='relative'>
-        <Stack ref={focusTrapRef}>
+        <Stack ref={isCreate ? focusTrapRef : null}>
           <Stack>
             <Grid>
-              <Grid.Col span={{ sm: 12, lg: 4 }}>
-                <TextInput withAsterisk label='Tên bài kiểm tra' data-autofocus {...form.getInputProps('name')} />
+              <Grid.Col span={{ sm: 12, lg: 6 }}>
+                <TextInput
+                  withAsterisk
+                  label='Tên bài kiểm tra'
+                  data-autofocus
+                  {...form.getInputProps('name')}
+                  disabled={!isCreate}
+                  styles={{
+                    input: {
+                      color: 'black', // Forces text color to stay black
+                    },
+                  }}
+                />
               </Grid.Col>
-              <Grid.Col span={{ sm: 12, lg: 4 }}>
+              {/* <Grid.Col span={{ sm: 12, lg: 4 }}>
                 <TextInput label='Thể loại chung' value={TextQuestionType[allQuestionType as EQuestionType]} disabled={true} />
-              </Grid.Col>
-              <Grid.Col span={{ sm: 12, lg: 4 }}>
-                <TextInput label='Phân loại' value={TextExamCategory[category as EExamCategory]} disabled={true} />
+              </Grid.Col> */}
+              <Grid.Col span={{ sm: 12, lg: 6 }}>
+                <TextInput
+                  label='Phân loại'
+                  value={TextExamCategory[category as EExamCategory]}
+                  disabled={true}
+                  styles={{
+                    input: {
+                      color: 'black', // Forces text color to stay black
+                    },
+                  }}
+                />
               </Grid.Col>
             </Grid>
           </Stack>
@@ -370,24 +452,27 @@ export default function ExamCreatePage() {
                   question={question}
                   errors={form.errors}
                   index={index}
+                  isCreate={isCreate}
                 />
               ))}
             </Stack>
           )}
 
-          <Button
-            variant='outline'
-            onClick={() => {
-              if (allQuestionType === EQuestionType.COMBINE) {
-                setOpenQuestionTypeModal(true);
-              } else {
-                onAddQuestion(allQuestionType as EQuestionType);
-              }
-            }}
-            leftSection={<IconPlus />}
-          >
-            Thêm câu hỏi
-          </Button>
+          {isCreate && (
+            <Button
+              variant='outline'
+              onClick={() => {
+                if (allQuestionType === EQuestionType.COMBINE) {
+                  setOpenQuestionTypeModal(true);
+                } else {
+                  onAddQuestion(allQuestionType as EQuestionType);
+                }
+              }}
+              leftSection={<IconPlus />}
+            >
+              Thêm câu hỏi
+            </Button>
+          )}
 
           <Divider variant='dotted' />
 
@@ -398,25 +483,37 @@ export default function ExamCreatePage() {
           {results?.length > 0 && (
             <Stack>
               {results?.map((result, index) => (
-                <ResultCard key={index} index={index} result={result} resultsHandler={resultsHandler} errors={form.errors} />
+                <ResultCard key={index} index={index} result={result} resultsHandler={resultsHandler} errors={form.errors} isCreate={!id} />
               ))}
             </Stack>
           )}
 
-          <Button variant='outline' onClick={onAddResult} leftSection={<IconPlus />}>
-            Thêm kết quả & nhận xét
-          </Button>
+          {isCreate && (
+            <Button variant='outline' onClick={onAddResult} leftSection={<IconPlus />}>
+              Thêm kết quả & nhận xét
+            </Button>
+          )}
 
           <Divider variant='dotted' />
 
-          <Group justify='space-between'>
-            <Button variant='default' onClick={() => {}}>
-              Mặc định
-            </Button>
-            <Button onClick={() => handleSubmit()} disabled={!form.isDirty()} loading={isLoading}>
-              Lưu
-            </Button>
-          </Group>
+          {isCreate && (
+            <Group justify='space-between'>
+              <Button variant='default' onClick={onReset}>
+                Mặc định
+              </Button>
+              <Button onClick={() => handleSubmit()} disabled={!form.isDirty()} loading={isLoading}>
+                Lưu
+              </Button>
+            </Group>
+          )}
+
+          {isView && (
+            <Group justify='flex-end'>
+              <Button onClick={() => {}} loading={isLoading}>
+                Chuyển đến trang Edit
+              </Button>
+            </Group>
+          )}
         </Stack>
         {isLoading && (
           <Box className='absolute left-0 right-0 top-0 bottom-0 bg-white opacity-70 rounded-md items-center justify-center flex'>

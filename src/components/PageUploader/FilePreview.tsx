@@ -34,7 +34,7 @@ export default function FilePreview({ image, files, height = 300, isLoading = fa
               <Card key={index} padding={'xs'} withBorder>
                 {image && (
                   <Card.Section>
-                    <Image src={imageUrl} height={height} fit='contain' alt={file.name} onLoad={() => !file.path && URL.revokeObjectURL(imageUrl!)} />
+                    <Image src={imageUrl} h={height} fit='contain' alt={file.name} onLoad={() => !file.path && URL.revokeObjectURL(imageUrl!)} />
                   </Card.Section>
                 )}
                 <Group gap={'xs'} wrap='nowrap'>

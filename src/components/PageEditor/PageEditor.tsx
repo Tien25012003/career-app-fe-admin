@@ -7,6 +7,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { useEffect } from 'react';
 interface PageEditorProps extends InputWrapperProps {
   value?: string;
   onChange?: (value: string) => void;
@@ -14,8 +15,9 @@ interface PageEditorProps extends InputWrapperProps {
   sticky?: boolean;
   stickyOffset?: number;
   editAble?: boolean;
+  initialValue?: string;
 }
-export function PageEditor({ value = '', onChange, error, sticky, stickyOffset, editAble, ...rest }: PageEditorProps) {
+export function PageEditor({ value = '', initialValue, onChange, error, sticky, stickyOffset, editAble = true, ...rest }: PageEditorProps) {
   const theme = useMantineTheme();
   const editor = useEditor({
     extensions: [StarterKit, Underline, Link, Superscript, SubScript, Highlight, TextAlign.configure({ types: ['heading', 'paragraph'] })],
@@ -23,13 +25,18 @@ export function PageEditor({ value = '', onChange, error, sticky, stickyOffset, 
     editable: editAble,
     onUpdate: (props) => onChange && onChange(props.editor.getHTML()),
   });
+  useEffect(() => {
+    if (initialValue) {
+      editor?.commands?.setContent(initialValue);
+    }
+  }, [initialValue]);
   return (
     <Input.Wrapper error={error} {...rest}>
       <Box
         style={{
-          cursor: editAble ? 'allowed' : 'allowed',
-          opacity: editAble ? 0.5 : 1,
-          pointerEvents: editAble ? 'none' : 'auto',
+          cursor: editAble ? 'text' : 'not-allowed',
+          opacity: !editAble ? 0.5 : 1,
+          pointerEvents: !editAble ? 'none' : 'auto',
         }}
       >
         <RichTextEditor
@@ -44,7 +51,7 @@ export function PageEditor({ value = '', onChange, error, sticky, stickyOffset, 
               padding: theme.spacing.xs,
             },
             content: {
-              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
+              backgroundColor: !editAble ? '#f6f8fa' : theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
               minHeight: '3.55rem',
             },
           }}

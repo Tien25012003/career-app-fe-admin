@@ -9,8 +9,9 @@ import { Badge, Button, Divider, Grid, Group, Paper, Stack, Text } from '@mantin
 import { FileWithPath } from '@mantine/dropzone';
 import { FormErrors } from '@mantine/form';
 import { useListState, UseListStateHandlers } from '@mantine/hooks';
+import { FileUtils } from '@util/FileUtils';
 import { TextUtils } from '@util/TextUtils';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { IQuestionHandler } from '../create/ExamCreatePage';
 import { ColorQuestionType, TextQuestionType } from '../utils';
 import { OptionCard } from './OptionCard';
@@ -23,6 +24,7 @@ type Props = {
   questionType: EQuestionType;
   errors?: FormErrors;
   index?: number;
+  isCreate?: boolean;
 };
 
 export interface IOptionHandler extends IOption {
@@ -30,9 +32,8 @@ export interface IOptionHandler extends IOption {
   imageBase64?: HTMLImageElement | null | undefined;
 }
 
-export function QuestionCard({ id, position, questionType, questionsHandler, question, errors, index }: Props) {
+export function QuestionCard({ id, position, questionType, questionsHandler, question, errors, index, isCreate = true }: Props) {
   // STATE
-  const [questionTitle, setQuestionTitle] = useState('');
   const [options, optionsHandler] = useListState<IOptionHandler>([
     {
       id: TextUtils.slugize('new-option'),
@@ -102,6 +103,30 @@ export function QuestionCard({ id, position, questionType, questionsHandler, que
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, options]);
 
+  const fetchFilesForOptions = async () => {
+    const optionsWithFiles = await Promise.all(
+      question?.options.map(async (o) => {
+        // Fetch the image file using imageKey URL
+        let imageFile;
+        if (o.image) {
+          imageFile = await FileUtils.fetchFileFromPath(o.image as string);
+        }
+        return { ...o, imageFile, imageKey: o.imageKey || null };
+      }) || [],
+    );
+    optionsHandler.setState(optionsWithFiles);
+  };
+
+  // EFFECTS FOR DETAIL
+  useEffect(() => {
+    console.log('question card detail');
+    if (!isCreate) {
+      if (question?.options) {
+        fetchFilesForOptions();
+      }
+    }
+  }, [isCreate]);
+
   return (
     <Paper withBorder shadow='none' radius={'md'} p='md'>
       <Stack>
@@ -112,9 +137,11 @@ export function QuestionCard({ id, position, questionType, questionsHandler, que
               {TextQuestionType[questionType as EQuestionType]}
             </Badge>
           </Group>
-          <Button color='red' onClick={onDeleteQuestion}>
-            Xoá câu hỏi
-          </Button>
+          {isCreate && (
+            <Button color='red' onClick={onDeleteQuestion}>
+              Xoá câu hỏi
+            </Button>
+          )}
         </Group>
         <Divider variant='dotted' p={0} />
         <Grid>
@@ -122,9 +149,10 @@ export function QuestionCard({ id, position, questionType, questionsHandler, que
             <PageEditor
               label='Câu hỏi'
               withAsterisk
-              value={questionTitle}
+              value={question?.questionTitle}
+              editAble={isCreate}
+              initialValue={isCreate ? '' : question?.questionTitle}
               onChange={(val) => {
-                setQuestionTitle(val);
                 if (isValidContentWithHTML(val)) {
                   handleChangeQuestionValues('questionTitle', val);
                 } else {
@@ -148,6 +176,7 @@ export function QuestionCard({ id, position, questionType, questionsHandler, que
               onChange={(file) => handleChangeQuestionImages(file)}
               value={question?.imageFile}
               accept={[EFileType.JPEG, EFileType.PNG].join(',')}
+              disabled={!isCreate}
             />
             {/* <PageDropZone
               onDrop={(files) => handleChangeQuestionImages(files as unknown as File)}
@@ -167,16 +196,19 @@ export function QuestionCard({ id, position, questionType, questionsHandler, que
                 questionType={questionType}
                 errors={errors}
                 questionIndex={index}
+                isCreate={isCreate}
               />
             ))}
           </Stack>
         )}
 
-        <Group>
-          <Button className='ml-auto' onClick={onAddOption}>
-            Thêm lựa chọn
-          </Button>
-        </Group>
+        {isCreate && (
+          <Group>
+            <Button className='ml-auto' onClick={onAddOption}>
+              Thêm lựa chọn
+            </Button>
+          </Group>
+        )}
       </Stack>
     </Paper>
   );

@@ -1,7 +1,6 @@
 import { Header } from '@component/Header';
 import { NavBar } from '@component/NavBar';
 import PageChatbot from '@component/PageChatbot/PageChatbot';
-import PageScrollToTop from '@component/PageScrollToTop/PageScrollToTop';
 import { AppShell, useMantineColorScheme, useMantineTheme } from '@mantine/core';
 import { hideNavbarAtom, miniNavbarAtom } from 'atoms/AppAtoms';
 import { useAtom } from 'jotai';

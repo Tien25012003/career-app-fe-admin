@@ -4,9 +4,6 @@ import { IQuestion, IResult, TExam } from '@interface/exam';
 export type ExamRESP = {
   _id: string;
   type: TExam;
-  questions: IQuestion[];
-  results: IResult[];
-
   name?: string;
   category: EExamCategory;
   createdAt?: number;
@@ -14,4 +11,9 @@ export type ExamRESP = {
   updatedAt?: number;
   updator?: string;
   status?: EExamStatus;
+};
+
+export type ExamDetailRESP = ExamRESP & {
+  questions: IQuestion[];
+  results: IResult[];
 };

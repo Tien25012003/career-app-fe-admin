@@ -4,11 +4,12 @@ import { ExamRESP } from '@api/services/exam/exam.response';
 import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
 import { TableButton } from '@component/TableButton/TableButton';
-import { EExamCategory, EExamStatus } from '@enum/exam';
+import { EExamCategory, EExamStatus, EQuestionType } from '@enum/exam';
 import { Badge, Stack } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { DATETIME_FORMAT, DateUtils } from '@util/DateUtils';
 import { QUERY_KEYS } from 'constants/query-key.constants';
+import { ROUTES } from 'constants/routes.constants';
 import { useFilter } from 'hooks/useFilter';
 import { DataTableColumn } from 'mantine-datatable';
 import { useMemo } from 'react';
@@ -89,10 +90,12 @@ export default function ExamManagement({ openCreateExamModal, setOpenCreateExamM
       {
         accessor: 'actions',
         title: 'Thao tác',
-        render: () => <TableButton onView={() => {}} onEdit={() => {}} onDelete={() => {}} />,
+        render: (val) => (
+          <TableButton onView={() => navigate(`${ROUTES.EXAMS.SYSTEM}/${val._id}/${EQuestionType.COMBINE}`)} onEdit={() => {}} onDelete={() => {}} />
+        ),
       },
     ],
-    [],
+    [navigate],
   );
   return (
     <Stack>

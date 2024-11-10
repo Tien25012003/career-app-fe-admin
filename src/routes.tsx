@@ -151,6 +151,22 @@ const privateRoutes: RouteObject[] = [
             ),
           },
           {
+            path: '/exams/system/:id/:allQuestionType',
+            element: (
+              <LoadingWrapper>
+                <ExamCreatePage />
+              </LoadingWrapper>
+            ),
+          },
+          {
+            path: '/exams/design/:id/:allQuestionType',
+            element: (
+              <LoadingWrapper>
+                <ExamCreatePage />
+              </LoadingWrapper>
+            ),
+          },
+          {
             path: '/subjects',
             element: (
               <LoadingWrapper>
