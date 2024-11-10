@@ -11,3 +11,5 @@ export const getSchoolSubjectsAPI = (data: SubjectREQ): Promise<TPagingResponse<
 export const addSubjectAPI = (data: SubjectREQ[]): Promise<BaseResponse<void>> => api.post(`${BASE_URL}/addSubjects`, { subjects: data });
 
 export const deleteSubjectAPI = (id: string): Promise<BaseResponse<void>> => api.delete(`${BASE_URL}/deleteSubjects`, { params: { id } });
+
+export const editSubjectAPI = (id: string, data: SubjectREQ): Promise<BaseResponse<void>> => api.put(`${BASE_URL}`, data, { params: { id } });

@@ -1,7 +1,6 @@
 import { executePromptAPI } from '@api/services/chat-bot/chat-bot.api';
 import CloverLogo from '@asset/clover.png';
 import { onError } from '@helper/error.helpers';
-import { IChat } from '@interface/chatbot';
 import {
   ActionIcon,
   Affix,
@@ -23,41 +22,6 @@ import { IconBrandHipchat, IconSend2 } from '@tabler/icons-react';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-const CHATBOT_SAMPLE: IChat[] = [
-  {
-    isBot: false,
-    message: 'Who are you?',
-  },
-  {
-    isBot: true,
-    message: 'I am Career App',
-  },
-  {
-    isBot: false,
-    message: 'Who are you?',
-  },
-  {
-    isBot: true,
-    message: 'I am Career App',
-  },
-  {
-    isBot: false,
-    message: 'Who are you?',
-  },
-  {
-    isBot: true,
-    message: 'I am Career App',
-  },
-  {
-    isBot: false,
-    message: 'Who are you?',
-  },
-  {
-    isBot: true,
-    message: 'I am Career App',
-  },
-];
 
 type TPrompt = {
   isBot: boolean;

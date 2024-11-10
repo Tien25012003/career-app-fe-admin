@@ -7,6 +7,7 @@ import { PageHeader } from '@component/PageHeader/PageHeader';
 import { TableButton } from '@component/TableButton/TableButton';
 import { onError } from '@helper/error.helpers';
 import { Button, Stack } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { IconBrandWechat, IconPlus } from '@tabler/icons-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { DATETIME_FORMAT, DateUtils } from '@util/DateUtils';
@@ -17,10 +18,13 @@ import useInvalidate from 'hooks/useInvalidate';
 import { DataTableColumn } from 'mantine-datatable';
 import { useCallback, useMemo, useState } from 'react';
 import { ChatbotCreateModal } from './components';
+import ChatbotFilterDrawer from './components/ChatbotFilterDrawer';
 
 export default function ChatbotPage() {
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const [opened, { open: openFilter, close: closeFilter }] = useDisclosure(false);
 
   const { queries, hasNone, onSearch, onReset, getPaginationConfigs } = useFilter<ChatBotREQ>();
 
@@ -120,7 +124,7 @@ export default function ChatbotPage() {
           </Button>
         }
       />
-      <AppSearch onSearch={(val) => onSearch({ question: val })} onReset={onReset} />
+      <AppSearch onSearch={(val) => onSearch({ question: val })} onReset={onReset} onFilter={openFilter} />
       <AppTable
         isLoading={isFetchingChatBots || isDeleting}
         data={chatbots?.data || []}
@@ -136,6 +140,14 @@ export default function ChatbotPage() {
           }
         }}
         selectedId={selectedId}
+      />
+      <ChatbotFilterDrawer
+        opened={opened}
+        onClose={closeFilter}
+        onSubmitFilter={(value) => {
+          onSearch(value);
+        }}
+        onResetFilter={onReset}
       />
     </Stack>
   );

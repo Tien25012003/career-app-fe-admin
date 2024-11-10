@@ -77,7 +77,7 @@ export default function SystemExam() {
               variant={selectedHeader === header.name ? 'filled' : 'outline'}
               onClick={() => {
                 setSelectedHeader(header.name);
-                navigate(header.link as string);
+                navigate(header.link as string, { replace: true });
               }}
             >
               {header.label}

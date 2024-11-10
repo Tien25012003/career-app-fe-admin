@@ -67,7 +67,7 @@ export default function ExamFilterDrawer({ opened = false, onClose, onSubmitFilt
       <Stack className='w-full'>
         <TextInput label='ID' {...form.getInputProps('id')} data-autofocus />
         <TextInput label='Tên bài kiểm tra' {...form.getInputProps('name')} />
-        <TextInput label='Người tạo' {...form.getInputProps('creator')} />
+        {/* <TextInput label='Người tạo' {...form.getInputProps('creator')} /> */}
         <Select withAsterisk label='Trạng thái' placeholder='' data={items} {...form.getInputProps('status')} clearable />
         <DatePickerInput
           placeholder='Ngày tạo'

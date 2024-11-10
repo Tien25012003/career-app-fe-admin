@@ -1,4 +1,4 @@
-import { addSubjectAPI, deleteSubjectAPI, getSchoolSubjectsAPI } from '@api/services/subject/subject.api';
+import { addSubjectAPI, deleteSubjectAPI, editSubjectAPI, getSchoolSubjectsAPI } from '@api/services/subject/subject.api';
 import { SubjectREQ } from '@api/services/subject/subject.request';
 import { SubjectRESP } from '@api/services/subject/subject.response';
 import AppSearch from '@component/AppSearch/AppSearch';
@@ -14,7 +14,7 @@ import { QUERY_KEYS } from 'constants/query-key.constants';
 import { useFilter } from 'hooks/useFilter';
 import useInvalidate from 'hooks/useInvalidate';
 import { DataTableColumn } from 'mantine-datatable';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
 type Props = {
   openCreateSubjectModal: boolean;
@@ -31,6 +31,9 @@ const initialFormValues: FormValues = {
   vnName: '',
 };
 export function SchoolScore({ openCreateSubjectModal, setOpenCreateSubjectModal }: Props) {
+  // STATES
+  const [selectedItem, setSelectedItem] = useState<SubjectRESP | null>(null);
+
   const form = useForm({
     initialValues: initialFormValues,
     validate: zodResolver(formSchema),
@@ -70,8 +73,27 @@ export function SchoolScore({ openCreateSubjectModal, setOpenCreateSubjectModal 
     onError,
   });
 
+  const { mutate: editSubjectMutation, isPending: isEditing } = useMutation({
+    mutationFn: (request: SubjectREQ) => editSubjectAPI(selectedItem?._id as string, request),
+    onSuccess: () => {
+      invalidate({
+        queryKey: [QUERY_KEYS.SCHOOL_SUBJECT.LIST],
+      });
+      NotifyUtils.success('Sửa môn học thành công!');
+      setOpenCreateSubjectModal(false);
+      setSelectedItem(null);
+      form.reset();
+    },
+    onError,
+  });
+
   // METHODS
   const handleSubmit = form.onSubmit((formValues) => {
+    if (selectedItem?._id) {
+      const request: SubjectREQ = formValues;
+      editSubjectMutation(request);
+      return;
+    }
     const request: SubjectREQ[] = [formValues];
     addSubjectMutation(request);
   });
@@ -109,11 +131,26 @@ export function SchoolScore({ openCreateSubjectModal, setOpenCreateSubjectModal 
       {
         accessor: 'actions',
         title: 'Thao tác',
-        render: (val) => <TableButton onView={() => {}} onEdit={() => {}} onDelete={() => handleDelete(val._id)} />,
+        render: (val) => (
+          <TableButton
+            onEdit={() => {
+              setSelectedItem(val);
+              setOpenCreateSubjectModal(true);
+            }}
+            onDelete={() => handleDelete(val._id)}
+          />
+        ),
       },
     ],
     [handleDelete],
   );
+
+  // EFFECTS
+  useEffect(() => {
+    if (openCreateSubjectModal && selectedItem) {
+      form.setValues(selectedItem);
+    }
+  }, [openCreateSubjectModal, selectedItem]);
   return (
     <Stack>
       <AppSearch onSearch={(val) => onSearch({ vnName: val })} onReset={onReset} />
@@ -125,7 +162,10 @@ export function SchoolScore({ openCreateSubjectModal, setOpenCreateSubjectModal 
       />
       <Modal
         opened={openCreateSubjectModal}
-        onClose={() => setOpenCreateSubjectModal(false)}
+        onClose={() => {
+          setOpenCreateSubjectModal(false);
+          setSelectedItem(null);
+        }}
         centered
         size={'md'}
         title='Thêm môn học'
@@ -142,8 +182,8 @@ export function SchoolScore({ openCreateSubjectModal, setOpenCreateSubjectModal 
             <Button variant='default' onClick={() => setOpenCreateSubjectModal(false)}>
               Huỷ
             </Button>
-            <Button onClick={() => handleSubmit()} disabled={!form.isDirty()}>
-              Thêm
+            <Button onClick={() => handleSubmit()} disabled={!form.isDirty()} loading={isAdding || isEditing}>
+              {selectedItem ? 'Lưu thay đổi' : 'Thêm'}
             </Button>
           </Group>
         </Stack>
