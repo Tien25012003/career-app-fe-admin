@@ -5,11 +5,11 @@ import { IconChecks } from '@tabler/icons-react';
 type TMemberItem = {
   member: TAccountName;
   checked: boolean;
-  onClick: (member: TAccountName) => void;
+  onClick?: (member: TAccountName) => void;
 };
 const MemberItem = ({ member, onClick, checked }: TMemberItem) => {
   return (
-    <Paper withBorder py={'md'} px={'lg'} onClick={() => onClick(member)}>
+    <Paper withBorder py={'md'} px={'lg'} onClick={() => onClick?.(member)}>
       <Group justify='space-between' flex={1}>
         <Group>
           <Avatar color='initials' name={member.name} size={'md'} />

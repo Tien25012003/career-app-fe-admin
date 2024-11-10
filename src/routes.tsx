@@ -13,7 +13,9 @@ const DashboardPage = lazyWithReload(() => import('@page/common/DashboardPage/Da
 const LoginPage = lazyWithReload(() => import('@page/auth/LoginPage/LoginPage'));
 const SignUpPage = lazyWithReload(() => import('@page/auth/SignUpPage/SignUpPage'));
 const NewsPage = lazyWithReload(() => import('@page/common/NewsPage/NewsPage'));
+//Account
 const AccountPage = lazyWithReload(() => import('@page/common/AccountPage/AccountPage'));
+const GroupDetailPage = lazyWithReload(() => import('@page/common/AccountPage/detail/GroupDetailPage'));
 // exams
 const ExamSystemPage = lazyWithReload(() => import('@page/common/ExamPage/system_exam/SystemExam'));
 const ExamDesignPage = lazyWithReload(() => import('@page/common/ExamPage/design_exam/DesignExam'));
@@ -93,10 +95,18 @@ const privateRoutes: RouteObject[] = [
             ),
           },
           {
-            path: '/accounts/create/group',
+            path: '/accounts/group/create',
             element: (
               <LoadingWrapper>
                 <AccountCreateGroupPage />
+              </LoadingWrapper>
+            ),
+          },
+          {
+            path: '/accounts/group/view/:id',
+            element: (
+              <LoadingWrapper>
+                <GroupDetailPage />
               </LoadingWrapper>
             ),
           },
