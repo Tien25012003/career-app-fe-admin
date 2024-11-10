@@ -99,10 +99,10 @@ const AccountGroupListPage = () => {
           {
             accessor: 'actions',
             title: 'Thao tác',
-            render: () => (
+            render: (record) => (
               <TableButton
                 onView={() => {
-                  navigate('/accounts/create/group');
+                  navigate(`/accounts/group/view/${record._id}`);
                 }}
                 onEdit={() => {}}
                 onDelete={() => {}}
