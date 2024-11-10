@@ -1,5 +1,5 @@
-import { addExamAPI, getExamDetailAPI } from '@api/services/exam/exam.api';
-import { AddExamREQ } from '@api/services/exam/exam.request';
+import { addExamAPI, editExamAPI, getExamDetailAPI } from '@api/services/exam/exam.api';
+import { AddExamREQ, EditExamREQ } from '@api/services/exam/exam.request';
 import { UploadRESP } from '@api/services/uploads/upload.response';
 import { uploadAPI } from '@api/services/uploads/uploads.api';
 import { PageHeader } from '@component/PageHeader/PageHeader';
@@ -131,9 +131,25 @@ export default function ExamCreatePage() {
     select: ({ data }) => data,
   });
 
+  // APIS EDIT EXAM
+  const { mutate: editExamMutation, isPending: isEditingExam } = useMutation({
+    mutationFn: (request: EditExamREQ) => editExamAPI(id as string, request),
+    onSuccess: () => {
+      invalidate({
+        queryKey: [QUERY_KEYS.EXAM.DESIGN_LIST, id],
+      });
+      NotifyUtils.success('Sửa bài kiểm tra mới thành công!');
+      //form.reset();
+      //navigate(category === EExamCategory.SYSTEM ? ROUTES.EXAMS.SYSTEM : ROUTES.EXAMS.DESIGN);
+    },
+    onError,
+  });
+
   const isCreate = useMemo(() => !id, [id]);
 
-  const isView = useMemo(() => id && !location?.pathname?.includes('edit'), [id, location?.pathname]);
+  const isView = useMemo(() => !!id && !location?.pathname?.includes('edit'), [id, location?.pathname]);
+
+  const isEdit = useMemo(() => !!id && location?.pathname?.includes('edit'), [id, location?.pathname]);
 
   const isLoading = useMemo(() => isUploadingFiles || isAddingExam || isFetchingDetail, [isAddingExam, isFetchingDetail, isUploadingFiles]);
 
@@ -282,7 +298,15 @@ export default function ExamCreatePage() {
 
       console.log('REQUEST', request);
 
-      addExamMutation(request);
+      if (isCreate) {
+        addExamMutation(request);
+        return;
+      }
+
+      if (isEdit) {
+        editExamMutation(request);
+        return;
+      }
     } catch (error) {
       console.log('error add exam', error);
       NotifyUtils.error('Lỗi upload hình ảnh!');
@@ -344,7 +368,7 @@ export default function ExamCreatePage() {
         if (q.image) {
           imageFile = await FileUtils.fetchFileFromPath(q.image as string);
         }
-        return { ...q, imageFile, imageKey: q.imageKey || null };
+        return { ...q, imageFile: imageFile || null, imageKey: q.imageKey || null, imageBase64: null };
       }) || [],
     );
     questionsHandler.setState(questionsWithFiles);
@@ -358,7 +382,14 @@ export default function ExamCreatePage() {
         if (r.image) {
           imageFile = await FileUtils.fetchFileFromPath(r.image as string);
         }
-        return { ...r, imageFile, imageKey: r.imageKey || null };
+        return {
+          ...r,
+          imageFile: imageFile || null,
+          imageKey: r.imageKey || null,
+          scoreFrom: r.score?.[0] || 0,
+          scoreTo: r.score?.[1] || 0,
+          imageBase64: null,
+        };
       }) || [],
     );
     resultsHandler.setState(resultsWithFiles || []);
@@ -374,6 +405,9 @@ export default function ExamCreatePage() {
       }
     }
   }, [detail, id]);
+
+  console.log('form', form.errors);
+  console.log('form value', form.getValues());
 
   return (
     <Stack my='1rem' mx='1rem'>
@@ -394,6 +428,7 @@ export default function ExamCreatePage() {
             component={Link}
             to={category === EExamCategory.SYSTEM ? '/exams/system' : '/exams/design'}
             variant='default'
+            replace
           >
             Trở về
           </Button>
@@ -410,7 +445,7 @@ export default function ExamCreatePage() {
                   label='Tên bài kiểm tra'
                   data-autofocus
                   {...form.getInputProps('name')}
-                  disabled={!isCreate}
+                  disabled={isView}
                   styles={{
                     input: {
                       color: 'black', // Forces text color to stay black
@@ -453,12 +488,14 @@ export default function ExamCreatePage() {
                   errors={form.errors}
                   index={index}
                   isCreate={isCreate}
+                  isView={isView}
+                  isEdit={isEdit}
                 />
               ))}
             </Stack>
           )}
 
-          {isCreate && (
+          {(isCreate || isEdit) && (
             <Button
               variant='outline'
               onClick={() => {
@@ -483,12 +520,21 @@ export default function ExamCreatePage() {
           {results?.length > 0 && (
             <Stack>
               {results?.map((result, index) => (
-                <ResultCard key={index} index={index} result={result} resultsHandler={resultsHandler} errors={form.errors} isCreate={!id} />
+                <ResultCard
+                  key={index}
+                  index={index}
+                  result={result}
+                  resultsHandler={resultsHandler}
+                  errors={form.errors}
+                  isCreate={isCreate}
+                  isEdit={isEdit}
+                  isView={isView}
+                />
               ))}
             </Stack>
           )}
 
-          {isCreate && (
+          {(isCreate || isEdit) && (
             <Button variant='outline' onClick={onAddResult} leftSection={<IconPlus />}>
               Thêm kết quả & nhận xét
             </Button>
@@ -503,6 +549,14 @@ export default function ExamCreatePage() {
               </Button>
               <Button onClick={() => handleSubmit()} disabled={!form.isDirty()} loading={isLoading}>
                 Lưu
+              </Button>
+            </Group>
+          )}
+
+          {isEdit && (
+            <Group justify='flex-end'>
+              <Button onClick={() => handleSubmit()} disabled={!form.isDirty()} loading={isLoading}>
+                Lưu thay đổi
               </Button>
             </Group>
           )}

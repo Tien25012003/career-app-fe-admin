@@ -18,9 +18,21 @@ type Props = {
   errors?: FormErrors;
   questionIndex?: number;
   isCreate?: boolean;
+  isView?: boolean;
+  isEdit?: boolean;
 };
 
-export function OptionCard({ index, option, optionsHandler, questionType, errors, questionIndex, isCreate = true }: Props) {
+export function OptionCard({
+  index,
+  option,
+  optionsHandler,
+  questionType,
+  errors,
+  questionIndex,
+  isCreate = true,
+  isView = false,
+  isEdit = false,
+}: Props) {
   // METHODS
   const onDeleteOption = (id: string) => {
     optionsHandler?.filter((option) => option.id !== id);
@@ -62,7 +74,7 @@ export function OptionCard({ index, option, optionsHandler, questionType, errors
         return (
           <Tooltip label='Tích chọn nếu đây là đáp án đúng'>
             <Radio
-              disabled={!isCreate}
+              disabled={isView}
               label={`Lựa chọn ${index + 1}`}
               name={option.id}
               value={option.id}
@@ -84,7 +96,7 @@ export function OptionCard({ index, option, optionsHandler, questionType, errors
         return (
           <Tooltip label='Tích chọn nếu đây là đáp án đúng' withArrow>
             <Checkbox
-              disabled={!isCreate}
+              disabled={isView}
               label={`Lựa chọn ${index + 1}`}
               name={option.id}
               value={option.id}
@@ -117,7 +129,7 @@ export function OptionCard({ index, option, optionsHandler, questionType, errors
     <Stack key={index}>
       <Group className='-mb-3 mt-2'>
         {renderIcon()}
-        {isCreate && (
+        {(isCreate || isEdit) && (
           <Tooltip label='Xoá lựa chọn'>
             <ActionIcon color='red.5' variant='subtle' onClick={() => onDeleteOption(option.id as string)}>
               <IconTrash size='1.125rem' />
@@ -137,7 +149,7 @@ export function OptionCard({ index, option, optionsHandler, questionType, errors
             }}
             label='Nội dung'
             value={option?.content}
-            disabled={!isCreate}
+            disabled={isView}
             onChange={(val) => {
               //setContent(val.target.value);
               handleChangeOptionValues('content', val.target.value);
@@ -160,7 +172,7 @@ export function OptionCard({ index, option, optionsHandler, questionType, errors
                 color: 'black', // Forces text color to stay black
               },
             }}
-            disabled={!isCreate}
+            disabled={isView}
             error={errors![`questions.${questionIndex}.options.${index}.standardScore`] || ''}
           />
         </Grid.Col>
@@ -177,7 +189,7 @@ export function OptionCard({ index, option, optionsHandler, questionType, errors
             value={option.imageFile}
             onChange={(file) => handelChangeOptionImage(file)}
             accept={[EFileType.JPEG, EFileType.PNG].join(',')}
-            disabled={!isCreate}
+            disabled={isView}
           />
         </Grid.Col>
       </Grid>

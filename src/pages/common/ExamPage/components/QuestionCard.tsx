@@ -25,6 +25,8 @@ type Props = {
   errors?: FormErrors;
   index?: number;
   isCreate?: boolean;
+  isView?: boolean;
+  isEdit?: boolean;
 };
 
 export interface IOptionHandler extends IOption {
@@ -32,7 +34,18 @@ export interface IOptionHandler extends IOption {
   imageBase64?: HTMLImageElement | null | undefined;
 }
 
-export function QuestionCard({ id, position, questionType, questionsHandler, question, errors, index, isCreate = true }: Props) {
+export function QuestionCard({
+  id,
+  position,
+  questionType,
+  questionsHandler,
+  question,
+  errors,
+  index,
+  isCreate = true,
+  isView = false,
+  isEdit = false,
+}: Props) {
   // STATE
   const [options, optionsHandler] = useListState<IOptionHandler>([
     {
@@ -111,7 +124,7 @@ export function QuestionCard({ id, position, questionType, questionsHandler, que
         if (o.image) {
           imageFile = await FileUtils.fetchFileFromPath(o.image as string);
         }
-        return { ...o, imageFile, imageKey: o.imageKey || null };
+        return { ...o, imageFile: imageFile || null, imageKey: o.imageKey || null, imageBase64: null };
       }) || [],
     );
     optionsHandler.setState(optionsWithFiles);
@@ -120,12 +133,12 @@ export function QuestionCard({ id, position, questionType, questionsHandler, que
   // EFFECTS FOR DETAIL
   useEffect(() => {
     console.log('question card detail');
-    if (!isCreate) {
+    if (isView || isEdit) {
       if (question?.options) {
         fetchFilesForOptions();
       }
     }
-  }, [isCreate]);
+  }, [isView, isEdit]);
 
   return (
     <Paper withBorder shadow='none' radius={'md'} p='md'>
@@ -150,8 +163,8 @@ export function QuestionCard({ id, position, questionType, questionsHandler, que
               label='Câu hỏi'
               withAsterisk
               value={question?.questionTitle}
-              editAble={isCreate}
-              initialValue={isCreate ? '' : question?.questionTitle}
+              editAble={isCreate || isEdit}
+              initialValue={isCreate || isEdit ? '' : question?.questionTitle}
               onChange={(val) => {
                 if (isValidContentWithHTML(val)) {
                   handleChangeQuestionValues('questionTitle', val);
@@ -176,7 +189,7 @@ export function QuestionCard({ id, position, questionType, questionsHandler, que
               onChange={(file) => handleChangeQuestionImages(file)}
               value={question?.imageFile}
               accept={[EFileType.JPEG, EFileType.PNG].join(',')}
-              disabled={!isCreate}
+              disabled={isView}
             />
             {/* <PageDropZone
               onDrop={(files) => handleChangeQuestionImages(files as unknown as File)}
@@ -197,12 +210,14 @@ export function QuestionCard({ id, position, questionType, questionsHandler, que
                 errors={errors}
                 questionIndex={index}
                 isCreate={isCreate}
+                isView={isView}
+                isEdit={isEdit}
               />
             ))}
           </Stack>
         )}
 
-        {isCreate && (
+        {(isCreate || isEdit) && (
           <Group>
             <Button className='ml-auto' onClick={onAddOption}>
               Thêm lựa chọn

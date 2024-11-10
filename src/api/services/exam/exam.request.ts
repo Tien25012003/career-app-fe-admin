@@ -21,3 +21,10 @@ export type AddExamREQ = {
   category: EExamCategory;
   status?: EExamStatus;
 };
+
+export type EditExamREQ = {
+  name: string;
+  type: TExam | null;
+  questions: IQuestion[];
+  results: IResult[];
+};

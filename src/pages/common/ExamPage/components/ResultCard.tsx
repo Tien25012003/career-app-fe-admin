@@ -15,8 +15,10 @@ type Props = {
   resultsHandler: UseListStateHandlers<IResultHandler>;
   errors: FormErrors;
   isCreate?: boolean;
+  isView?: boolean;
+  isEdit?: boolean;
 };
-export function ResultCard({ index, result, resultsHandler, errors, isCreate = true }: Props) {
+export function ResultCard({ index, result, resultsHandler, errors, isCreate = true, isEdit = false, isView = false }: Props) {
   // METHODS
   const onDeleteResult = (id: string) => {
     resultsHandler?.filter((result) => result.id !== id);
@@ -58,7 +60,7 @@ export function ResultCard({ index, result, resultsHandler, errors, isCreate = t
       <Stack>
         <Group justify='space-between'>
           <Text fw={500}>Kết quả & nhận xét số {index + 1}</Text>
-          {isCreate && (
+          {(isCreate || isEdit) && (
             <Tooltip label='Xoá lựa chọn'>
               <Button color='red' onClick={() => onDeleteResult(result.id as string)}>
                 Xoá kết quả & nhận xét
@@ -80,7 +82,7 @@ export function ResultCard({ index, result, resultsHandler, errors, isCreate = t
                   color: 'black', // Forces text color to stay black
                 },
               }}
-              disabled={!isCreate}
+              disabled={isView}
               error={errors[`results.${index}.score.0`] ? 'Vui lòng không bỏ trống!' : ''}
             />
           </Grid.Col>
@@ -97,7 +99,7 @@ export function ResultCard({ index, result, resultsHandler, errors, isCreate = t
                   color: 'black', // Forces text color to stay black
                 },
               }}
-              disabled={!isCreate}
+              disabled={isView}
               error={errors[`results.${index}.score.1`] ? 'Vui lòng không bỏ trống!' : ''}
             />
           </Grid.Col>
@@ -114,7 +116,7 @@ export function ResultCard({ index, result, resultsHandler, errors, isCreate = t
                 }
               }}
               error={(errors[`results.${index}.content`] as string) || ''}
-              editAble={isCreate}
+              editAble={isCreate || isEdit}
             />
           </Grid.Col>
           <Grid.Col span={{ sm: 12, lg: 6 }}>
@@ -128,7 +130,7 @@ export function ResultCard({ index, result, resultsHandler, errors, isCreate = t
                   handleChangeResultValues('detail', '');
                 }
               }}
-              editAble={isCreate}
+              editAble={isCreate || isEdit}
             />
           </Grid.Col>
           <Grid.Col span={{ sm: 12, lg: 6 }}>
@@ -145,7 +147,7 @@ export function ResultCard({ index, result, resultsHandler, errors, isCreate = t
               accept={[EFileType.JPEG, EFileType.PNG].join(',')}
               value={result?.imageFile}
               onChange={(file) => handleChangeResultImages(file)}
-              disabled={!isCreate}
+              disabled={isView}
             />
           </Grid.Col>
         </Grid>

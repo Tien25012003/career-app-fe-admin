@@ -1,7 +1,7 @@
 import { api } from '@api/config';
 import { EExamStatus } from '@enum/exam';
 import { BaseResponse, TPagingResponse } from '@type/response.type';
-import { AddExamREQ, ExamREQ } from './exam.request';
+import { AddExamREQ, EditExamREQ, ExamREQ } from './exam.request';
 import { ExamDetailRESP, ExamRESP } from './exam.response';
 
 const BASE_URL = '/exams';
@@ -16,3 +16,5 @@ export const getExamDetailAPI = (id: string): Promise<BaseResponse<ExamDetailRES
 
 export const updateStatusAPI = (id: string, status: EExamStatus): Promise<BaseResponse<void>> =>
   api.put(`${BASE_URL}/status`, { status }, { params: { id } });
+
+export const editExamAPI = (id: string, data: EditExamREQ): Promise<BaseResponse<void>> => api.put(`${BASE_URL}/edit`, data, { params: { id } });
