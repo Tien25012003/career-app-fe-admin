@@ -7,10 +7,15 @@ export type ExamREQ = {
   type?: TExam;
   creator?: string;
   updator?: string;
-  status?: EExamStatus;
+  status?: EExamStatus | null;
 
   // For group
   groupId?: number;
+
+  // For filter
+  id?: string;
+  startDate?: number;
+  endDate?: number;
 };
 
 export type AddExamREQ = {

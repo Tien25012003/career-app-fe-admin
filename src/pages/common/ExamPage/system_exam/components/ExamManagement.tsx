@@ -7,6 +7,7 @@ import { TableButton } from '@component/TableButton/TableButton';
 import { EExamCategory, EExamStatus, EQuestionType } from '@enum/exam';
 import { onError } from '@helper/error.helpers';
 import { ActionIcon, Badge, Menu, Stack } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { IconSettings, IconStatusChange } from '@tabler/icons-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { DATETIME_FORMAT, DateUtils } from '@util/DateUtils';
@@ -20,6 +21,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { QuestionTypeModal } from '../../components';
 import ChangeStatusModal from '../../components/ChangeStatusModal';
+import ExamFilterDrawer from '../../components/ExamFilterDrawer';
 import { ColorExamStatus, TextExamStatus } from '../../utils';
 type Props = {
   openCreateExamModal: boolean;
@@ -33,6 +35,7 @@ export default function ExamManagement({ openCreateExamModal, setOpenCreateExamM
   // STATES
   const [openChangeStatusModal, setOpenChangeStatusModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ExamRESP | null>(null);
+  const [opened, { open: openFilter, close: closeFilter }] = useDisclosure(false);
 
   const navigate = useNavigate();
 
@@ -112,10 +115,6 @@ export default function ExamManagement({ openCreateExamModal, setOpenCreateExamM
         render: (val) => (val.updatedAt ? DateUtils.fDate(new Date(val.updatedAt), DATETIME_FORMAT) : '_'),
       },
       {
-        accessor: 'updator',
-        title: 'Người sửa đổi',
-      },
-      {
         accessor: 'actions',
         title: 'Thao tác',
         render: (val) => (
@@ -156,7 +155,7 @@ export default function ExamManagement({ openCreateExamModal, setOpenCreateExamM
   );
   return (
     <Stack>
-      <AppSearch onSearch={(val) => onSearch({ name: val })} onReset={onReset} />
+      <AppSearch onSearch={(val) => onSearch({ name: val })} onReset={onReset} onFilter={openFilter} />
       <AppTable
         data={exams?.data || []}
         columns={columns}
@@ -177,6 +176,14 @@ export default function ExamManagement({ openCreateExamModal, setOpenCreateExamM
           setSelectedItem(null);
         }}
         initialValues={selectedItem as ExamRESP}
+      />
+      <ExamFilterDrawer
+        opened={opened}
+        onClose={closeFilter}
+        onSubmitFilter={(value) => {
+          onSearch(value);
+        }}
+        onResetFilter={onReset}
       />
     </Stack>
   );

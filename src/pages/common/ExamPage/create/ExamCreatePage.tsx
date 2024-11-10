@@ -6,7 +6,7 @@ import { PageHeader } from '@component/PageHeader/PageHeader';
 import { EExamCategory, EExamStatus, EQuestionType } from '@enum/exam';
 import { onError } from '@helper/error.helpers';
 import { IOption, IQuestion, IResult } from '@interface/exam';
-import { Box, Button, Divider, Grid, Group, Loader, Paper, Stack, Text, TextInput } from '@mantine/core';
+import { Badge, Box, Button, Divider, Grid, Group, Loader, Paper, Stack, Text, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { useFocusTrap, useListState } from '@mantine/hooks';
 import { IconChevronLeft, IconChevronRight, IconHelpOctagon, IconPencil, IconPlus, IconTargetArrow } from '@tabler/icons-react';
@@ -23,7 +23,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { z } from 'zod';
 import { QuestionCard, QuestionTypeModal } from '../components';
 import { ResultCard } from '../components/ResultCard';
-import { TextExamCategory } from '../utils';
+import { ColorExamStatus, TextExamCategory, TextExamStatus } from '../utils';
 
 const formSchema = z.object({
   //type: z.string().trim().min(1, SchemaUtils.message.nonempty),
@@ -324,6 +324,8 @@ export default function ExamCreatePage() {
     resultsHandler.setState([]);
   };
 
+  console.log('form errors', form.errors);
+
   // EFFECTS
   useEffect(() => {
     console.log('set question');
@@ -406,9 +408,6 @@ export default function ExamCreatePage() {
     }
   }, [detail, id]);
 
-  console.log('form', form.errors);
-  console.log('form value', form.getValues());
-
   return (
     <Stack my='1rem' mx='1rem'>
       <PageHeader
@@ -416,10 +415,20 @@ export default function ExamCreatePage() {
         leftSection={<IconPencil />}
         middleSection={
           <>
-            <IconChevronRight size={'20'} />
-            <Text size='xl' fw={500}>
-              {id ? id : `Thêm mới`}
-            </Text>
+            <Group>
+              <IconChevronRight size={'20'} />
+              <Text size='xl' fw={500}>
+                {id ? id : `Thêm mới`}
+              </Text>
+              {(isView || isEdit) && (
+                <>
+                  <IconChevronRight size={'20'} />
+                  <Badge size='sm' color={ColorExamStatus(detail?.status as EExamStatus)} className='mx-auto'>
+                    {TextExamStatus[detail?.status as EExamStatus]}
+                  </Badge>
+                </>
+              )}
+            </Group>
           </>
         }
         rightSection={
@@ -563,7 +572,20 @@ export default function ExamCreatePage() {
 
           {isView && (
             <Group justify='flex-end'>
-              <Button onClick={() => {}} loading={isLoading}>
+              <Button
+                onClick={() => {
+                  console.log('category', category);
+                  if (category === EExamCategory.SYSTEM) {
+                    navigate(`${ROUTES.EXAMS.SYSTEM}/edit/${id}/${EQuestionType.COMBINE}`, { replace: true });
+                    return;
+                  }
+                  if (category === EExamCategory.DESIGN) {
+                    navigate(`${ROUTES.EXAMS.DESIGN}/edit/${id}/${EQuestionType.COMBINE}`, { replace: true });
+                    return;
+                  }
+                }}
+                loading={isLoading}
+              >
                 Chuyển đến trang Edit
               </Button>
             </Group>

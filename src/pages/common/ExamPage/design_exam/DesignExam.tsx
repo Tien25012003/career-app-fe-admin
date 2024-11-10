@@ -8,7 +8,8 @@ import { TableButton } from '@component/TableButton/TableButton';
 import { EExamCategory, EExamStatus, EQuestionType } from '@enum/exam';
 import { onError } from '@helper/error.helpers';
 import { ActionIcon, Badge, Button, Menu, Stack } from '@mantine/core';
-import { IconPencil, IconPlus, IconSettings, IconStatusChange } from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
+import { IconPencil, IconPlus, IconSettings, IconStatusChange, IconUsersPlus } from '@tabler/icons-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { DATETIME_FORMAT, DateUtils } from '@util/DateUtils';
 import { NotifyUtils } from '@util/NotificationUtils';
@@ -21,6 +22,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { QuestionTypeModal } from '../components';
 import ChangeStatusModal from '../components/ChangeStatusModal';
+import ExamFilterDrawer from '../components/ExamFilterDrawer';
 import { ColorExamStatus, TextExamStatus } from '../utils';
 
 export const initialQuery = {
@@ -32,6 +34,9 @@ export default function DesignExam() {
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openChangeStatusModal, setOpenChangeStatusModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ExamRESP | null>(null);
+  const [opened, { open: openFilter, close: closeFilter }] = useDisclosure(false);
+
+  // const [userInfo] = useAtom(userInfoAtom);
 
   const navigate = useNavigate();
 
@@ -122,10 +127,6 @@ export default function DesignExam() {
         render: (val) => (val.updatedAt ? DateUtils.fDate(new Date(val.updatedAt), DATETIME_FORMAT) : '_'),
       },
       {
-        accessor: 'updator',
-        title: 'Người sửa đổi',
-      },
-      {
         accessor: 'actions',
         title: 'Thao tác',
         render: (val) => (
@@ -157,6 +158,9 @@ export default function DesignExam() {
               >
                 Chuyển trạng thái
               </Menu.Item>
+              <Menu.Item onClick={() => {}} leftSection={<IconUsersPlus color='grey' size={16} />}>
+                Thêm vào nhóm
+              </Menu.Item>
             </Menu.Dropdown>
           </Menu>
         ),
@@ -175,7 +179,7 @@ export default function DesignExam() {
           </Button>
         }
       />
-      <AppSearch />
+      <AppSearch onSearch={(val) => onSearch({ name: val })} onReset={onReset} onFilter={openFilter} />
       <AppTable
         data={exams?.data || []}
         columns={columns}
@@ -197,6 +201,14 @@ export default function DesignExam() {
           setSelectedItem(null);
         }}
         initialValues={selectedItem as ExamRESP}
+      />
+      <ExamFilterDrawer
+        opened={opened}
+        onClose={closeFilter}
+        onSubmitFilter={(value) => {
+          onSearch(value);
+        }}
+        onResetFilter={onReset}
       />
     </Stack>
   );
