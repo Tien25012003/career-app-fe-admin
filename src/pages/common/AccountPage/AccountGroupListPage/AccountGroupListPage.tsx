@@ -1,11 +1,14 @@
-import { getGroupListAPI } from '@api/services/group/group.api';
+import { queryClient } from '@api/config/queryClient';
+import { deleteGroupAPI, getGroupListAPI } from '@api/services/group/group.api';
 import { GroupREQ } from '@api/services/group/group.request';
 import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
 import { TableButton } from '@component/TableButton/TableButton';
 import { Avatar, Badge, Group, Stack, Tooltip } from '@mantine/core';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { DateUtils } from '@util/DateUtils';
+import { NotifyUtils } from '@util/NotificationUtils';
+import { AxiosError } from 'axios';
 import { QUERY_KEYS } from 'constants/query-key.constants';
 import { useFilter } from 'hooks/useFilter';
 import { useNavigate } from 'react-router-dom';
@@ -50,6 +53,19 @@ const AccountGroupListPage = () => {
     queryFn: () => getGroupListAPI(queries),
     enabled: !hasNone,
   });
+  const { mutate: deleteGroup, isPending } = useMutation({
+    mutationFn: (id: string) => deleteGroupAPI({ id }),
+    onSuccess: () => {
+      NotifyUtils.success('Xóa nhóm thành công!');
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GROUP.LIST, queries],
+      });
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      NotifyUtils.error(error.response?.data?.message);
+    },
+  });
+
   return (
     <Stack>
       <AppSearch onSearch={(value) => onSearch({ ...queries, groupName: value })} onReset={onReset} />
@@ -107,7 +123,9 @@ const AccountGroupListPage = () => {
                 onEdit={() => {
                   navigate(`/accounts/group/edit/${record._id}`);
                 }}
-                onDelete={() => {}}
+                onDelete={() => {
+                  deleteGroup(record._id);
+                }}
               />
             ),
           },
