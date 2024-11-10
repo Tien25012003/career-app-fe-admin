@@ -18,4 +18,7 @@ export const QUERY_KEYS = {
     LIST: 'GROUP_LIST',
     SELECT: 'GROUP_SELECT',
   },
+  NEWS: {
+    ALL: 'ALL',
+  },
 };

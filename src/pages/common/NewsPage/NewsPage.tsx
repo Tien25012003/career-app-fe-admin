@@ -1,10 +1,13 @@
+import { getAllNewsAPI } from '@api/services/news/news.api';
 import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import { TableButton } from '@component/TableButton/TableButton';
 import { Badge, Button, Group, Image, Modal, ScrollArea, Stack, Text } from '@mantine/core';
 import { IconBrandWechat, IconNews, IconPlus } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
 import { DateUtils } from '@util/DateUtils';
+import { QUERY_KEYS } from 'constants/query-key.constants';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 type TNews = {
@@ -33,6 +36,10 @@ const newsDummyData: TNews[] = [
 ];
 export default function NewsPage() {
   const [openCreateModal, setOpenCreateModal] = useState(false);
+  const { data: news, isFetching } = useQuery({
+    queryKey: [QUERY_KEYS.NEWS.ALL],
+    queryFn: () => getAllNewsAPI(),
+  });
   return (
     <Stack my='1rem' mx='1rem'>
       <PageHeader
@@ -46,13 +53,13 @@ export default function NewsPage() {
       />
       <AppSearch />
       <AppTable
-        data={newsDummyData}
+        data={news?.data || []}
+        isLoading={isFetching}
         columns={[
           {
-            accessor: 'id',
+            accessor: '_id',
             title: 'ID',
-            width: 50,
-            textAlign: 'center',
+            width: 200,
           },
           {
             accessor: 'image',
@@ -90,7 +97,7 @@ export default function NewsPage() {
           {
             accessor: 'createdAt',
             title: 'Ngày tạo',
-            render: (record) => <Text>{DateUtils.fDate(record.createdAt)}</Text>,
+            render: (record) => <Text>{DateUtils.fDate(new Date(record.createdAt))}</Text>,
           },
           {
             accessor: 'actions',
