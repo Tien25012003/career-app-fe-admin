@@ -24,4 +24,7 @@ export const QUERY_KEYS = {
   CONCLUSION: {
     LIST: 'CONCLUSION_LIST',
   },
+  DICTIONARY: {
+    LIST: 'DICTIONARY',
+  },
 };

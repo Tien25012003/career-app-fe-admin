@@ -28,3 +28,12 @@ export enum ESchoolScore {
   C = 'C',
   D = 'D',
 }
+
+export enum EGroup {
+  A0 = 'A0',
+  // A1 = 'A1',
+  B = 'B',
+  C = 'C',
+  D1 = 'D1',
+  D7 = 'D7',
+}

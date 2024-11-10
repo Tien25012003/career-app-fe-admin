@@ -15,9 +15,12 @@ const AppSearch = ({ onSearch, onReset, onFilter }: AppSearchProps) => {
   return (
     <Paper p={'xs'} shadow='md' radius={'md'} bg={colorScheme === 'light' ? theme.colors.gray[0] : theme.colors.gray[9]} withBorder>
       <Group>
-        <Button variant='light' leftSection={<IconAdjustmentsHorizontal size={'1.125rem'} />} color='grape' onClick={() => onFilter?.()}>
-          Lọc
-        </Button>
+        {!!onFilter && (
+          <Button variant='light' leftSection={<IconAdjustmentsHorizontal size={'1.125rem'} />} color='grape' onClick={() => onFilter?.()}>
+            Lọc
+          </Button>
+        )}
+
         <Input
           leftSection={<IconSearch size={'1.125rem'} />}
           placeholder='Tìm kiếm thông tin'

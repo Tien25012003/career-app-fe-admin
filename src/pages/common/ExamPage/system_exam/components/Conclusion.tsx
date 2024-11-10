@@ -8,7 +8,7 @@ import { EHolland, ESchoolScore } from '@enum/exam';
 import { onError } from '@helper/error.helpers';
 import { Button, Group, Modal, NumberInput, Radio, Stack, TagsInput, Textarea, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import { useFocusTrap } from '@mantine/hooks';
+import { useDisclosure, useFocusTrap } from '@mantine/hooks';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { NotifyUtils } from '@util/NotificationUtils';
 import { SchemaUtils } from '@util/SchemaUtils';
@@ -18,6 +18,7 @@ import useInvalidate from 'hooks/useInvalidate';
 import { DataTableColumn } from 'mantine-datatable';
 import { useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
+import ConclusionFilterDrawer from '../../components/ConclusionFilterDrawer';
 
 type Props = {
   openCreateConclusionModal: boolean;
@@ -54,6 +55,7 @@ export function Conclusion({ openCreateConclusionModal, setOpenCreateConclusionM
   const invalidate = useInvalidate();
 
   const [selectedItem, setSelectedItem] = useState<ConclusionRESP | null>(null);
+  const [opened, { open: openFilter, close: closeFilter }] = useDisclosure(false);
 
   // APIS
   const { data: conclusions, isFetching: isFetchingConclusion } = useQuery({
@@ -200,12 +202,12 @@ export function Conclusion({ openCreateConclusionModal, setOpenCreateConclusionM
         ),
       },
     ],
-    [deleteConclusionMutation],
+    [deleteConclusionMutation, setOpenCreateConclusionModal],
   );
 
   return (
     <Stack>
-      <AppSearch onSearch={(val) => onSearch({ Field: val })} onReset={onReset} />
+      <AppSearch onSearch={(val) => onSearch({ Field: val })} onReset={onReset} onFilter={openFilter} />
       <AppTable
         data={conclusions?.data || []}
         columns={columns}
@@ -256,6 +258,14 @@ export function Conclusion({ openCreateConclusionModal, setOpenCreateConclusionM
           </Group>
         </Stack>
       </Modal>
+      <ConclusionFilterDrawer
+        opened={opened}
+        onClose={closeFilter}
+        onSubmitFilter={(value) => {
+          onSearch(value);
+        }}
+        onResetFilter={onReset}
+      />
     </Stack>
   );
 }
