@@ -110,7 +110,9 @@ const AccountListPage = () => {
                 onView={() => {
                   navigate(`/accounts/view/${record._id}`);
                 }}
-                onEdit={() => {}}
+                onEdit={() => {
+                  navigate(`/accounts/edit/${record._id}`);
+                }}
                 onDelete={() => {}}
               />
             ),

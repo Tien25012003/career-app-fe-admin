@@ -12,3 +12,6 @@ export const getAccount = (params: { userId: string }): Promise<TPagingResponse<
 export const createAccountAPI = (body: Partial<TAccountREQ>): Promise<TPagingResponse<void>> => api.post(`${BASE_URL}`, body);
 export const getListAccountName = (params: { keyword: string }): Promise<TPagingResponse<TAccountName[]>> =>
   api.get(`${BASE_URL}/account-name`, { params });
+export const updateAccountAPI = (body: Partial<TAccountREQ>, id: string): Promise<TPagingResponse<void>> =>
+  api.put(`${BASE_URL}/info`, body, { params: { id } });
+export const updateStatusAccountAPI = (params: { id: string }): Promise<TPagingResponse<void>> => api.get(`${BASE_URL}/status`, { params });
