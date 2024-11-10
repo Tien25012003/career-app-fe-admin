@@ -119,7 +119,6 @@ const GroupFormPage = (group: Partial<IGroup>) => {
 };
 const GroupDetailPage = () => {
   const { id } = useParams();
-  const [selectedMembers, setSelectedMembers] = useState<TAccountName[]>([]);
 
   const { data: group, isPending: isPendingGroup } = useQuery({
     queryKey: [QUERY_KEYS.ACCOUNT.NAME, { id }],

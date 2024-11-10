@@ -4,6 +4,7 @@ import { Skeleton } from '@mantine/core';
 import AccountCreateGroupPage from '@page/common/AccountPage/create/AccountCreateGroupPage';
 import AccountCreatePage from '@page/common/AccountPage/create/AccountCreatePage';
 import AccountDetailPage from '@page/common/AccountPage/detail/AccountDetailPage';
+import GroupEditPage from '@page/common/AccountPage/edit/GroupEditPage';
 import { HomePage } from '@page/common/HomePage';
 import NewsCreatePage from '@page/common/NewsPage/create/NewsCreatePage';
 import { NotFoundPage } from '@page/common/NotFoundPage/NotFoundPage';
@@ -109,6 +110,14 @@ const privateRoutes: RouteObject[] = [
             element: (
               <LoadingWrapper>
                 <AccountCreateGroupPage />
+              </LoadingWrapper>
+            ),
+          },
+          {
+            path: '/accounts/group/edit/:id',
+            element: (
+              <LoadingWrapper>
+                <GroupEditPage />
               </LoadingWrapper>
             ),
           },

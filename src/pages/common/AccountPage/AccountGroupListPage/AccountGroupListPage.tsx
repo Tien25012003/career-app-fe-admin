@@ -104,7 +104,9 @@ const AccountGroupListPage = () => {
                 onView={() => {
                   navigate(`/accounts/group/view/${record._id}`);
                 }}
-                onEdit={() => {}}
+                onEdit={() => {
+                  navigate(`/accounts/group/edit/${record._id}`);
+                }}
                 onDelete={() => {}}
               />
             ),

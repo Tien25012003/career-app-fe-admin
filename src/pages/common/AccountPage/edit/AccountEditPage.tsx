@@ -14,6 +14,7 @@ import {
   Button,
   Divider,
   PasswordInput,
+  Loader,
 } from '@mantine/core';
 import { z } from 'zod';
 import { EFeature } from '@api/services/auth/auth.response';
@@ -202,6 +203,11 @@ const AccountEditPage = () => {
           </Group>
         }
       />
+      {isFetchingAccount && (
+        <Group justify='center' align='center'>
+          <Loader size={30} />
+        </Group>
+      )}
       {account?.data && !isFetchingAccount && (
         <AccountForm
           id={id!}
