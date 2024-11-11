@@ -1,3 +1,5 @@
+import { EGroup } from '@enum/exam';
+
 export type MajorRESP = {
   _id: string;
   name: string;
@@ -5,4 +7,10 @@ export type MajorRESP = {
   subjects: string;
   pros: string;
   cons: string;
+  groupId: string;
+};
+
+export type GroupRESP = {
+  _id: string;
+  group: EGroup;
 };

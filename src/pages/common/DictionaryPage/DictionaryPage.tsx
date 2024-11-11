@@ -1,4 +1,4 @@
-import { getMajorsAPI } from '@api/services/dictionary/dictionary.api';
+import { deleteMajorAPI, getMajorsAPI } from '@api/services/dictionary/dictionary.api';
 import { MajorREQ } from '@api/services/dictionary/dictionary.request';
 import { MajorRESP } from '@api/services/dictionary/dictionary.response';
 import AppSearch from '@component/AppSearch/AppSearch';
@@ -6,9 +6,11 @@ import AppTable from '@component/AppTable/AppTable';
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import { TableButton } from '@component/TableButton/TableButton';
 import { EGroup } from '@enum/exam';
+import { onError } from '@helper/error.helpers';
 import { Button, Group, Image, Stack, Text } from '@mantine/core';
 import { IconBook2, IconPlus } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { NotifyUtils } from '@util/NotificationUtils';
 import { QUERY_KEYS } from 'constants/query-key.constants';
 import { useFilter } from 'hooks/useFilter';
 import useInvalidate from 'hooks/useInvalidate';
@@ -31,6 +33,17 @@ export default function DictionaryPage() {
     queryKey: [QUERY_KEYS.DICTIONARY.LIST, queries],
     queryFn: () => getMajorsAPI({ ...queries }),
     enabled: !hasNone,
+  });
+
+  const { mutate: deleteMajorMutation, isPending: isDeleting } = useMutation({
+    mutationFn: ({ id, groupId }: { id: string; groupId: string }) => deleteMajorAPI(id, groupId),
+    onSuccess: () => {
+      invalidate({
+        queryKey: [QUERY_KEYS.DICTIONARY.LIST],
+      });
+      NotifyUtils.success('Xoá thành công!');
+    },
+    onError,
   });
 
   const columns = useMemo<DataTableColumn<MajorRESP>[]>(
@@ -77,10 +90,10 @@ export default function DictionaryPage() {
       {
         accessor: 'actions',
         title: 'Thao tác',
-        render: () => <TableButton onView={() => {}} onEdit={() => {}} onDelete={() => {}} />,
+        render: (val) => <TableButton onDelete={() => deleteMajorMutation({ id: val._id, groupId: val.groupId })} />,
       },
     ],
-    [],
+    [deleteMajorMutation],
   );
 
   return (
@@ -115,7 +128,7 @@ export default function DictionaryPage() {
       <AppTable
         data={majors?.data || []}
         columns={columns}
-        isLoading={isFetchingMajor}
+        isLoading={isFetchingMajor || isDeleting}
         paginationConfigs={getPaginationConfigs(majors?.pagination?.totalPages, majors?.pagination?.totalCounts)}
       />
     </Stack>

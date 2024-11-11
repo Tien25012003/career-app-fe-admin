@@ -26,5 +26,6 @@ export const QUERY_KEYS = {
   },
   DICTIONARY: {
     LIST: 'DICTIONARY',
+    GROUPS: 'GROUPS',
   },
 };

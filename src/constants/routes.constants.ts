@@ -5,4 +5,5 @@ export const ROUTES = {
     DESIGN: '/exams/design',
     SYSTEM: '/exams/system',
   },
+  DICTIONARY: '/dictionary',
 };
