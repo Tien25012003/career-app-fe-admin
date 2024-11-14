@@ -12,6 +12,8 @@ import { AxiosError } from 'axios';
 import { QUERY_KEYS } from 'constants/query-key.constants';
 import { useFilter } from 'hooks/useFilter';
 import { useNavigate } from 'react-router-dom';
+import AccountGroupFilterDrawer from './components/AccountGroupFilterDrawer';
+import { useDisclosure } from '@mantine/hooks';
 
 const BadgeStatus = (status: number) => {
   switch (status) {
@@ -23,7 +25,7 @@ const BadgeStatus = (status: number) => {
           </Badge>
         </Tooltip>
       );
-    case 2:
+    case 1:
       return (
         <Tooltip label='Đang hoạt động'>
           <Badge size='sm'>Đang hoạt động</Badge>
@@ -46,7 +48,7 @@ export const initialQuery: Partial<GroupREQ> = {
 const AccountGroupListPage = () => {
   const navigate = useNavigate();
   const { queries, hasNone, onSearch, onReset, getPaginationConfigs } = useFilter<Partial<GroupREQ>>(initialQuery);
-
+  const [openedFilter, { open: openFilter, close: closeFilter }] = useDisclosure(false);
   // APIS
   const { data: groups, isFetching: isFetchingGroup } = useQuery({
     queryKey: [QUERY_KEYS.GROUP.LIST, queries],
@@ -68,7 +70,7 @@ const AccountGroupListPage = () => {
 
   return (
     <Stack>
-      <AppSearch onSearch={(value) => onSearch({ ...queries, groupName: value })} onReset={onReset} />
+      <AppSearch onFilter={openFilter} onSearch={(value) => onSearch({ ...queries, groupName: value })} onReset={onReset} />
       <AppTable
         columns={[
           {
@@ -133,6 +135,17 @@ const AccountGroupListPage = () => {
         data={groups?.data || []}
         isLoading={isFetchingGroup}
         paginationConfigs={getPaginationConfigs(groups?.pagination?.totalPages, groups?.pagination?.totalCounts)}
+      />
+      <AccountGroupFilterDrawer
+        opened={openedFilter}
+        onClose={closeFilter}
+        onSubmitFilter={(value) => {
+          onSearch({
+            ...queries,
+            ...value,
+          });
+        }}
+        onResetFilter={onReset}
       />
     </Stack>
   );

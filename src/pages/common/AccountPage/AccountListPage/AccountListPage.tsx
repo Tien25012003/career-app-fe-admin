@@ -9,6 +9,8 @@ import { DATETIME_FORMAT, DateUtils } from '@util/DateUtils';
 import { QUERY_KEYS } from 'constants/query-key.constants';
 import { useFilter } from 'hooks/useFilter';
 import { useNavigate } from 'react-router-dom';
+import AccountFilterDrawer from '../AccountGroupListPage/components/AccountFilterDrawer';
+import { useDisclosure } from '@mantine/hooks';
 
 const BadgeStatus = (status: number) => {
   switch (status) {
@@ -42,6 +44,7 @@ export const initialQuery: Partial<GetListAccountREQ> = {
 };
 const AccountListPage = () => {
   const navigate = useNavigate();
+  const [openedFilter, { open: openFilter, close: closeFilter }] = useDisclosure(false);
   const { queries, hasNone, onSearch, onReset, getPaginationConfigs } = useFilter<Partial<GetListAccountREQ>>(initialQuery);
 
   // APIS
@@ -52,7 +55,7 @@ const AccountListPage = () => {
   });
   return (
     <Stack>
-      <AppSearch onSearch={(value) => onSearch({ ...queries, name: value })} onReset={onReset} />
+      <AppSearch onSearch={(value) => onSearch({ ...queries, name: value })} onReset={onReset} onFilter={openFilter} />
       <AppTable
         columns={[
           {
@@ -121,6 +124,17 @@ const AccountListPage = () => {
         data={accounts?.data || []}
         isLoading={isFetchingAccount}
         paginationConfigs={getPaginationConfigs(accounts?.pagination?.totalPages, accounts?.pagination?.totalCounts)}
+      />
+      <AccountFilterDrawer
+        onClose={closeFilter}
+        onResetFilter={onReset}
+        onSubmitFilter={(value) => {
+          onSearch({
+            ...queries,
+            ...value,
+          });
+        }}
+        opened={openedFilter}
       />
     </Stack>
   );
