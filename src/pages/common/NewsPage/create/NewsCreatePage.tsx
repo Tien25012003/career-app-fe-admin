@@ -1,69 +1,103 @@
-import { PageEditor } from '@component/PageEditor/PageEditor';
+import { queryClient } from '@api/config/queryClient';
+import { createNewsAPI } from '@api/services/news/news.api';
+import { NewsItem } from '@api/services/news/news.response';
+import { uploadAPI } from '@api/services/uploads/uploads.api';
 import { PageHeader } from '@component/PageHeader/PageHeader';
-import { Button, Divider, Group, Paper, rem, Select, SimpleGrid, Stack, Text } from '@mantine/core';
+import { PageUploader } from '@component/PageUploader/PageUploader';
+import { Button, Divider, Group, Image, Input, Paper, rem, Select, SimpleGrid, Stack, Text, Textarea, TextInput } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { useForm, zodResolver } from '@mantine/form';
 import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconNews, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import { useMutation } from '@tanstack/react-query';
+import { NotifyUtils } from '@util/NotificationUtils';
 import { SchemaUtils } from '@util/SchemaUtils';
-import { useCallback, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { AxiosError } from 'axios';
+import { QUERY_KEYS } from 'constants/query-key.constants';
+import { ROUTES } from 'constants/routes.constants';
+import { useState } from 'react';
+
+import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 const formSchema = z.object({
-  groupName: z.string().min(1, SchemaUtils.message.nonempty),
-  owner: z.string().min(1, SchemaUtils.message.nonempty),
-  status: z.union([z.literal(1), z.literal(0)]),
+  type: z.string().min(1, SchemaUtils.message.nonempty),
+  title: z.string().min(1, SchemaUtils.message.nonempty),
+  content: z.string().min(1, SchemaUtils.message.nonempty),
+  image: z
+    .object({
+      longImage: z.string().min(0),
+      shortImage: z.string().min(0),
+    })
+    .nullable()
+    .optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 const initialFormValues: FormValues = {
-  groupName: '',
-  owner: '',
-  status: 0, //0: deactive ; 1: active
+  type: '',
+  title: '',
+  content: '',
+  image: {
+    longImage: '',
+    shortImage: '',
+  },
 };
 
-const GROUPS = [
-  {
-    label: 'Group A',
-    value: 'A',
-  },
-  {
-    label: 'Group B',
-    value: 'B',
-  },
-];
-
-type TMember = {
-  key: number;
-  name: string;
-  email: string;
-};
-const MEMBERS = Array.from<TMember>({ length: 10 }).map(() => ({
-  key: Math.floor(Math.random() * 1000),
-  name: 'KHANG' + Math.floor(Math.random() * 1000),
-  email: `Khang${Math.floor(Math.random() * 1000)}@gmail.com`,
-}));
 const NewsCreatePage = () => {
-  const [selectedMembers, setSelectedMembers] = useState<TMember[]>([]);
+  const navigate = useNavigate();
   const form = useForm({
     initialValues: initialFormValues,
     validate: zodResolver(formSchema),
   });
-  const handleSubmit = form.onSubmit((formValues) => {});
+  const [isUploadFile, setIsUploadFile] = useState(false);
+  const [shortImage, setShortImage] = useState<File>();
+  const [longImage, setLongImage] = useState<File>();
+  const { mutate: createNews, isPending } = useMutation({
+    mutationFn: (request: Omit<NewsItem, '_id' | 'createdAt'>) => createNewsAPI(request),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.NEWS.ALL],
+      });
+      NotifyUtils.success('Thêm mới thành công!');
+      form.reset();
+      navigate(-1);
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      NotifyUtils.error(error.response?.data?.message);
+    },
+  });
+  const handleSubmit = form.onSubmit(async (formValues) => {
+    if (shortImage && longImage) {
+      setIsUploadFile(true);
+      try {
+        const shortFormData = new FormData();
+        shortFormData.append('file', shortImage);
+        shortFormData.append('folderName', 'news');
 
-  const isChecked = useCallback(
-    (member: TMember) => {
-      return selectedMembers.findIndex((selectedMember) => selectedMember.key === member.key) > -1 ? true : false;
-    },
-    [selectedMembers],
-  );
-  const onMemberClick = useCallback(
-    (member: TMember) => {
-      if (isChecked(member)) {
-        setSelectedMembers([...selectedMembers.filter((selectedMember) => selectedMember.key !== member.key)]);
-      } else setSelectedMembers([...selectedMembers, member]);
-    },
-    [selectedMembers, setSelectedMembers],
-  );
+        const longFormData = new FormData();
+        longFormData.append('file', longImage);
+        longFormData.append('folderName', 'news');
+
+        // Use Promise.all with proper destructuring
+        const [shortImageRes, longImageRes] = await Promise.all([await uploadAPI(shortFormData), await uploadAPI(longFormData)]);
+        setIsUploadFile(false);
+        createNews({
+          ...formValues,
+          image: {
+            longImage: longImageRes.data.url || '',
+            shortImage: shortImageRes.data.url || '',
+          },
+        });
+      } catch (error) {
+        setIsUploadFile(false);
+
+        console.error('Error uploading images:', error);
+        // Handle the error, e.g., show a notification or update UI
+      }
+    } else {
+      NotifyUtils.info('Vui lòng điền đầy đủ thông tin');
+    }
+  });
+
   return (
     <Stack my='1rem' mx='1rem'>
       <PageHeader
@@ -97,96 +131,52 @@ const NewsCreatePage = () => {
                 withAsterisk
                 comboboxProps={{ withinPortal: false }}
                 label='Chọn loại tin tức'
-                data={['Nổi bật', 'IT', 'Marketing']}
+                data={['BREAKING', 'NORMAL']}
                 placeholder='Chọn loại tin tức'
-                {...form.getInputProps('owner')}
+                {...form.getInputProps('type')}
                 clearable
                 searchable
               />
               <Stack gap={'xs'}>
-                <Text fw={500} size='sm'>
-                  Chọn ảnh kích thước (312x312)
-                </Text>
-                <Dropzone
-                  onDrop={(files) => console.log('accepted files', files)}
-                  onReject={(files) => console.log('rejected files', files)}
-                  maxSize={5 * 1024 ** 2}
-                  accept={IMAGE_MIME_TYPE}
-                >
-                  <Group justify='center' gap='xl' mih={220} style={{ pointerEvents: 'none' }}>
-                    <Dropzone.Accept>
-                      <IconUpload style={{ width: rem(52), height: rem(52), color: 'var(--mantine-color-blue-6)' }} stroke={1.5} />
-                    </Dropzone.Accept>
-                    <Dropzone.Reject>
-                      <IconX style={{ width: rem(52), height: rem(52), color: 'var(--mantine-color-red-6)' }} stroke={1.5} />
-                    </Dropzone.Reject>
-                    <Dropzone.Idle>
-                      <IconPhoto style={{ width: rem(52), height: rem(52), color: 'var(--mantine-color-dimmed)' }} stroke={1.5} />
-                    </Dropzone.Idle>
-
-                    <div>
-                      <Text size='xl' inline>
-                        Kéo hoặc chọn ảnh
-                      </Text>
-                      <Text size='sm' c='dimmed' inline mt={7}>
-                        Mỗi file / ảnh phải có kích thước nhỏ hơn 5MB
-                      </Text>
-                    </div>
-                  </Group>
-                </Dropzone>
+                <PageUploader
+                  previewProps={{
+                    image: true,
+                    isLoading: false,
+                    height: 150,
+                  }}
+                  placeholder='Chọn ảnh kích thước (312x312)'
+                  withAsterisk
+                  label='Chọn ảnh kích thước (312x312)'
+                  clearable
+                  value={shortImage}
+                  onChange={(file) => file && setShortImage(file)}
+                />
               </Stack>
-              <Stack gap={'xs'}>
-                <Text fw={500} size='sm'>
-                  Chọn ảnh kích thước (512x512)
-                </Text>
-                <Dropzone
-                  onDrop={(files) => console.log('accepted files', files)}
-                  onReject={(files) => console.log('rejected files', files)}
-                  maxSize={5 * 1024 ** 2}
-                  accept={IMAGE_MIME_TYPE}
-                >
-                  <Group justify='center' gap='xl' mih={220} style={{ pointerEvents: 'none' }}>
-                    <Dropzone.Accept>
-                      <IconUpload style={{ width: rem(52), height: rem(52), color: 'var(--mantine-color-blue-6)' }} stroke={1.5} />
-                    </Dropzone.Accept>
-                    <Dropzone.Reject>
-                      <IconX style={{ width: rem(52), height: rem(52), color: 'var(--mantine-color-red-6)' }} stroke={1.5} />
-                    </Dropzone.Reject>
-                    <Dropzone.Idle>
-                      <IconPhoto style={{ width: rem(52), height: rem(52), color: 'var(--mantine-color-dimmed)' }} stroke={1.5} />
-                    </Dropzone.Idle>
-
-                    <div>
-                      <Text size='xl' inline>
-                        Kéo hoặc chọn ảnh
-                      </Text>
-                      <Text size='sm' c='dimmed' inline mt={7}>
-                        Mỗi file / ảnh phải có kích thước nhỏ hơn 5MB
-                      </Text>
-                    </div>
-                  </Group>
-                </Dropzone>
-              </Stack>
+              <PageUploader
+                previewProps={{
+                  image: true,
+                  isLoading: false,
+                  height: 150,
+                }}
+                placeholder='Chọn ảnh kích thước (512x512)'
+                withAsterisk
+                label='Chọn ảnh kích thước (512x512)'
+                clearable
+                value={longImage}
+                onChange={(file) => file && setLongImage(file)}
+              />
             </Stack>
 
             <Stack>
-              <Stack gap={'xs'}>
-                <Text fw={500} size='sm'>
-                  Nhập tiêu đề
-                </Text>
-                <PageEditor />
-              </Stack>
-              <Stack gap={'xs'}>
-                <Text size='sm' fw={500}>
-                  Nhập nội dung
-                </Text>
-                <PageEditor />
-              </Stack>
+              <Textarea label={'Nhập tiêu đề'} withAsterisk placeholder='Nhập tiêu đề' rows={5} {...form.getInputProps('title')} />
+              <TextInput type='url' label={'Nhập nội dung'} withAsterisk placeholder='Nhập nội dung' {...form.getInputProps('content')} />
             </Stack>
           </SimpleGrid>
           <Divider />
           <Group justify='flex-end'>
-            <Button>Thêm mới</Button>
+            <Button loading={isUploadFile || isPending} disabled={!form.isDirty()} onClick={() => handleSubmit()}>
+              Thêm mới
+            </Button>
           </Group>
         </Stack>
       </Paper>

@@ -1,4 +1,5 @@
 import { getAllNewsAPI } from '@api/services/news/news.api';
+import { TNewsREQ } from '@api/services/news/news.request';
 import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
 import { PageHeader } from '@component/PageHeader/PageHeader';
@@ -8,6 +9,7 @@ import { IconBrandWechat, IconNews, IconPlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { DateUtils } from '@util/DateUtils';
 import { QUERY_KEYS } from 'constants/query-key.constants';
+import { useFilter } from 'hooks/useFilter';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 type TNews = {
@@ -36,9 +38,11 @@ const newsDummyData: TNews[] = [
 ];
 export default function NewsPage() {
   const [openCreateModal, setOpenCreateModal] = useState(false);
+  const { queries, hasNone, onSearch, onReset, getPaginationConfigs } = useFilter<TNewsREQ>();
+
   const { data: news, isFetching } = useQuery({
-    queryKey: [QUERY_KEYS.NEWS.ALL],
-    queryFn: () => getAllNewsAPI(),
+    queryKey: [QUERY_KEYS.NEWS.ALL, queries],
+    queryFn: () => getAllNewsAPI(queries),
   });
   return (
     <Stack my='1rem' mx='1rem'>
@@ -51,9 +55,18 @@ export default function NewsPage() {
           </Button>
         }
       />
-      <AppSearch />
+      <AppSearch
+        onSearch={(value) => {
+          onSearch({
+            ...queries,
+            search: value!,
+          });
+        }}
+        onReset={onReset}
+      />
       <AppTable
         data={news?.data || []}
+        paginationConfigs={getPaginationConfigs(news?.pagination?.totalPages, news?.pagination?.totalCounts)}
         isLoading={isFetching}
         columns={[
           {

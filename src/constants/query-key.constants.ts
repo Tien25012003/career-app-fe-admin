@@ -20,6 +20,7 @@ export const QUERY_KEYS = {
   },
   NEWS: {
     ALL: 'ALL',
+    CATEGORY: 'CATEGORY',
   },
   CONCLUSION: {
     LIST: 'CONCLUSION_LIST',
