@@ -10,6 +10,7 @@ export const QUERY_KEYS = {
   EXAM: {
     LIST: 'EXAM_LIST',
     DESIGN_LIST: 'EXAM_DESIGN_LIST',
+    SELECT: 'EXAM_SELECT',
   },
   SCHOOL_SUBJECT: {
     LIST: 'SCHOOL_SUBJECT_LIST',
@@ -17,6 +18,7 @@ export const QUERY_KEYS = {
   GROUP: {
     LIST: 'GROUP_LIST',
     SELECT: 'GROUP_SELECT',
+    EXAM_IN_GROUP: 'EXAM_IN_GROUP',
   },
   NEWS: {
     ALL: 'ALL',

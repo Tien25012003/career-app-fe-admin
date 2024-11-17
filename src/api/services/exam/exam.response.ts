@@ -17,3 +17,10 @@ export type ExamDetailRESP = ExamRESP & {
   questions: IQuestion[];
   results: IResult[];
 };
+
+export type TExamSelectRESP = {
+  _id: string;
+  type: string;
+  name: string;
+  category: string;
+};

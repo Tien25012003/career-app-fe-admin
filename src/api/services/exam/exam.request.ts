@@ -10,7 +10,7 @@ export type ExamREQ = {
   status?: EExamStatus | null;
 
   // For group
-  groupId?: number;
+  groupId?: string;
 
   // For filter
   id?: string;
@@ -32,4 +32,9 @@ export type EditExamREQ = {
   type: TExam | null;
   questions: IQuestion[];
   results: IResult[];
+};
+
+export type TExamToGroupREQ = {
+  groupId: string;
+  examId: string;
 };
