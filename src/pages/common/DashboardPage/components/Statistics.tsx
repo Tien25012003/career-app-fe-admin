@@ -1,12 +1,13 @@
 import { getStatisticsAPI } from '@api/services/report/report.api';
 import { EROLE } from '@enum/account.enum';
-import { alpha, Card, Grid, Group, Paper, Stack, Text, Transition, useMantineColorScheme, useMantineTheme } from '@mantine/core';
-import { Icon, IconPencil, IconSchool, IconUserEdit, IconUsers } from '@tabler/icons-react';
+import { ActionIcon, alpha, Card, Grid, Group, Image, Paper, Stack, Text, Transition, useMantineColorScheme, useMantineTheme } from '@mantine/core';
+import { Icon, IconPencil, IconPencilMinus, IconSchool, IconUserEdit, IconUsers } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { userInfoAtom } from 'atoms/auth.store';
 import { QUERY_KEYS } from 'constants/query-key.constants';
 import { useAtom } from 'jotai';
-import { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
+import EditUserInfoModal from './EditUserInfoModal';
 
 type StatisticItemProps = {
   label: string;
@@ -23,6 +24,9 @@ export function Statistics() {
 
   const [userInfo] = useAtom(userInfoAtom);
   const userRole = useMemo(() => userInfo?.role, [userInfo?.role]);
+
+  // STATES
+  const [openModalEditInfo, setOpenModalEditInfo] = useState(false);
 
   // APIS
   const {
@@ -60,7 +64,7 @@ export function Statistics() {
         iconColor: theme.colors.yellow[9],
       },
       {
-        label: 'Số lượng bài kiểm tra',
+        label: 'Số bài kiểm tra',
         count: fetchedStatistics?.exams || 0,
         icon: IconPencil,
         color: theme.colors.grape[1],
@@ -72,40 +76,88 @@ export function Statistics() {
 
   const statistics = proccessedStatistics?.filter((item) => !item.isHide);
 
-  const lg = useMemo(() => 12 / statistics?.length, [statistics?.length]);
+  const lg = useMemo(() => 24 / statistics?.length, [statistics?.length]);
 
   return (
-    <Transition mounted={true} transition={'fade'}>
-      {(styles) => (
-        <Paper withBorder shadow='sm' p='sm' radius='md'>
-          <Grid>
-            {statistics.map((item, index) => {
-              // if (isFetching) return <Skeleton height={20} radius='sm' />;
-              return (
-                <Transition mounted={!isLoading} transition={'fade-right'} enterDelay={index * 50}>
-                  {(styles) => (
-                    <Grid.Col span={{ sm: 12, lg: lg }} style={styles}>
-                      <Card bg={colorScheme === 'light' ? item.color : alpha(theme.colors.blue[1], 0.1)} shadow='none' key={index}>
-                        <Group align='center'>
-                          <item.icon size='2rem' stroke={1.5} color={item.iconColor} />
-                          <Stack gap={-10}>
-                            <Text size='sm' fw={500}>
-                              {item.label}
-                            </Text>
-                            <Text size='md' fw={700}>
-                              {item.count}
-                            </Text>
-                          </Stack>
-                        </Group>
-                      </Card>
-                    </Grid.Col>
-                  )}
-                </Transition>
-              );
-            })}
-          </Grid>
-        </Paper>
-      )}
-    </Transition>
+    <React.Fragment>
+      <Transition mounted={true} transition={'fade'}>
+        {(styles) => (
+          <Paper withBorder shadow='sm' p='sm' radius='md' style={styles}>
+            <Grid>
+              <Grid.Col span={{ sm: 12, lg: 3 }}>
+                <Card
+                  bg={colorScheme === 'light' ? alpha(theme.colors.gray[1], 0.1) : alpha(theme.colors.blue[1], 0.1)}
+                  shadow='none'
+                  className='h-full rounded-lg'
+                  withBorder
+                >
+                  <Stack>
+                    <Group gap={12} justify='space-between'>
+                      <Group>
+                        <Image
+                          src={'https://t4.ftcdn.net/jpg/06/44/10/27/360_F_644102790_xU44JCmu0oJdc1dyUiVBbxEXhOu76XuM.jpg'}
+                          w={64}
+                          h={64}
+                          radius={100}
+                          className='border-[2px] shadow-sm'
+                        />
+                        <Stack gap={0}>
+                          <Text size='md' fw={500}>
+                            {userInfo?.role}
+                          </Text>
+                          <Text size='md' fw={600}>
+                            {userInfo?.username}
+                          </Text>
+                        </Stack>
+                      </Group>
+                      <ActionIcon variant='default' onClick={() => setOpenModalEditInfo(true)}>
+                        <IconPencilMinus size={'1.125rem'} stroke={1.5} />
+                      </ActionIcon>
+                    </Group>
+                    <Stack gap={2}>
+                      <Text size='md' fw={400}>
+                        Tên: {userInfo?.name}
+                      </Text>
+                      <Text size='sm' fw={400}>
+                        Email: {userInfo?.email}
+                      </Text>
+                    </Stack>
+                  </Stack>
+                </Card>
+              </Grid.Col>
+              <Grid.Col span={{ sm: 12, lg: 9 }}>
+                <Grid>
+                  {statistics.map((item, index) => {
+                    // if (isFetching) return <Skeleton height={20} radius='sm' />;
+                    return (
+                      <Transition mounted={!isLoading} transition={'fade-right'} enterDelay={index * 50}>
+                        {(styles) => (
+                          <Grid.Col span={{ sm: 12, lg: lg }} style={styles}>
+                            <Card bg={colorScheme === 'light' ? item.color : alpha(theme.colors.blue[1], 0.1)} shadow='none' key={index}>
+                              <Group align='center' wrap='nowrap'>
+                                <item.icon size='2rem' stroke={1.5} color={item.iconColor} />
+                                <Stack gap={-10}>
+                                  <Text size='sm' fw={500}>
+                                    {item.label}
+                                  </Text>
+                                  <Text size='md' fw={700}>
+                                    {item.count}
+                                  </Text>
+                                </Stack>
+                              </Group>
+                            </Card>
+                          </Grid.Col>
+                        )}
+                      </Transition>
+                    );
+                  })}
+                </Grid>
+              </Grid.Col>
+            </Grid>
+          </Paper>
+        )}
+      </Transition>
+      <EditUserInfoModal open={openModalEditInfo} onClose={() => setOpenModalEditInfo(false)} />
+    </React.Fragment>
   );
 }

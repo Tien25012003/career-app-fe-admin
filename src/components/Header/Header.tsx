@@ -1,7 +1,7 @@
 import { ActionButton } from '@component/ActionButton';
 import { HeaderLogo } from '@icon/HeaderLogo';
 import { alpha, AppShell, Box, Burger, Button, Flex, Group, Menu, useMantineColorScheme, useMantineTheme } from '@mantine/core';
-import { IconLogout, IconMoonStars, IconSun, IconUserCircle } from '@tabler/icons-react';
+import { IconLogout, IconMoonStars, IconSun } from '@tabler/icons-react';
 import { hideNavbarAtom, miniNavbarAtom } from 'atoms/AppAtoms';
 import useLogout from 'hooks/useLogout';
 import { useAtom } from 'jotai';
@@ -51,7 +51,7 @@ export function Header() {
         </Flex>
         <Flex align={'center'} visibleFrom='sm'>
           <Group gap={'xs'}>
-            <ActionButton tooltip={'Trang cá nhân'} icon={IconUserCircle} onClick={() => {}} />
+            {/* <ActionButton tooltip={'Trang cá nhân'} icon={IconUserCircle} onClick={() => {}} /> */}
             <ActionButton
               tooltip={colorScheme === 'dark' ? 'Chế độ sáng' : 'Chế độ tối'}
               icon={colorScheme === 'dark' ? IconSun : IconMoonStars}
@@ -66,7 +66,7 @@ export function Header() {
               <Button>Menu</Button>
             </Menu.Target>
             <Menu.Dropdown>
-              <Menu.Item leftSection={<IconUserCircle size='1.125rem' stroke={1.5} />}>Trang cá nhân</Menu.Item>
+              {/* <Menu.Item leftSection={<IconUserCircle size='1.125rem' stroke={1.5} />}>Trang cá nhân</Menu.Item> */}
               <Menu.Item
                 leftSection={colorScheme === 'dark' ? <IconSun size='1.375rem' stroke={1.5} /> : <IconMoonStars size='1.375rem' stroke={1.5} />}
                 onClick={handleChangeColorScheme}

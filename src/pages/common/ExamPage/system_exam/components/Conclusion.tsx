@@ -167,7 +167,7 @@ export function Conclusion({ openCreateConclusionModal, setOpenCreateConclusionM
       {
         accessor: 'SchoolScore',
         title: 'Khối',
-        width: 50,
+        width: 80,
         textAlign: 'center',
       },
       {

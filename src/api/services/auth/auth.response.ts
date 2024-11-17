@@ -1,10 +1,11 @@
 import { EROLE } from '@enum/account.enum';
 
 export type UserInfoRES = {
-  id: string;
+  _id: string;
   username: string;
   email: string;
   role: EROLE;
+  name: string;
   // TODO: GROUP & PERMISSION
 };
 export enum EFeature {
