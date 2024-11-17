@@ -68,14 +68,16 @@ export function NavBar() {
     <AppShell.Navbar>
       <AppShell.Section grow component={ScrollArea} p={theme.spacing.md} scrollbarSize={10}>
         {!miniNavbar
-          ? navElements.map((navElement) => (
+          ? navElements.map((navElement, index) => (
               <CustomNavLink
+                key={index}
                 item={navElement}
                 active={navElement.link ? location.pathname.endsWith(navElement.link) || location.pathname.startsWith(`${navElement.link}/`) : false}
               >
-                {navElement.children?.map((childNavElement) => {
+                {navElement.children?.map((childNavElement, childIndex) => {
                   return (
                     <CustomNavLink
+                      key={childIndex}
                       item={childNavElement}
                       active={
                         childNavElement.link
@@ -87,11 +89,12 @@ export function NavBar() {
                 })}
               </CustomNavLink>
             ))
-          : navElements.map((navElement) => (
+          : navElements.map((navElement, index) => (
               <HoverCard key={navElement.label} position='right'>
                 <HoverCard.Target>
                   <Box>
                     <CustomNavLink
+                      key={index}
                       item={navElement}
                       showLabel={false}
                       // showLabel={!largerThanMd && !hideNavbar}

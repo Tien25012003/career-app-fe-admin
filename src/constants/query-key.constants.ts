@@ -29,4 +29,8 @@ export const QUERY_KEYS = {
     LIST: 'DICTIONARY',
     GROUPS: 'GROUPS',
   },
+  REPORT: {
+    STATISTICS: 'STATISTICS',
+    SCORES: 'SCORE',
+  },
 };

@@ -1,4 +1,10 @@
-import { Grid, useMantineTheme } from '@mantine/core';
+import { getReportAPI } from '@api/services/report/report.api';
+import { EGroup, EHolland } from '@enum/exam';
+import { Grid, Transition, useMantineTheme } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
+import { QUERY_KEYS } from 'constants/query-key.constants';
+import { useMemo } from 'react';
+import { getHollandColor, getSchoolGroupColor } from '../utils/getHollandColor';
 import { PageChart } from './PageChart';
 
 const EQDummyData = [
@@ -47,69 +53,148 @@ const SchoolData = [
   { type: 'D1', count: 60, color: 'blue' },
   { type: 'D7', count: 30, color: 'purple' },
 ];
+
+type ScoreChartItemProps = {
+  type?: string;
+  score?: number;
+  color?: string;
+};
+
 export function ScoreChart() {
   const theme = useMantineTheme();
+
+  // APIS
+  const {
+    data: fetchedReport,
+    //isFetching,
+    isLoading,
+  } = useQuery({
+    queryKey: [QUERY_KEYS.REPORT.SCORES],
+    queryFn: () => getReportAPI(),
+    select: ({ data }) => data,
+  });
+
+  const IQData = useMemo<ScoreChartItemProps[] | []>(
+    () => fetchedReport?.filter((item) => item.type === 'IQ')?.sort((a, b) => (a.score as number) - (b?.score as number)) || [],
+    [fetchedReport],
+  );
+
+  const EQData = useMemo<ScoreChartItemProps[] | []>(
+    () => fetchedReport?.filter((item) => item.type === 'EQ')?.sort((a, b) => (a.score as number) - (b?.score as number)) || [],
+    [fetchedReport],
+  );
+
+  const SchoolScoreData = useMemo<ScoreChartItemProps[] | []>(
+    () => fetchedReport?.filter((item) => item.type === 'SchoolScore')?.sort((a, b) => (a.score as number) - (b?.score as number)) || [],
+    [fetchedReport],
+  );
+
+  const HollandData = useMemo<ScoreChartItemProps[] | []>(
+    () =>
+      fetchedReport
+        ?.filter((item) => Object.keys(EHolland)?.includes(item.type as EHolland))
+        ?.map((item) => ({
+          ...item,
+          color: getHollandColor(item.type as EHolland),
+        })) || [],
+    [fetchedReport],
+  );
+
+  const SchoolGroupData = useMemo<ScoreChartItemProps[] | []>(
+    () =>
+      fetchedReport
+        ?.filter((item) => Object.keys(EGroup)?.includes(item.type as EGroup))
+        ?.map((item) => ({
+          ...item,
+          color: getSchoolGroupColor(item.type as EGroup),
+        })) || [],
+    [fetchedReport],
+  );
+
   return (
     <Grid>
-      <Grid.Col span={{ sm: 12, lg: 4 }}>
-        <PageChart
-          chartType='AreaChart'
-          title='Thống kê điểm IQ'
-          dataKey='score'
-          data={IQDummyData}
-          series={[{ name: 'count', color: theme.colors.orange[8], label: 'Số lượng học sinh' }]}
-          xAxisLabel='Số điểm IQ'
-          yAxisLabel='Số lượng học sinh'
-        />
-      </Grid.Col>
-      <Grid.Col span={{ sm: 12, lg: 4 }}>
-        <PageChart
-          chartType='AreaChart'
-          title='Thống kê điểm EQ'
-          dataKey='score'
-          data={EQDummyData}
-          series={[{ name: 'count', color: theme.colors.green[8], label: 'Số lượng học sinh' }]}
-          xAxisLabel='Số điểm EQ'
-          yAxisLabel='Số lượng học sinh'
-        />
-      </Grid.Col>
-      <Grid.Col span={{ sm: 12, lg: 4 }}>
-        <PageChart
-          chartType='AreaChart'
-          title='Thống kê điểm trung bình'
-          dataKey='score'
-          data={ScoreDummyData}
-          series={[{ name: 'count', color: theme.colors.blue[8], label: 'Số lượng học sinh' }]}
-          xAxisLabel='Điểm trung bình'
-          yAxisLabel='Số lượng học sinh'
-        />
-      </Grid.Col>
-      <Grid.Col span={{ sm: 12, lg: 6 }}>
-        <PageChart
-          chartType='BarChart'
-          title='Thống kê Holland'
-          dataKey='type'
-          data={HollandDummyData}
-          series={[{ name: 'count', color: theme.colors.blue[8], label: 'Số lượng học sinh' }]}
-          xAxisLabel='Các nhóm Holland'
-          yAxisLabel='Số lượng học sinh'
-          withTooltip={false}
-          withBarValueLabel={true}
-        />
-      </Grid.Col>
-      <Grid.Col span={{ sm: 12, lg: 6 }}>
-        <PageChart
-          chartType='BarChart'
-          title='Thống kê khối thi'
-          dataKey='type'
-          data={SchoolData}
-          series={[{ name: 'count', color: theme.colors.blue[8], label: 'Số lượng học sinh' }]}
-          xAxisLabel='Khối thi'
-          yAxisLabel='Số lượng học sinh'
-          withTooltip={false}
-          withBarValueLabel={true}
-        />
-      </Grid.Col>
+      <Transition mounted={!isLoading} transition={'fade-right'} enterDelay={0}>
+        {(styles) => (
+          <Grid.Col span={{ sm: 12, lg: 4 }} style={styles}>
+            <PageChart
+              chartType='AreaChart'
+              title='Thống kê điểm IQ'
+              dataKey='score'
+              data={IQData}
+              series={[{ name: 'count', color: theme.colors.orange[8], label: 'Số lượng học sinh' }]}
+              xAxisLabel='Số điểm IQ'
+              yAxisLabel='Số lượng học sinh'
+            />
+          </Grid.Col>
+        )}
+      </Transition>
+      <Transition mounted={!isLoading} transition={'fade-right'} enterDelay={50}>
+        {(styles) => (
+          <Grid.Col span={{ sm: 12, lg: 4 }} style={styles}>
+            <PageChart
+              chartType='AreaChart'
+              title='Thống kê điểm EQ'
+              dataKey='score'
+              data={EQData}
+              series={[{ name: 'count', color: theme.colors.green[8], label: 'Số lượng học sinh' }]}
+              xAxisLabel='Số điểm EQ'
+              yAxisLabel='Số lượng học sinh'
+            />
+          </Grid.Col>
+        )}
+      </Transition>
+
+      <Transition mounted={!isLoading} transition={'fade-right'} enterDelay={100}>
+        {(styles) => (
+          <Grid.Col span={{ sm: 12, lg: 4 }} style={styles}>
+            <PageChart
+              chartType='AreaChart'
+              title='Thống kê điểm trung bình'
+              dataKey='score'
+              data={SchoolScoreData}
+              series={[{ name: 'count', color: theme.colors.blue[8], label: 'Số lượng học sinh' }]}
+              xAxisLabel='Điểm trung bình'
+              yAxisLabel='Số lượng học sinh'
+            />
+          </Grid.Col>
+        )}
+      </Transition>
+
+      <Transition mounted={!isLoading} transition={'fade-right'} enterDelay={150}>
+        {(styles) => (
+          <Grid.Col span={{ sm: 12, lg: 6 }} style={styles}>
+            <PageChart
+              chartType='BarChart'
+              title='Thống kê Holland'
+              dataKey='type'
+              data={HollandData}
+              series={[{ name: 'count', color: theme.colors.blue[8], label: 'Số lượng học sinh' }]}
+              xAxisLabel='Các nhóm Holland'
+              yAxisLabel='Số lượng học sinh'
+              withTooltip={false}
+              withBarValueLabel={true}
+            />
+          </Grid.Col>
+        )}
+      </Transition>
+
+      <Transition mounted={!isLoading} transition={'fade-right'} enterDelay={200}>
+        {(styles) => (
+          <Grid.Col span={{ sm: 12, lg: 6 }} style={styles}>
+            <PageChart
+              chartType='BarChart'
+              title='Thống kê khối thi'
+              dataKey='type'
+              data={SchoolGroupData}
+              series={[{ name: 'count', color: theme.colors.blue[8], label: 'Số lượng học sinh' }]}
+              xAxisLabel='Khối thi'
+              yAxisLabel='Số lượng học sinh'
+              withTooltip={false}
+              withBarValueLabel={true}
+            />
+          </Grid.Col>
+        )}
+      </Transition>
     </Grid>
   );
 }
