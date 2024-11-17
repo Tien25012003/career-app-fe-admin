@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import { Text } from '@mantine/core';
 import usePageTitle from 'hooks/usePageTitle';
 type TPageTitle = {

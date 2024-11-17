@@ -5,7 +5,7 @@ import { navElements } from 'constants/navElements';
 import { useLargerThan } from 'hooks';
 import { useAtom } from 'jotai';
 import React, { useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 type TNavLink = {
   item: NavElement;
@@ -15,7 +15,6 @@ type TNavLink = {
   className?: string;
 };
 const CustomNavLink = ({ item, children, showLabel = true, active, className }: TNavLink) => {
-  const location = useLocation();
   const theme = useMantineTheme();
   const [miniNavbar] = useAtom(miniNavbarAtom);
   const { colorScheme } = useMantineColorScheme();
