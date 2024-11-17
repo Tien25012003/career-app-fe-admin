@@ -24,6 +24,7 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconInfoCircle,
+  IconRobot,
   IconSearch,
   IconSettings,
   IconUser,
@@ -40,7 +41,6 @@ import { QUERY_KEYS } from 'constants/query-key.constants';
 import { getAccount, getListAccountName } from '@api/services/account/account.api';
 import { TAccountName } from '@api/services/account/account.request';
 import { createGroupAPI, getGroupAPI } from '@api/services/group/group.api';
-import { TGroupREQ } from '@api/services/group/group.request';
 import { NotifyUtils } from '@util/NotificationUtils';
 import { AxiosError } from 'axios';
 import { IGroup } from '@api/services/group/group.response';
@@ -50,6 +50,9 @@ import { useDisclosure } from '@mantine/hooks';
 import ExamInGroupModal from '../components/ExamInGroupModal';
 import { TExamToGroupREQ } from '@api/services/exam/exam.request';
 import { queryClient } from '@api/config/queryClient';
+import { getChatbotInGroupAPI, getChatBotListAPI, removePromptInGroupAPI } from '@api/services/chat-bot/chat-bot.api';
+import ChatbotItem from '../components/ChatbotItem';
+import ChatbotInGroupModal from '../components/ChatbotInModal';
 const formSchema = z.object({
   groupName: z.string().min(1, SchemaUtils.message.nonempty),
   owner: z
@@ -81,6 +84,7 @@ const GroupFormPage = (group: Partial<IGroup>) => {
     status: group.status, //0: deactive ; 1: active
   };
   const [openedExamInGroup, { open: openExamInGroup, close: closeExamInGroup }] = useDisclosure(false);
+  const [openedChatbotInGroup, { open: openChatbotInGroup, close: closeChatbotInGroup }] = useDisclosure(false);
   const [queryExam, setQueryExam] = useState('');
 
   const form = useForm({
@@ -95,6 +99,10 @@ const GroupFormPage = (group: Partial<IGroup>) => {
     queryKey: [QUERY_KEYS.EXAM.LIST, queryExam, group._id],
     queryFn: () => getExamListAPI({ groupId: group._id!, name: queryExam }),
   });
+  const { data: chatbotInGroup, isPending: isPendingChatbotInGroup } = useQuery({
+    queryKey: [QUERY_KEYS.GROUP.CHATBOT_IN_GROUP, { groupdId: group._id }],
+    queryFn: () => getChatbotInGroupAPI({ groupId: group._id! }),
+  });
   const { mutate: removeExam } = useMutation({
     mutationFn: (value: TExamToGroupREQ) => removeExamInGroup(value),
     onSuccess: () => {
@@ -102,6 +110,19 @@ const GroupFormPage = (group: Partial<IGroup>) => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.EXAM.LIST, queryExam, group._id],
       });
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      NotifyUtils.error(error.response?.data?.message);
+    },
+  });
+  const { mutate: removePromptToGroup } = useMutation({
+    mutationFn: (value: { groupId: string; promptId: string }) => removePromptInGroupAPI(value),
+    onSuccess: () => {
+      NotifyUtils.success('Xóa prompt thành công!');
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GROUP.CHATBOT_IN_GROUP, { groupdId: group._id }],
+      });
+      form.reset();
     },
     onError: (error: AxiosError<{ message: string }>) => {
       NotifyUtils.error(error.response?.data?.message);
@@ -189,29 +210,47 @@ const GroupFormPage = (group: Partial<IGroup>) => {
             </ScrollArea>
           </Stack>
         </Paper>
-        {/* <Paper withBorder shadow='sm' radius={'md'} p='md'>
+        <Paper withBorder shadow='sm' radius={'md'} p='md'>
           <Stack>
-            <Group>
-              <IconUsersGroup />
-              <Text fw={500}>Chọn thành viên</Text>
+            <Group justify='space-between'>
+              <Group>
+                <IconRobot />
+                <Text fw={500}>Câu hỏi chatbot</Text>
+              </Group>
+              <Button variant='transparent' onClick={openChatbotInGroup}>
+                Thêm
+              </Button>
             </Group>
             <Group>
-              <TextInput flex={1} placeholder='Nhập tên thành viên' leftSection={<IconSearch size={'1.125rem'} />} />
+              <TextInput flex={1} placeholder='Nhập tên câu hỏi' leftSection={<IconSearch size={'1.125rem'} />} />
               <Button>Tìm kiếm</Button>
             </Group>
+
             <ScrollArea>
               <Stack mah={300} pos={'relative'}>
                 <LoadingOverlay visible={isPendingAccountName} zIndex={1000} overlayProps={{ radius: 'sm', blur: 2 }} />
 
-                {form.getValues().members.map((member) => {
-                  return <MemberItem key={member._id} member={member} checked={true} />;
+                {chatbotInGroup?.data.map((chatbot) => {
+                  return (
+                    <ChatbotItem
+                      key={chatbot._id}
+                      chatbot={chatbot}
+                      onRemoveClick={() =>
+                        removePromptToGroup({
+                          groupId: group._id!,
+                          promptId: chatbot._id,
+                        })
+                      }
+                    />
+                  );
                 })}
               </Stack>
             </ScrollArea>
           </Stack>
-        </Paper> */}
+        </Paper>
       </SimpleGrid>
       {group?._id && <ExamInGroupModal groupId={group._id} opened={openedExamInGroup} onClose={closeExamInGroup} />}
+      {group?._id && <ChatbotInGroupModal groupId={group._id} opened={openedChatbotInGroup} onClose={closeChatbotInGroup} />}
     </Stack>
   );
 };

@@ -1,6 +1,7 @@
 export const QUERY_KEYS = {
   CHAT_BOT: {
     LIST: 'CHAT_BOT_LIST',
+    SELECT: 'CHAT_BOT_SELECT',
   },
   ACCOUNT: {
     USER_INFO: 'USER_INFO',
@@ -19,6 +20,7 @@ export const QUERY_KEYS = {
     LIST: 'GROUP_LIST',
     SELECT: 'GROUP_SELECT',
     EXAM_IN_GROUP: 'EXAM_IN_GROUP',
+    CHATBOT_IN_GROUP: 'CHATBOT_IN_GROUP',
   },
   NEWS: {
     ALL: 'ALL',

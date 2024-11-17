@@ -17,3 +17,7 @@ export type EditPromptREQ = {
   answer?: string;
   keywords?: string;
 };
+
+export type TChatbotInGroupREQ = {
+  groupId: string;
+};
