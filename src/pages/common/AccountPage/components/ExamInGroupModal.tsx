@@ -60,8 +60,14 @@ const ExamInGroupModal = ({ opened, onClose, groupId }: TExamInGroupProps) => {
   const onAddExamToGroup = form.onSubmit((values) => {
     addExamToGroup(values);
   });
+
+  const handleClose = () => {
+    onClose();
+    form.reset();
+  };
+
   return (
-    <Modal opened={opened} onClose={onClose} title={<Text fw={'bold'}>Nhập thông tin</Text>}>
+    <Modal opened={opened} onClose={handleClose} title={<Text fw={'bold'}>Nhập thông tin</Text>}>
       <Stack>
         <Select
           disabled
@@ -73,16 +79,16 @@ const ExamInGroupModal = ({ opened, onClose, groupId }: TExamInGroupProps) => {
         <Select
           label='Chọn bài kiểm tra'
           placeholder='Chọn bài kiểm tra'
-          data={examSelect?.data?.map((exam) => ({ label: `${exam.name} - ${exam.type} - ${exam.category}`, value: exam._id }))}
+          data={examSelect?.data?.map((exam) => ({ label: `${exam.name}  - ${exam.category}`, value: exam._id }))}
           {...form.getInputProps('examId')}
         />
         <Divider />
         <Group justify='flex-end'>
+          <Button variant='default' onClick={handleClose}>
+            Hủy
+          </Button>
           <Button onClick={() => onAddExamToGroup()} loading={isPending} disabled={!form.isDirty()}>
             Xác nhận
-          </Button>
-          <Button bg={'red'} onClick={onClose}>
-            Hủy
           </Button>
         </Group>
       </Stack>

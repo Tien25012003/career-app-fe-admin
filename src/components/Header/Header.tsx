@@ -33,7 +33,7 @@ export function Header() {
         <Flex align={'center'} h='100%'>
           <Box>
             <Burger
-              opened={!hideNavbar}
+              opened={false}
               onClick={() => {
                 setMiniNavbar((m: boolean) => !m);
                 setHideNavbar((o: boolean) => !o);

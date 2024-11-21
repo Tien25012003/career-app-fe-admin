@@ -56,6 +56,9 @@ function AppTable<T>({ data, columns, isLoading, onRowClick, paginationConfigs }
         table: {
           backgroundColor: colorScheme === 'light' ? theme.white : theme.colors.gray[9],
         },
+        root: {
+          border: `1px solid ${theme.colors.gray[3]} `,
+        },
       }}
       scrollAreaProps={{ type: 'never' }}
       recordsPerPageLabel='Số items mỗi trang'

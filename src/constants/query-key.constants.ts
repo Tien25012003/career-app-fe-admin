@@ -37,4 +37,7 @@ export const QUERY_KEYS = {
     STATISTICS: 'STATISTICS',
     SCORES: 'SCORE',
   },
+  DO_EXAM: {
+    LIST: 'DO_EXAM_LIST',
+  },
 };

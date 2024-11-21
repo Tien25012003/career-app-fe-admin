@@ -204,6 +204,7 @@ export function QuestionCard({
             {options?.map((option, i) => (
               <OptionCard
                 index={i}
+                key={i}
                 option={option}
                 optionsHandler={optionsHandler}
                 questionType={questionType}

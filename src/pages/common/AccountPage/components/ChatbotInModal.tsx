@@ -1,7 +1,5 @@
 import { queryClient } from '@api/config/queryClient';
-import { addPromptInGroupAPI, getChatBotListAPI, getPromptSelectAPI } from '@api/services/chat-bot/chat-bot.api';
-import { addExamInGroup, getExamSelectAPI } from '@api/services/exam/exam.api';
-import { TExamToGroupREQ } from '@api/services/exam/exam.request';
+import { addPromptInGroupAPI, getPromptSelectAPI } from '@api/services/chat-bot/chat-bot.api';
 import { getGroupSelectAPI } from '@api/services/group/group.api';
 import { Button, Divider, Group, Modal, Select, Stack, Text } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
@@ -82,11 +80,11 @@ const ChatbotInGroupModal = ({ opened, onClose, groupId }: TExamInGroupProps) =>
         />
         <Divider />
         <Group justify='flex-end'>
+          <Button variant='default' onClick={onClose}>
+            Hủy
+          </Button>
           <Button onClick={() => onAddExamToGroup()} loading={isPendingAdd} disabled={!form.isDirty()}>
             Xác nhận
-          </Button>
-          <Button bg={'red'} onClick={onClose}>
-            Hủy
           </Button>
         </Group>
       </Stack>

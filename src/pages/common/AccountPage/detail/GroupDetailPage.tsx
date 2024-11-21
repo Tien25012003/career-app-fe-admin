@@ -1,58 +1,28 @@
+import { queryClient } from '@api/config/queryClient';
+import { getListAccountName } from '@api/services/account/account.api';
+import { getChatbotInGroupAPI, removePromptInGroupAPI } from '@api/services/chat-bot/chat-bot.api';
+import { getExamListAPI, removeExamInGroup } from '@api/services/exam/exam.api';
+import { TExamToGroupREQ } from '@api/services/exam/exam.request';
+import { getGroupAPI } from '@api/services/group/group.api';
+import { IGroup } from '@api/services/group/group.response';
 import { PageHeader } from '@component/PageHeader/PageHeader';
-import {
-  ActionIcon,
-  Avatar,
-  Button,
-  Checkbox,
-  Divider,
-  Group,
-  LoadingOverlay,
-  Modal,
-  MultiSelect,
-  Paper,
-  ScrollArea,
-  Select,
-  SimpleGrid,
-  Stack,
-  Switch,
-  Text,
-  TextInput,
-} from '@mantine/core';
-import { useForm, UseFormReturnType, zodResolver } from '@mantine/form';
-import {
-  IconBook2,
-  IconChevronLeft,
-  IconChevronRight,
-  IconInfoCircle,
-  IconRobot,
-  IconSearch,
-  IconSettings,
-  IconUser,
-  IconUsersGroup,
-  IconX,
-} from '@tabler/icons-react';
+import { Button, Group, LoadingOverlay, Paper, ScrollArea, Select, SimpleGrid, Stack, Switch, Text, TextInput } from '@mantine/core';
+import { useForm, zodResolver } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { IconBook2, IconChevronLeft, IconChevronRight, IconInfoCircle, IconRobot, IconSearch, IconUser, IconUsersGroup } from '@tabler/icons-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { NotifyUtils } from '@util/NotificationUtils';
 import { SchemaUtils } from '@util/SchemaUtils';
-import React, { useCallback, useState } from 'react';
+import { AxiosError } from 'axios';
+import { QUERY_KEYS } from 'constants/query-key.constants';
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { z } from 'zod';
-import MemberItem from '../components/MemberItem';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { QUERY_KEYS } from 'constants/query-key.constants';
-import { getAccount, getListAccountName } from '@api/services/account/account.api';
-import { TAccountName } from '@api/services/account/account.request';
-import { createGroupAPI, getGroupAPI } from '@api/services/group/group.api';
-import { NotifyUtils } from '@util/NotificationUtils';
-import { AxiosError } from 'axios';
-import { IGroup } from '@api/services/group/group.response';
-import { getExamListAPI, removeExamInGroup } from '@api/services/exam/exam.api';
-import ExamItem from '../components/ExamItem';
-import { useDisclosure } from '@mantine/hooks';
-import ExamInGroupModal from '../components/ExamInGroupModal';
-import { TExamToGroupREQ } from '@api/services/exam/exam.request';
-import { queryClient } from '@api/config/queryClient';
-import { getChatbotInGroupAPI, getChatBotListAPI, removePromptInGroupAPI } from '@api/services/chat-bot/chat-bot.api';
-import ChatbotItem from '../components/ChatbotItem';
 import ChatbotInGroupModal from '../components/ChatbotInModal';
+import ChatbotItem from '../components/ChatbotItem';
+import ExamInGroupModal from '../components/ExamInGroupModal';
+import ExamItem from '../components/ExamItem';
+import MemberItem from '../components/MemberItem';
 const formSchema = z.object({
   groupName: z.string().min(1, SchemaUtils.message.nonempty),
   owner: z
@@ -130,7 +100,7 @@ const GroupFormPage = (group: Partial<IGroup>) => {
   });
   return (
     <Stack>
-      <SimpleGrid cols={2}>
+      <SimpleGrid cols={{ sm: 1, lg: 2 }}>
         <Paper withBorder shadow='sm' radius={'md'} p='md'>
           <Stack>
             <Group>
@@ -170,7 +140,7 @@ const GroupFormPage = (group: Partial<IGroup>) => {
               <Stack mah={300} pos={'relative'}>
                 <LoadingOverlay visible={isPendingAccountName} zIndex={1000} overlayProps={{ radius: 'sm', blur: 2 }} />
 
-                {form.getValues().members.map((member) => {
+                {form?.getValues().members?.map((member) => {
                   return <MemberItem key={member._id} member={member} checked={true} />;
                 })}
               </Stack>
@@ -178,7 +148,7 @@ const GroupFormPage = (group: Partial<IGroup>) => {
           </Stack>
         </Paper>
       </SimpleGrid>
-      <SimpleGrid cols={2}>
+      <SimpleGrid cols={{ sm: 1, lg: 2 }}>
         <Paper withBorder shadow='sm' radius={'md'} p='md'>
           <Stack>
             <Group justify='space-between'>
@@ -203,7 +173,7 @@ const GroupFormPage = (group: Partial<IGroup>) => {
               <Stack mah={300} pos={'relative'}>
                 <LoadingOverlay visible={isPendingExamInGroup} zIndex={1000} overlayProps={{ radius: 'sm', blur: 2 }} />
 
-                {examsInGroup?.data.map((exam) => {
+                {examsInGroup?.data?.map((exam) => {
                   return <ExamItem key={exam._id} exam={exam} onRemoveClick={() => removeExam({ examId: exam._id, groupId: group._id! })} />;
                 })}
               </Stack>
@@ -230,7 +200,7 @@ const GroupFormPage = (group: Partial<IGroup>) => {
               <Stack mah={300} pos={'relative'}>
                 <LoadingOverlay visible={isPendingAccountName} zIndex={1000} overlayProps={{ radius: 'sm', blur: 2 }} />
 
-                {chatbotInGroup?.data.map((chatbot) => {
+                {chatbotInGroup?.data?.map((chatbot) => {
                   return (
                     <ChatbotItem
                       key={chatbot._id}
