@@ -57,7 +57,7 @@ function AppTable<T>({ data, columns, isLoading, onRowClick, paginationConfigs }
           backgroundColor: colorScheme === 'light' ? theme.white : theme.colors.gray[9],
         },
         root: {
-          border: `1px solid ${theme.colors.gray[3]} `,
+          border: colorScheme === 'light' ? `1px solid ${theme.colors.gray[3]}` : `1px solid ${theme.colors.gray[7]}`,
         },
       }}
       scrollAreaProps={{ type: 'never' }}

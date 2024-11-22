@@ -4,13 +4,13 @@ import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
 import { TableButton } from '@component/TableButton/TableButton';
 import { Avatar, Badge, Group, Stack, Tooltip } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { DATETIME_FORMAT, DateUtils } from '@util/DateUtils';
 import { QUERY_KEYS } from 'constants/query-key.constants';
 import { useFilter } from 'hooks/useFilter';
 import { useNavigate } from 'react-router-dom';
 import AccountFilterDrawer from '../AccountGroupListPage/components/AccountFilterDrawer';
-import { useDisclosure } from '@mantine/hooks';
 
 const BadgeStatus = (status: number) => {
   switch (status) {
@@ -22,7 +22,7 @@ const BadgeStatus = (status: number) => {
           </Badge>
         </Tooltip>
       );
-    case 2:
+    case 1:
       return (
         <Tooltip label='Đang hoạt động'>
           <Badge size='sm'>Đang hoạt động</Badge>
@@ -53,6 +53,7 @@ const AccountListPage = () => {
     queryFn: () => getAccountListAPI(queries),
     enabled: !hasNone,
   });
+
   return (
     <Stack>
       <AppSearch onSearch={(value) => onSearch({ ...queries, name: value })} onReset={onReset} onFilter={openFilter} />
@@ -64,6 +65,10 @@ const AccountListPage = () => {
           },
           {
             accessor: 'username',
+            title: 'User name',
+          },
+          {
+            accessor: 'email',
             title: 'Email',
           },
           {

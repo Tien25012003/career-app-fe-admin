@@ -1,44 +1,27 @@
-import React, { useEffect } from 'react';
-import { useForm, zodResolver } from '@mantine/form';
-import {
-  Checkbox,
-  Group,
-  Stack,
-  Paper,
-  Text,
-  TextInput,
-  MultiSelect,
-  Select,
-  Switch,
-  SimpleGrid,
-  Button,
-  Divider,
-  PasswordInput,
-  Loader,
-} from '@mantine/core';
-import { z } from 'zod';
-import { EFeature } from '@api/services/auth/auth.response';
-import { IconChevronLeft, IconChevronRight, IconSettings, IconUser } from '@tabler/icons-react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { PageHeader } from '@component/PageHeader/PageHeader';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { getGroupSelectAPI } from '@api/services/group/group.api';
-import { SchemaUtils } from '@util/SchemaUtils';
-import { QUERY_KEYS } from 'constants/query-key.constants';
-import { TACCOUNT } from '@api/services/account/account.response';
-import { AxiosError } from 'axios';
-import { NotifyUtils } from '@util/NotificationUtils';
-import { BaseResponse } from '@type/response.type';
-import { createAccountAPI, getAccount, updateAccountAPI } from '@api/services/account/account.api';
-import { TAccountREQ } from '@api/services/account/account.request';
 import { queryClient } from '@api/config/queryClient';
+import { getAccount, updateAccountAPI } from '@api/services/account/account.api';
+import { TAccountREQ } from '@api/services/account/account.request';
+import { getGroupSelectAPI } from '@api/services/group/group.api';
+import { PageHeader } from '@component/PageHeader/PageHeader';
+import { Button, Checkbox, Group, Loader, MultiSelect, Paper, Select, SimpleGrid, Stack, Switch, Text, TextInput } from '@mantine/core';
+import { useForm, zodResolver } from '@mantine/form';
+import { IconChevronLeft, IconChevronRight, IconUser } from '@tabler/icons-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { NotifyUtils } from '@util/NotificationUtils';
+import { SchemaUtils } from '@util/SchemaUtils';
+import { AxiosError } from 'axios';
+import { QUERY_KEYS } from 'constants/query-key.constants';
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { z } from 'zod';
 
 const formSchema = z.object({
   username: z.string().min(1, SchemaUtils.message.nonempty),
   name: z.string().min(1, SchemaUtils.message.nonempty),
   email: z.string().email(SchemaUtils.message.invalidEmail),
   role: z.string().min(1, SchemaUtils.message.nonempty),
-  groups: z.string().array().min(1, SchemaUtils.message.nonempty),
+  // groups: z.string().array().min(1, SchemaUtils.message.nonempty),
+  groups: z.string().array(),
   permissions: z.array(
     z.object({
       code: z.string(),
@@ -105,7 +88,7 @@ const AccountForm = ({ initialValues, id }: { initialValues: FormValues; id: str
             <TextInput placeholder='Nhập địa chỉ email' withAsterisk label='Email' type='email' {...form.getInputProps('email')} />
 
             <MultiSelect
-              withAsterisk
+              //withAsterisk
               label='Danh sách nhóm'
               data={groupSelect?.data?.map((group) => ({ label: group.groupName, value: group._id }))}
               placeholder='Chọn danh sách nhóm'
