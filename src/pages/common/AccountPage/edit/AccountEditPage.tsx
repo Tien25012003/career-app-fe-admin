@@ -2,8 +2,10 @@ import { queryClient } from '@api/config/queryClient';
 import { getAccount, updateAccountAPI } from '@api/services/account/account.api';
 import { TAccountREQ } from '@api/services/account/account.request';
 import { getGroupSelectAPI } from '@api/services/group/group.api';
+import AppFallBack from '@component/AppFallBack/AppFallBack';
 import { PageHeader } from '@component/PageHeader/PageHeader';
-import { Button, Checkbox, Group, Loader, MultiSelect, Paper, Select, SimpleGrid, Stack, Switch, Text, TextInput } from '@mantine/core';
+import { EROLE } from '@enum/account.enum';
+import { Box, Button, Checkbox, Group, Loader, MultiSelect, Paper, Select, SimpleGrid, Stack, Switch, Text, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { IconChevronLeft, IconChevronRight, IconUser } from '@tabler/icons-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -45,9 +47,7 @@ const AccountForm = ({ initialValues, id }: { initialValues: FormValues; id: str
     validate: zodResolver(formSchema),
   });
 
-  useEffect(() => {
-    form.setValues(initialValues);
-  }, [initialValues]);
+  // APIS
   const { data: groupSelect } = useQuery({
     queryKey: [QUERY_KEYS.GROUP.SELECT],
     queryFn: () => getGroupSelectAPI(),
@@ -65,6 +65,8 @@ const AccountForm = ({ initialValues, id }: { initialValues: FormValues; id: str
       NotifyUtils.error(error.response?.data?.message);
     },
   });
+
+  // METHODS
   const handlePermissionChange = (featureCode: string, permissionType: keyof FormValues['permissions'][number]['permission'], checked: boolean) => {
     // Create a new array for permissions, updating only the targeted item
     form.setFieldValue(
@@ -78,9 +80,14 @@ const AccountForm = ({ initialValues, id }: { initialValues: FormValues; id: str
     updateAccount({ ...formValues, status: formValues.status ? 1 : 0 });
   });
 
+  // EFFECTS
+  useEffect(() => {
+    form.setValues(initialValues);
+  }, [initialValues]);
+
   return (
     <Stack>
-      <SimpleGrid cols={2}>
+      <SimpleGrid cols={{ sm: 1, lg: 2 }} className='relative'>
         <Paper withBorder shadow='sm' radius='md' p='md'>
           <Stack>
             <TextInput placeholder='Nhập tên tài khoản' withAsterisk label='Tên tài khoản' {...form.getInputProps('username')} />
@@ -111,7 +118,7 @@ const AccountForm = ({ initialValues, id }: { initialValues: FormValues; id: str
           </Stack>
         </Paper>
 
-        <Paper withBorder shadow='sm' radius='md' p='md'>
+        <Paper withBorder shadow='sm' radius='md' p='md' className='relative'>
           <Stack>
             <Text fw={500}>Phân quyền tính năng</Text>
             {form.values.permissions.map((feature) => (
@@ -144,9 +151,16 @@ const AccountForm = ({ initialValues, id }: { initialValues: FormValues; id: str
               </Stack>
             ))}
           </Stack>
+          {form?.values.role === EROLE.STUDENT && <AppFallBack variant='not-allow' />}
         </Paper>
+
+        {isPending && (
+          <Box className='absolute left-0 right-0 top-0 bottom-0 bg-white opacity-70 rounded-md items-center justify-center flex'>
+            <Loader />
+          </Box>
+        )}
       </SimpleGrid>
-      <Group justify='flex-start'>
+      <Group justify='flex-end'>
         <Button onClick={() => handleSubmit()} loading={isPending} disabled={!form.isDirty()}>
           Lưu
         </Button>
@@ -163,6 +177,7 @@ const AccountEditPage = () => {
     queryKey: [QUERY_KEYS.ACCOUNT.LIST, id],
     queryFn: () => getAccount({ userId: id! }),
   });
+
   // Function to handle permission changes
 
   return (

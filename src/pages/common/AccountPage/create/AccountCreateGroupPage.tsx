@@ -1,13 +1,14 @@
+import { getListAccountName } from '@api/services/account/account.api';
+import { TAccountName } from '@api/services/account/account.request';
+import { createGroupAPI } from '@api/services/group/group.api';
+import { TGroupREQ } from '@api/services/group/group.request';
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import {
   ActionIcon,
   Avatar,
   Button,
-  Checkbox,
-  Divider,
   Group,
   LoadingOverlay,
-  MultiSelect,
   Paper,
   ScrollArea,
   Select,
@@ -18,20 +19,16 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconSearch, IconSettings, IconUser, IconUsersGroup, IconX } from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconSearch, IconUser, IconUsersGroup, IconX } from '@tabler/icons-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { NotifyUtils } from '@util/NotificationUtils';
 import { SchemaUtils } from '@util/SchemaUtils';
-import React, { useCallback, useState } from 'react';
+import { AxiosError } from 'axios';
+import { QUERY_KEYS } from 'constants/query-key.constants';
+import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { z } from 'zod';
 import MemberItem from '../components/MemberItem';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { QUERY_KEYS } from 'constants/query-key.constants';
-import { getListAccountName } from '@api/services/account/account.api';
-import { TAccountName } from '@api/services/account/account.request';
-import { createGroupAPI } from '@api/services/group/group.api';
-import { TGroupREQ } from '@api/services/group/group.request';
-import { NotifyUtils } from '@util/NotificationUtils';
-import { AxiosError } from 'axios';
 const formSchema = z.object({
   groupName: z.string().min(1, SchemaUtils.message.nonempty),
   owner: z.string().min(1, SchemaUtils.message.nonempty),
@@ -91,6 +88,8 @@ const AccountCreateGroupPage = () => {
     },
     [selectedMembers, setSelectedMembers],
   );
+
+  console.log('members', members);
   return (
     <Stack my='1rem' mx='1rem'>
       <PageHeader
@@ -122,7 +121,7 @@ const AccountCreateGroupPage = () => {
           </Group>
         }
       />
-      <SimpleGrid cols={2}>
+      <SimpleGrid cols={{ sm: 1, lg: 2 }}>
         <Paper withBorder shadow='sm' radius={'md'} p='md'>
           <Stack>
             <Group>

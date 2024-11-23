@@ -4,16 +4,14 @@ import { NewsItem } from '@api/services/news/news.response';
 import { uploadAPI } from '@api/services/uploads/uploads.api';
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import { PageUploader } from '@component/PageUploader/PageUploader';
-import { Button, Divider, Group, Image, Input, Paper, rem, Select, SimpleGrid, Stack, Text, Textarea, TextInput } from '@mantine/core';
-import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { Button, Divider, Group, Paper, Select, SimpleGrid, Stack, Text, Textarea, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconNews, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconNews } from '@tabler/icons-react';
 import { useMutation } from '@tanstack/react-query';
 import { NotifyUtils } from '@util/NotificationUtils';
 import { SchemaUtils } from '@util/SchemaUtils';
 import { AxiosError } from 'axios';
 import { QUERY_KEYS } from 'constants/query-key.constants';
-import { ROUTES } from 'constants/routes.constants';
 import { useState } from 'react';
 
 import { Link, useNavigate } from 'react-router-dom';
@@ -120,7 +118,7 @@ const NewsCreatePage = () => {
 
       <Paper withBorder shadow='sm' radius={'md'} p='md'>
         <Stack>
-          <SimpleGrid cols={2}>
+          <SimpleGrid cols={{ sm: 1, lg: 2 }}>
             <Stack gap={'xs'}>
               <Group>
                 <IconInfoCircle />

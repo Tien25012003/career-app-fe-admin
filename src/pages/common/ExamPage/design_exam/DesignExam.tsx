@@ -5,6 +5,7 @@ import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import { TableButton } from '@component/TableButton/TableButton';
+import { EROLE } from '@enum/account.enum';
 import { EExamCategory, EExamStatus, EQuestionType } from '@enum/exam';
 import { onError } from '@helper/error.helpers';
 import { ActionIcon, Badge, Button, Menu, Stack } from '@mantine/core';
@@ -13,10 +14,12 @@ import { IconPencil, IconPlus, IconSettings, IconStatusChange, IconUsersPlus } f
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { DATETIME_FORMAT, DateUtils } from '@util/DateUtils';
 import { NotifyUtils } from '@util/NotificationUtils';
+import { userInfoAtom } from 'atoms/auth.store';
 import { QUERY_KEYS } from 'constants/query-key.constants';
 import { ROUTES } from 'constants/routes.constants';
 import { useFilter } from 'hooks/useFilter';
 import useInvalidate from 'hooks/useInvalidate';
+import { useAtom } from 'jotai';
 import { DataTableColumn } from 'mantine-datatable';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -36,7 +39,7 @@ export default function DesignExam() {
   const [selectedItem, setSelectedItem] = useState<ExamRESP | null>(null);
   const [opened, { open: openFilter, close: closeFilter }] = useDisclosure(false);
 
-  // const [userInfo] = useAtom(userInfoAtom);
+  const [userInfo] = useAtom(userInfoAtom);
 
   const navigate = useNavigate();
 
@@ -168,6 +171,14 @@ export default function DesignExam() {
     ],
     [navigate, onDelete],
   );
+
+  const permissionColumns = useMemo(() => {
+    if (userInfo?.role === EROLE.ADMIN) {
+      return columns;
+    }
+    return columns?.filter((item) => item?.accessor !== 'creator');
+  }, [columns, userInfo?.role]);
+
   return (
     <Stack my='1rem' mx='1rem'>
       <PageHeader
@@ -182,7 +193,7 @@ export default function DesignExam() {
       <AppSearch onSearch={(val) => onSearch({ name: val })} onReset={onReset} onFilter={openFilter} />
       <AppTable
         data={exams?.data || []}
-        columns={columns}
+        columns={permissionColumns}
         isLoading={isFetchingExam || isUpdatingStatus}
         paginationConfigs={getPaginationConfigs(exams?.pagination?.totalPages, exams?.pagination?.totalCounts)}
         //onRowClick={(row) => navigate(`${ROUTES.EXAMS.DESIGN}/${row.record._id}/${EQuestionType.COMBINE}`)}

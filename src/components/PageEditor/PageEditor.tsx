@@ -8,6 +8,9 @@ import Underline from '@tiptap/extension-underline';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useEffect } from 'react';
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 interface PageEditorProps extends InputWrapperProps {
   value?: string;
   onChange?: (value: string) => void;

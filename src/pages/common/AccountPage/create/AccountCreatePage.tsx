@@ -1,35 +1,21 @@
-import React from 'react';
-import { useForm, zodResolver } from '@mantine/form';
-import {
-  Checkbox,
-  Group,
-  Stack,
-  Paper,
-  Text,
-  TextInput,
-  MultiSelect,
-  Select,
-  Switch,
-  SimpleGrid,
-  Button,
-  Divider,
-  PasswordInput,
-} from '@mantine/core';
-import { z } from 'zod';
-import { EFeature } from '@api/services/auth/auth.response';
-import { IconChevronLeft, IconChevronRight, IconSettings, IconUser } from '@tabler/icons-react';
-import { Link, useNavigate } from 'react-router-dom';
-import { PageHeader } from '@component/PageHeader/PageHeader';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { getGroupSelectAPI } from '@api/services/group/group.api';
-import { SchemaUtils } from '@util/SchemaUtils';
-import { QUERY_KEYS } from 'constants/query-key.constants';
-import { TACCOUNT } from '@api/services/account/account.response';
-import { AxiosError } from 'axios';
-import { NotifyUtils } from '@util/NotificationUtils';
-import { BaseResponse } from '@type/response.type';
-import { createAccountAPI } from '@api/services/account/account.api';
+import { createAccountWithTokenAPI } from '@api/services/account/account.api';
 import { TAccountREQ } from '@api/services/account/account.request';
+import { EFeature } from '@api/services/auth/auth.response';
+import { getGroupSelectAPI } from '@api/services/group/group.api';
+import AppFallBack from '@component/AppFallBack/AppFallBack';
+import { PageHeader } from '@component/PageHeader/PageHeader';
+import { EROLE } from '@enum/account.enum';
+import { Button, Checkbox, Group, MultiSelect, Paper, PasswordInput, Select, SimpleGrid, Stack, Switch, Text, TextInput } from '@mantine/core';
+import { useForm, zodResolver } from '@mantine/form';
+import { IconChevronLeft, IconChevronRight, IconUser } from '@tabler/icons-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { NotifyUtils } from '@util/NotificationUtils';
+import { SchemaUtils } from '@util/SchemaUtils';
+import { AxiosError } from 'axios';
+import { QUERY_KEYS } from 'constants/query-key.constants';
+import useInvalidate from 'hooks/useInvalidate';
+import { useNavigate } from 'react-router-dom';
+import { z } from 'zod';
 
 const formSchema = z.object({
   username: z.string().min(1, SchemaUtils.message.nonempty),
@@ -37,7 +23,8 @@ const formSchema = z.object({
   email: z.string().email(SchemaUtils.message.invalidEmail),
   role: z.string().min(1, SchemaUtils.message.nonempty),
   password: z.string().min(8, SchemaUtils.message.invalidPassword),
-  groups: z.string().array().min(1, SchemaUtils.message.nonempty),
+  // groups: z.string().array().min(1, SchemaUtils.message.nonempty),
+  groups: z.string().array(),
   permissions: z.array(
     z.object({
       code: z.string(),
@@ -76,6 +63,7 @@ const initialFormValues: FormValues = {
 
 const AccountCreatePage = () => {
   const navigate = useNavigate();
+  const invalidate = useInvalidate();
 
   const form = useForm({
     initialValues: initialFormValues,
@@ -86,9 +74,13 @@ const AccountCreatePage = () => {
     queryKey: [QUERY_KEYS.GROUP.SELECT],
     queryFn: () => getGroupSelectAPI(),
   });
+
   const { mutate: createAccount, isPending } = useMutation({
-    mutationFn: (request: Partial<TAccountREQ>) => createAccountAPI(request),
+    mutationFn: (request: Partial<TAccountREQ>) => createAccountWithTokenAPI(request),
     onSuccess: () => {
+      invalidate({
+        queryKey: [QUERY_KEYS.ACCOUNT.LIST],
+      });
       NotifyUtils.success('Tạo tài khoản mới thành công!');
       form.reset();
     },
@@ -108,6 +100,7 @@ const AccountCreatePage = () => {
   const handleSubmit = form.onSubmit((formValues) => {
     console.log(formValues);
     createAccount({ ...formValues, status: formValues.status ? 1 : 0 });
+    navigate(-1);
   });
 
   return (
@@ -128,20 +121,10 @@ const AccountCreatePage = () => {
             <Button leftSection={<IconChevronLeft size={'1.125rem'} />} onClick={() => navigate(-1)} variant='default'>
               Trở về
             </Button>
-            <Button
-              onClick={() => {
-                console.log(form.errors, form.getValues());
-                handleSubmit();
-              }}
-              disabled={!form.isDirty()}
-              loading={isPending}
-            >
-              Thêm
-            </Button>
           </Group>
         }
       />
-      <SimpleGrid cols={2}>
+      <SimpleGrid cols={{ sm: 1, lg: 2 }}>
         <Paper withBorder shadow='sm' radius='md' p='md'>
           <Stack>
             <TextInput placeholder='Nhập tên tài khoản' withAsterisk label='Tên tài khoản' {...form.getInputProps('username')} />
@@ -150,7 +133,6 @@ const AccountCreatePage = () => {
             <PasswordInput placeholder='Nhập mật khẩu' withAsterisk label='Mật khẩu' {...form.getInputProps('password')} />
 
             <MultiSelect
-              withAsterisk
               label='Danh sách nhóm'
               data={groupSelect?.data?.map((group) => ({ label: group.groupName, value: group._id }))}
               placeholder='Chọn danh sách nhóm'
@@ -173,7 +155,7 @@ const AccountCreatePage = () => {
           </Stack>
         </Paper>
 
-        <Paper withBorder shadow='sm' radius='md' p='md'>
+        <Paper withBorder shadow='sm' radius='md' p='md' className='relative'>
           <Stack>
             <Text fw={500}>Phân quyền tính năng</Text>
             {form.values.permissions.map((feature) => (
@@ -204,8 +186,23 @@ const AccountCreatePage = () => {
               </Stack>
             ))}
           </Stack>
+          {form.values.role === EROLE.STUDENT && <AppFallBack variant='not-allow' />}
         </Paper>
+
+        {isPending && <AppFallBack />}
       </SimpleGrid>
+      <Group justify='flex-end'>
+        <Button
+          onClick={() => {
+            console.log(form.errors, form.getValues());
+            handleSubmit();
+          }}
+          disabled={!form.isDirty()}
+          loading={isPending}
+        >
+          Thêm
+        </Button>
+      </Group>
     </Stack>
   );
 };

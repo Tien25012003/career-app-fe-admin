@@ -1,21 +1,9 @@
 import { getAccount } from '@api/services/account/account.api';
 import { getGroupSelectAPI } from '@api/services/group/group.api';
+import AppFallBack from '@component/AppFallBack/AppFallBack';
 import { PageHeader } from '@component/PageHeader/PageHeader';
-import {
-  Button,
-  Checkbox,
-  Divider,
-  Group,
-  LoadingOverlay,
-  MultiSelect,
-  Paper,
-  Select,
-  SimpleGrid,
-  Stack,
-  Switch,
-  Text,
-  TextInput,
-} from '@mantine/core';
+import { EROLE } from '@enum/account.enum';
+import { Button, Checkbox, Group, LoadingOverlay, MultiSelect, Paper, Select, SimpleGrid, Stack, Switch, Text, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconSettings, IconUser } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -55,10 +43,12 @@ const AccountForm = (value: FormValues) => {
     queryKey: [QUERY_KEYS.GROUP.SELECT],
     queryFn: () => getGroupSelectAPI(),
   });
-  const handleSubmit = form.onSubmit((formValues) => {});
+  const handleSubmit = form.onSubmit((formValues) => {
+    console.log('formValues', formValues);
+  });
 
   return (
-    <SimpleGrid cols={2}>
+    <SimpleGrid cols={{ sm: 1, lg: 2 }}>
       <Paper withBorder shadow='sm' radius={'md'} p='md'>
         <Stack>
           <Group>
@@ -91,7 +81,7 @@ const AccountForm = (value: FormValues) => {
           <Switch label='Kích hoạt tài khoản' fw={500} {...form.getInputProps('status', { type: 'checkbox' })} />
         </Stack>
       </Paper>
-      <Paper withBorder shadow='sm' radius={'md'} p='md'>
+      <Paper withBorder shadow='sm' radius={'md'} p='md' className='relative'>
         <Stack>
           <Group>
             <IconSettings />
@@ -110,6 +100,7 @@ const AccountForm = (value: FormValues) => {
             </Group>
           ))}
         </Stack>
+        {form?.values.role === EROLE.STUDENT && <AppFallBack variant='not-allow' />}
       </Paper>
     </SimpleGrid>
   );

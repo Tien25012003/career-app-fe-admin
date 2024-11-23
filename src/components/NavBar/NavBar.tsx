@@ -1,10 +1,11 @@
 import { AppShell, Box, Group, HoverCard, NavLink, ScrollArea, Stack, Text, useMantineColorScheme, useMantineTheme } from '@mantine/core';
 import { NavElement } from '@type/ui/navElements';
 import { hideNavbarAtom, miniNavbarAtom } from 'atoms/AppAtoms';
+import { userInfoAtom } from 'atoms/auth.store';
 import { navElements } from 'constants/navElements';
 import { useLargerThan } from 'hooks';
 import { useAtom } from 'jotai';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 type TNavLink = {
@@ -54,6 +55,27 @@ export function NavBar() {
   const [hideNavbar] = useAtom(hideNavbarAtom);
   const largerThanMd = useLargerThan('md');
   const largerThanSm = useLargerThan('sm');
+
+  const [userInfo] = useAtom(userInfoAtom);
+
+  // HANDLE PERMISSIONS
+  const permissionCodes = useMemo<string[] | []>(() => userInfo?.permissions?.map((p) => p.code) || [], [userInfo?.permissions]);
+
+  // const permissionNavElements = useMemo(() => navElements?.filter((item) => permissionCodes?.includes(item?.code as never)), [userInfo?.permissions]);
+
+  const permissionNavElements = useMemo(() => {
+    const filterNav = (elements: NavElement[] | []): NavElement[] => {
+      return elements
+        .filter((item) => permissionCodes.includes(item.code as never)) // Filter parent elements
+        .map((item) => ({
+          ...item,
+          children: item.children ? filterNav(item.children) : undefined, // Recursively filter children
+        }));
+    };
+    return filterNav(navElements);
+  }, [permissionCodes]);
+
+  // EFFECTS
   useEffect(() => {
     if (!largerThanSm) {
       setMiniNavbar(false);
@@ -68,13 +90,13 @@ export function NavBar() {
     <AppShell.Navbar>
       <AppShell.Section grow component={ScrollArea} p={theme.spacing.md} scrollbarSize={10}>
         {!miniNavbar
-          ? navElements.map((navElement, index) => (
+          ? permissionNavElements?.map((navElement, index) => (
               <CustomNavLink
                 key={index}
                 item={navElement}
                 active={navElement.link ? location.pathname.endsWith(navElement.link) || location.pathname.startsWith(`${navElement.link}/`) : false}
               >
-                {navElement.children?.map((childNavElement, childIndex) => {
+                {navElement?.children?.map((childNavElement, childIndex) => {
                   return (
                     <CustomNavLink
                       key={childIndex}
@@ -89,7 +111,7 @@ export function NavBar() {
                 })}
               </CustomNavLink>
             ))
-          : navElements.map((navElement, index) => (
+          : permissionNavElements?.map((navElement, index) => (
               <HoverCard key={navElement.label} position='right'>
                 <HoverCard.Target>
                   <Box>
@@ -99,7 +121,7 @@ export function NavBar() {
                       showLabel={false}
                       // showLabel={!largerThanMd && !hideNavbar}
                       active={
-                        navElement.link ? location.pathname.endsWith(navElement.link) || location.pathname.startsWith(`${navElement.link}/`) : false
+                        navElement.link ? location?.pathname?.endsWith(navElement.link) || location.pathname.startsWith(`${navElement.link}/`) : false
                       }
                     />
                   </Box>
@@ -110,7 +132,7 @@ export function NavBar() {
                       {navElement.label}
                     </Text>
                     <Box>
-                      {navElement.children?.map((childNavElement, childIndex) => (
+                      {navElement?.children?.map((childNavElement, childIndex) => (
                         <CustomNavLink
                           className={'mb-2'}
                           item={childNavElement}

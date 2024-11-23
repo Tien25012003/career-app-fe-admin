@@ -1,14 +1,17 @@
+import { queryClient } from '@api/config/queryClient';
+import { getListAccountName } from '@api/services/account/account.api';
+import { TAccountName } from '@api/services/account/account.request';
+import { getGroupAPI, updateGroupAPI } from '@api/services/group/group.api';
+import { TGroupREQ } from '@api/services/group/group.request';
+import { IGroup } from '@api/services/group/group.response';
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import {
   ActionIcon,
   Avatar,
   Button,
-  Checkbox,
-  Divider,
   Group,
   Loader,
   LoadingOverlay,
-  MultiSelect,
   Paper,
   ScrollArea,
   Select,
@@ -19,22 +22,16 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconSearch, IconSettings, IconUser, IconUsersGroup, IconX } from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconSearch, IconUser, IconUsersGroup, IconX } from '@tabler/icons-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { NotifyUtils } from '@util/NotificationUtils';
 import { SchemaUtils } from '@util/SchemaUtils';
-import React, { useCallback, useEffect, useState } from 'react';
+import { AxiosError } from 'axios';
+import { QUERY_KEYS } from 'constants/query-key.constants';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { z } from 'zod';
 import MemberItem from '../components/MemberItem';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { QUERY_KEYS } from 'constants/query-key.constants';
-import { getListAccountName } from '@api/services/account/account.api';
-import { TAccountName } from '@api/services/account/account.request';
-import { createGroupAPI, getGroupAPI, updateGroupAPI } from '@api/services/group/group.api';
-import { TGroupREQ } from '@api/services/group/group.request';
-import { NotifyUtils } from '@util/NotificationUtils';
-import { AxiosError } from 'axios';
-import { IGroup } from '@api/services/group/group.response';
-import { queryClient } from '@api/config/queryClient';
 const formSchema = z.object({
   groupName: z.string().min(1, SchemaUtils.message.nonempty),
   owner: z.string().min(1, SchemaUtils.message.nonempty),
@@ -116,7 +113,7 @@ const GroupForm = ({ initialValues, id }: { initialValues: Partial<IGroup>; id: 
   );
   return (
     <Stack>
-      <SimpleGrid cols={2}>
+      <SimpleGrid cols={{ sm: 1, lg: 2 }}>
         <Paper withBorder shadow='sm' radius={'md'} p='md'>
           <Stack>
             <Group>

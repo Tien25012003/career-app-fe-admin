@@ -76,7 +76,7 @@ export function Statistics() {
 
   const statistics = proccessedStatistics?.filter((item) => !item.isHide);
 
-  const lg = useMemo(() => 24 / statistics?.length, [statistics?.length]);
+  const lg = useMemo(() => (userInfo?.role === EROLE?.ADMIN ? 24 / statistics?.length : 6), [statistics?.length, userInfo?.role]);
 
   return (
     <React.Fragment>

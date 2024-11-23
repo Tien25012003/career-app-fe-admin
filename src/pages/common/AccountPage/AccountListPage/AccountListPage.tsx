@@ -1,14 +1,17 @@
-import { getAccountListAPI } from '@api/services/account/account.api';
+import { getAccountListAPI, updateStatusAccountAPI } from '@api/services/account/account.api';
 import { GetListAccountREQ } from '@api/services/account/account.request';
 import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
 import { TableButton } from '@component/TableButton/TableButton';
+import { onError } from '@helper/error.helpers';
 import { Avatar, Badge, Group, Stack, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { DATETIME_FORMAT, DateUtils } from '@util/DateUtils';
+import { NotifyUtils } from '@util/NotificationUtils';
 import { QUERY_KEYS } from 'constants/query-key.constants';
 import { useFilter } from 'hooks/useFilter';
+import useInvalidate from 'hooks/useInvalidate';
 import { useNavigate } from 'react-router-dom';
 import AccountFilterDrawer from '../AccountGroupListPage/components/AccountFilterDrawer';
 
@@ -17,15 +20,25 @@ const BadgeStatus = (status: number) => {
     case 0:
       return (
         <Tooltip label='Tạm dừng'>
-          <Badge color='red' size='sm'>
-            Tạm dừng
+          <Badge color='gray' size='sm' className='mx-auto'>
+            Chưa kích hoạt
           </Badge>
         </Tooltip>
       );
     case 1:
       return (
         <Tooltip label='Đang hoạt động'>
-          <Badge size='sm'>Đang hoạt động</Badge>
+          <Badge size='sm' className='mx-auto'>
+            Đang hoạt động
+          </Badge>
+        </Tooltip>
+      );
+    case 2:
+      return (
+        <Tooltip label='Tạm dừng'>
+          <Badge color='red' size='sm' className='mx-auto'>
+            Tạm dừng
+          </Badge>
         </Tooltip>
       );
     default:
@@ -47,11 +60,24 @@ const AccountListPage = () => {
   const [openedFilter, { open: openFilter, close: closeFilter }] = useDisclosure(false);
   const { queries, hasNone, onSearch, onReset, getPaginationConfigs } = useFilter<Partial<GetListAccountREQ>>(initialQuery);
 
+  const invalidate = useInvalidate();
+
   // APIS
   const { data: accounts, isFetching: isFetchingAccount } = useQuery({
     queryKey: [QUERY_KEYS.ACCOUNT.LIST, queries],
     queryFn: () => getAccountListAPI(queries),
     enabled: !hasNone,
+  });
+
+  const { mutate: updateStatusAccount, isPending: isUpdatingStatus } = useMutation({
+    mutationFn: (id: string) => updateStatusAccountAPI({ status: 2 }, { id }),
+    onSuccess: () => {
+      invalidate({
+        queryKey: [QUERY_KEYS.ACCOUNT.LIST, queries],
+      });
+      NotifyUtils.success('Xoá tài khoản thành công!');
+    },
+    onError,
   });
 
   return (
@@ -99,16 +125,20 @@ const AccountListPage = () => {
             accessor: 'createdAt',
             title: 'Ngày tạo',
             render: ({ createdAt }) => DateUtils.fDate(createdAt, DATETIME_FORMAT),
+            width: 150,
           },
           {
             accessor: 'updatedAt',
             title: 'Ngày cập nhật',
             render: ({ updatedAt }) => DateUtils.fDate(updatedAt, DATETIME_FORMAT),
+            width: 150,
           },
           {
             accessor: 'status',
             title: 'Trạng thái',
             render: ({ status }) => BadgeStatus(status),
+            width: 150,
+            textAlign: 'center',
           },
           {
             accessor: 'actions',
@@ -121,7 +151,7 @@ const AccountListPage = () => {
                 onEdit={() => {
                   navigate(`/accounts/edit/${record._id}`);
                 }}
-                onDelete={() => {}}
+                onDelete={() => updateStatusAccount(record._id)}
               />
             ),
           },

@@ -3,8 +3,8 @@ import { Button, Group, Stack } from '@mantine/core';
 import { IconPlus, IconUser } from '@tabler/icons-react';
 import { startTransition, useState } from 'react';
 import { Link } from 'react-router-dom';
-import AccountListPage from './AccountListPage/AccountListPage';
 import AccountGroupListPage from './AccountGroupListPage/AccountGroupListPage';
+import AccountListPage from './AccountListPage/AccountListPage';
 
 export default function AccountPage() {
   const [type, setType] = useState('list');
@@ -14,6 +14,7 @@ export default function AccountPage() {
       setType(newType);
     });
   };
+
   return (
     <Stack p={'md'}>
       <PageHeader

@@ -7,6 +7,7 @@ export type UserInfoRES = {
   role: EROLE;
   name: string;
   // TODO: GROUP & PERMISSION
+  permissions: TPermission[];
 };
 export enum EFeature {
   DASHBOARD = 'DASHBOARD',
