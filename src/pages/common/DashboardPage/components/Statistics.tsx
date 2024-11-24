@@ -95,7 +95,7 @@ export function Statistics() {
                     <Group gap={12} justify='space-between'>
                       <Group>
                         <Image
-                          src={'https://t4.ftcdn.net/jpg/06/44/10/27/360_F_644102790_xU44JCmu0oJdc1dyUiVBbxEXhOu76XuM.jpg'}
+                          src={'https://t3.ftcdn.net/jpg/06/57/85/22/360_F_657852299_5py03y6oH4mrUDyZnf9XxFSFfrjcqAzP.jpg'}
                           w={64}
                           h={64}
                           radius={100}
@@ -110,7 +110,7 @@ export function Statistics() {
                           </Text>
                         </Stack>
                       </Group>
-                      <ActionIcon variant='default' onClick={() => setOpenModalEditInfo(true)}>
+                      <ActionIcon variant='transparent' onClick={() => setOpenModalEditInfo(true)}>
                         <IconPencilMinus size={'1.125rem'} stroke={1.5} />
                       </ActionIcon>
                     </Group>

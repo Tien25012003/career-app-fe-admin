@@ -35,7 +35,6 @@ export function HomePage() {
       <NavBar />
       <AppShell.Main bg={colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0]}>
         <Outlet />
-        {/* <PageScrollToTop /> */}
         <PageChatbot />
       </AppShell.Main>
     </AppShell>

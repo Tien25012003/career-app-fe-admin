@@ -3,6 +3,7 @@ import { AddExamREQ, EditExamREQ } from '@api/services/exam/exam.request';
 import { UploadRESP } from '@api/services/uploads/upload.response';
 import { uploadAPI } from '@api/services/uploads/uploads.api';
 import { PageHeader } from '@component/PageHeader/PageHeader';
+import PageScrollToTop from '@component/PageScrollToTop/PageScrollToTop';
 import { EExamCategory, EExamStatus, EQuestionType } from '@enum/exam';
 import { onError } from '@helper/error.helpers';
 import { IOption, IQuestion, IResult } from '@interface/exam';
@@ -605,6 +606,7 @@ export default function ExamCreatePage() {
         }}
         questionTypeList={Object.keys(EQuestionType).slice(0, 3) as EQuestionType[]}
       />
+      <PageScrollToTop />
     </Stack>
   );
 }
