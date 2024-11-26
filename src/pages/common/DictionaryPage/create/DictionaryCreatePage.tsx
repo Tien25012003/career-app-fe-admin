@@ -87,7 +87,6 @@ export default function DictionaryCreatePage() {
 
   // METHODS
   const handleSubmit = form.onSubmit(async (formValues) => {
-    console.log('formValues', formValues);
     setIsUploadingFiles(true);
     try {
       const formData = new FormData();
@@ -105,7 +104,6 @@ export default function DictionaryCreatePage() {
       };
       addMajorMutation(request);
     } catch (error) {
-      console.log('error add exam', error);
       NotifyUtils.error('Lỗi upload hình ảnh!');
       setIsUploadingFiles(false);
     } finally {

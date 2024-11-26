@@ -98,7 +98,6 @@ const AccountCreatePage = () => {
     );
   };
   const handleSubmit = form.onSubmit((formValues) => {
-    console.log(formValues);
     createAccount({ ...formValues, status: formValues.status ? 1 : 0 });
     navigate(-1);
   });
@@ -194,7 +193,6 @@ const AccountCreatePage = () => {
       <Group justify='flex-end'>
         <Button
           onClick={() => {
-            console.log(form.errors, form.getValues());
             handleSubmit();
           }}
           disabled={!form.isDirty()}

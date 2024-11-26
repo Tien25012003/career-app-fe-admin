@@ -35,7 +35,6 @@ export default function ConclusionFilterDrawer({ opened = false, onClose, onSubm
   });
 
   const handleSubmit = form.onSubmit((formValues) => {
-    console.log('formValues', formValues);
     onSubmitFilter?.(formValues as unknown as ConclusionREQ);
     onClose?.();
   });

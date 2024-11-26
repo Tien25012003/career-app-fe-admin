@@ -47,7 +47,6 @@ export default function LoginPage() {
       navigate('/');
     },
     onError: (error: AxiosError) => {
-      console.log('error', error);
       NotifyUtils.error('Đăng nhập thất bại!');
     },
   });

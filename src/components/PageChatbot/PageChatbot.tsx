@@ -43,7 +43,6 @@ export default function PageChatbot() {
   const { mutate: executePromptMutation, isPending } = useMutation({
     mutationFn: (prompt: string) => executePromptAPI({ prompt }),
     onSuccess: ({ data }) => {
-      console.log('data');
       setPrompts([...prompts, { isBot: true, message: data }]);
       setValue('');
     },

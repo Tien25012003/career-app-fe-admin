@@ -29,7 +29,6 @@ export default function ChatbotFilterDrawer({ opened = false, onClose, onSubmitF
 
   // METHODS
   const handleSubmit = form.onSubmit((formValues) => {
-    // console.log('formValues', new Date(formValues.createdAt[0]).getTime());
     onSubmitFilter?.(formValues);
     onClose?.();
   });

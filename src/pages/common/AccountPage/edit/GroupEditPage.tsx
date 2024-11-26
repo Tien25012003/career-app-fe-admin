@@ -197,7 +197,7 @@ const GroupEditPage = () => {
     queryFn: () => getGroupAPI({ id: id! }),
     enabled: id ? true : false,
   });
-  console.log('group', group);
+
   return (
     <Stack my='1rem' mx='1rem'>
       <PageHeader

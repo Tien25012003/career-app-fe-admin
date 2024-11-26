@@ -53,7 +53,7 @@ export function QuestionCard({
       image: '',
       content: '',
       isResult: true,
-      standardScore: 0,
+      standardScore: undefined,
       imageFile: null,
       imageBase64: null,
     },
@@ -70,7 +70,7 @@ export function QuestionCard({
       image: '',
       content: '',
       isResult: false,
-      standardScore: 0,
+      standardScore: undefined,
       imageFile: null,
       imageBase64: null,
     });
@@ -118,8 +118,9 @@ export function QuestionCard({
 
   const fetchFilesForOptions = async () => {
     const optionsWithFiles = await Promise.all(
-      question?.options.map(async (o) => {
+      question?.options.map(async (o, index) => {
         // Fetch the image file using imageKey URL
+        console.log('index', index, o.image);
         let imageFile;
         if (o.image) {
           imageFile = await FileUtils.fetchFileFromPath(o.image as string);
@@ -134,9 +135,10 @@ export function QuestionCard({
   useEffect(() => {
     console.log('question card detail');
     if (isView || isEdit) {
-      if (question?.options) {
-        fetchFilesForOptions();
-      }
+      // if (question?.options) {
+      //   fetchFilesForOptions();
+      // }
+      fetchFilesForOptions();
     }
   }, [isView, isEdit]);
 

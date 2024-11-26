@@ -51,7 +51,6 @@ export default function ExamFilterDrawer({ opened = false, onClose, onSubmitFilt
 
   // METHODS
   const handleSubmit = form.onSubmit((formValues) => {
-    // console.log('formValues', new Date(formValues.createdAt[0]).getTime());
     onSubmitFilter?.({
       id: formValues.id,
       name: formValues.name,

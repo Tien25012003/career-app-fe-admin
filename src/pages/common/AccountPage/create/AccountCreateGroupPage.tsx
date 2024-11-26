@@ -89,7 +89,6 @@ const AccountCreateGroupPage = () => {
     [selectedMembers, setSelectedMembers],
   );
 
-  console.log('members', members);
   return (
     <Stack my='1rem' mx='1rem'>
       <PageHeader
@@ -110,7 +109,6 @@ const AccountCreateGroupPage = () => {
             </Button>
             <Button
               onClick={() => {
-                console.log(form.errors, form.getValues());
                 handleSubmit();
               }}
               disabled={!form.isDirty()}

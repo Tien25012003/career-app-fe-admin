@@ -1,5 +1,6 @@
 import { addExamAPI, editExamAPI, getExamDetailAPI } from '@api/services/exam/exam.api';
 import { AddExamREQ, EditExamREQ } from '@api/services/exam/exam.request';
+import { examDtoService } from '@api/services/exam/exam.service';
 import { UploadRESP } from '@api/services/uploads/upload.response';
 import { uploadAPI } from '@api/services/uploads/uploads.api';
 import { PageHeader } from '@component/PageHeader/PageHeader';
@@ -129,7 +130,7 @@ export default function ExamCreatePage() {
     queryKey: [QUERY_KEYS.CHAT_BOT.LIST, id],
     queryFn: () => getExamDetailAPI(id!),
     enabled: !!id,
-    select: ({ data }) => data,
+    select: ({ data }) => examDtoService(data),
   });
 
   // APIS EDIT EXAM
@@ -359,10 +360,9 @@ export default function ExamCreatePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [results]);
 
-  //console.log('question', questions);
+  console.log('question', questions);
 
   // EFFECTS FOR DETAILS
-
   const fetchFilesForQuestions = async () => {
     const questionsWithFiles = await Promise.all(
       detail?.questions?.map(async (q) => {
@@ -398,6 +398,7 @@ export default function ExamCreatePage() {
     resultsHandler.setState(resultsWithFiles || []);
   };
 
+  // EFFECTS
   useEffect(() => {
     console.log('set detail');
     if (id) {

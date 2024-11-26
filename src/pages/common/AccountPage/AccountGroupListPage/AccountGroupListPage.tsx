@@ -5,15 +5,15 @@ import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
 import { TableButton } from '@component/TableButton/TableButton';
 import { Avatar, Badge, Group, Stack, Tooltip } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { DateUtils } from '@util/DateUtils';
+import { DATETIME_FORMAT, DateUtils } from '@util/DateUtils';
 import { NotifyUtils } from '@util/NotificationUtils';
 import { AxiosError } from 'axios';
 import { QUERY_KEYS } from 'constants/query-key.constants';
 import { useFilter } from 'hooks/useFilter';
 import { useNavigate } from 'react-router-dom';
 import AccountGroupFilterDrawer from './components/AccountGroupFilterDrawer';
-import { useDisclosure } from '@mantine/hooks';
 
 const BadgeStatus = (status: number) => {
   switch (status) {
@@ -102,16 +102,19 @@ const AccountGroupListPage = () => {
           {
             accessor: 'createdAt',
             title: 'Ngày tạo',
-            render: ({ createdAt }) => DateUtils.fDate(createdAt),
+            width: 150,
+            render: ({ createdAt }) => DateUtils.fDate(createdAt, DATETIME_FORMAT),
           },
           {
             accessor: 'updatedAt',
             title: 'Ngày cập nhật',
-            render: ({ updatedAt }) => DateUtils.fDate(updatedAt),
+            width: 150,
+            render: ({ updatedAt }) => DateUtils.fDate(updatedAt, DATETIME_FORMAT),
           },
           {
             accessor: 'status',
             title: 'Trạng thái',
+            width: 150,
             render: ({ status }) => BadgeStatus(status),
           },
           {

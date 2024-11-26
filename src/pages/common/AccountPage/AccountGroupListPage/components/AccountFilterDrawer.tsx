@@ -1,4 +1,3 @@
-import { ChatBotREQ } from '@api/services/chat-bot/chat-bot.request';
 import { GroupREQ } from '@api/services/group/group.request';
 import { Button, Drawer, Group, Select, Stack, Switch, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
@@ -34,7 +33,6 @@ export default function AccountFilterDrawer({ opened = false, onClose, onSubmitF
 
   // METHODS
   const handleSubmit = form.onSubmit((formValues) => {
-    // console.log('formValues', new Date(formValues.createdAt[0]).getTime());
     onSubmitFilter?.({
       ...formValues,
       status: formValues.status ? 1 : 0,
