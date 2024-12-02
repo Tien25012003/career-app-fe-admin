@@ -25,10 +25,12 @@ import { NotifyUtils } from '@util/NotificationUtils';
 import { SchemaUtils } from '@util/SchemaUtils';
 import { AxiosError } from 'axios';
 import { QUERY_KEYS } from 'constants/query-key.constants';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { z } from 'zod';
 import MemberItem from '../components/MemberItem';
+import { useAtom } from 'jotai';
+import { userInfoAtom } from 'atoms/auth.store';
 const formSchema = z.object({
   groupName: z.string().min(1, SchemaUtils.message.nonempty),
   owner: z.string().min(1, SchemaUtils.message.nonempty),
@@ -47,8 +49,13 @@ const initialFormValues: FormValues = {
 const AccountCreateGroupPage = () => {
   const [selectedMembers, setSelectedMembers] = useState<TAccountName[]>([]);
   const [keyword, setKeyword] = useState('');
+  const [userInfo] = useAtom(userInfoAtom);
+
   const form = useForm({
-    initialValues: initialFormValues,
+    initialValues: {
+      ...initialFormValues,
+      owner: userInfo?.role === 'TEACHER' ? userInfo._id : '',
+    },
     validate: zodResolver(formSchema),
   });
   const { data: members, isPending: isPendingAccountName } = useQuery({
@@ -131,11 +138,12 @@ const AccountCreateGroupPage = () => {
               withAsterisk
               comboboxProps={{ withinPortal: false }}
               label='Chọn trưởng nhóm'
-              data={members?.data?.map((member) => ({ label: member.name, value: member._id }))}
+              data={members?.data?.filter((member) => member.role === 'TEACHER')?.map((member) => ({ label: member.name, value: member._id }))}
               placeholder='Chọn trưởng nhóm'
               {...form.getInputProps('owner')}
               clearable
               searchable
+              disabled={userInfo?.role === 'TEACHER'}
             />
             <Switch label='Kích hoạt tài khoản' fw={500} {...form.getInputProps('status', { type: 'checkbox' })} />
           </Stack>
@@ -170,10 +178,12 @@ const AccountCreateGroupPage = () => {
               <Stack mah={300} pos={'relative'}>
                 <LoadingOverlay visible={isPendingAccountName} zIndex={1000} overlayProps={{ radius: 'sm', blur: 2 }} />
 
-                {members?.data?.map((member) => {
-                  const checked = isChecked(member);
-                  return <MemberItem key={member._id} member={member} checked={checked} onClick={onMemberClick} />;
-                })}
+                {members?.data
+                  ?.filter((member) => member.role === 'STUDENT')
+                  ?.map((member) => {
+                    const checked = isChecked(member);
+                    return <MemberItem key={member._id} member={member} checked={checked} onClick={onMemberClick} />;
+                  })}
               </Stack>
             </ScrollArea>
           </Stack>

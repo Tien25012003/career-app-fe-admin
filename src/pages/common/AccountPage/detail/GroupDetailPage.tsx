@@ -56,6 +56,7 @@ const GroupFormPage = (group: Partial<IGroup>) => {
   const [openedExamInGroup, { open: openExamInGroup, close: closeExamInGroup }] = useDisclosure(false);
   const [openedChatbotInGroup, { open: openChatbotInGroup, close: closeChatbotInGroup }] = useDisclosure(false);
   const [queryExam, setQueryExam] = useState('');
+  const [queryMember, setQueryMember] = useState('');
 
   const form = useForm({
     initialValues: initialFormValues,
@@ -63,7 +64,7 @@ const GroupFormPage = (group: Partial<IGroup>) => {
   });
   const { data: members, isPending: isPendingAccountName } = useQuery({
     queryKey: [QUERY_KEYS.ACCOUNT.NAME],
-    queryFn: () => getListAccountName({ keyword: '' }),
+    queryFn: () => getListAccountName({ keyword: queryMember }),
   });
   const { data: examsInGroup, isPending: isPendingExamInGroup } = useQuery({
     queryKey: [QUERY_KEYS.EXAM.LIST, queryExam, group._id],
@@ -132,7 +133,7 @@ const GroupFormPage = (group: Partial<IGroup>) => {
                 flex={1}
                 placeholder='Nhập tên thành viên'
                 leftSection={<IconSearch size={'1.125rem'} />}
-                onChange={(e) => setQueryExam(e.target.value)}
+                onChange={(e) => setQueryMember(e.target.value)}
               />
               <Button>Tìm kiếm</Button>
             </Group>
@@ -140,7 +141,7 @@ const GroupFormPage = (group: Partial<IGroup>) => {
               <Stack mah={300} pos={'relative'}>
                 <LoadingOverlay visible={isPendingAccountName} zIndex={1000} overlayProps={{ radius: 'sm', blur: 2 }} />
 
-                {form?.getValues().members?.map((member) => {
+                {form?.getValues()?.members?.map((member) => {
                   return <MemberItem key={member._id} member={member} checked={true} />;
                 })}
               </Stack>
