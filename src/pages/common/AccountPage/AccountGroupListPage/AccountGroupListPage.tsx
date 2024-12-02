@@ -1,5 +1,5 @@
 import { queryClient } from '@api/config/queryClient';
-import { deleteGroupAPI, getGroupListAPI } from '@api/services/group/group.api';
+import { deleteGroupAPI, getGroupListAPI, updateGroupAPI } from '@api/services/group/group.api';
 import { GroupREQ } from '@api/services/group/group.request';
 import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
@@ -55,12 +55,12 @@ const AccountGroupListPage = () => {
     queryFn: () => getGroupListAPI(queries),
     enabled: !hasNone,
   });
-  const { mutate: deleteGroup, isPending } = useMutation({
-    mutationFn: (id: string) => deleteGroupAPI({ id }),
+  const { mutate: deactiveGroup, isPending } = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: number }) => updateGroupAPI({ status: status }, id),
     onSuccess: () => {
-      NotifyUtils.success('Xóa nhóm thành công!');
+      NotifyUtils.success('Cập nhật trạng thái thành công!');
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GROUP.LIST, queries],
+        queryKey: [QUERY_KEYS.GROUP.LIST],
       });
     },
     onError: (error: AxiosError<{ message: string }>) => {
@@ -128,8 +128,11 @@ const AccountGroupListPage = () => {
                 onEdit={() => {
                   navigate(`/accounts/group/edit/${record._id}`);
                 }}
-                onDelete={() => {
-                  deleteGroup(record._id);
+                onChangeStatus={() => {
+                  deactiveGroup({
+                    id: record._id,
+                    status: record.status ? 0 : 1,
+                  });
                 }}
               />
             ),

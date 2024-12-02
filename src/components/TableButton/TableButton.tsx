@@ -1,13 +1,14 @@
 import { ActionIcon, Button, Group, Popover, Stack, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconEdit, IconEye, IconTrash } from '@tabler/icons-react';
+import { IconEdit, IconExchange, IconEye, IconTrash } from '@tabler/icons-react';
 type Props = {
   onView?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
+  onChangeStatus?: () => void;
   isConfirmDelete?: boolean;
 };
-export function TableButton({ onView, onEdit, onDelete, isConfirmDelete = true }: Props) {
+export function TableButton({ onView, onEdit, onDelete, isConfirmDelete = true, onChangeStatus }: Props) {
   const [opened, { toggle, close }] = useDisclosure(false);
 
   const handleDelete = () => {
@@ -23,6 +24,11 @@ export function TableButton({ onView, onEdit, onDelete, isConfirmDelete = true }
       {!!onEdit && (
         <ActionIcon onClick={onEdit}>
           <IconEdit size='1rem' />
+        </ActionIcon>
+      )}
+      {!!onChangeStatus && (
+        <ActionIcon onClick={onChangeStatus} variant='light'>
+          <IconExchange size='1rem' />
         </ActionIcon>
       )}
       {!!onDelete && (
