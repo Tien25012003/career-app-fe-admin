@@ -1,12 +1,11 @@
 import { TPermission } from './account.response';
 
 export type GetListAccountREQ = {
-  status: number;
-  email: string;
-  name: string;
-  page: number;
-  size: number;
-  role: string;
+  userId: string;
+};
+
+export type GetMemberAccountREQ = {
+  userId: string;
 };
 export type TAccountREQ = {
   _id: string;

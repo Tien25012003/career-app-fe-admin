@@ -1,4 +1,4 @@
-import { getAccountListAPI, updateStatusAccountAPI } from '@api/services/account/account.api';
+import { getAccountListAPI, getMemberAccountListAPI, updateStatusAccountAPI } from '@api/services/account/account.api';
 import { GetListAccountREQ } from '@api/services/account/account.request';
 import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
@@ -14,6 +14,8 @@ import { useFilter } from 'hooks/useFilter';
 import useInvalidate from 'hooks/useInvalidate';
 import { useNavigate } from 'react-router-dom';
 import AccountFilterDrawer from '../AccountGroupListPage/components/AccountFilterDrawer';
+import { useAtom } from 'jotai';
+import { userInfoAtom } from 'atoms/auth.store';
 
 const BadgeStatus = (status: number) => {
   switch (status) {
@@ -51,21 +53,21 @@ const BadgeStatus = (status: number) => {
       );
   }
 };
-export const initialQuery: Partial<GetListAccountREQ> = {
-  page: 1,
-  size: 10,
+const query = {
+  userId: '6741e47fb917b74c31adbea2',
 };
 const AccountListPage = () => {
   const navigate = useNavigate();
+  const [userInfo] = useAtom(userInfoAtom);
   const [openedFilter, { open: openFilter, close: closeFilter }] = useDisclosure(false);
-  const { queries, hasNone, onSearch, onReset, getPaginationConfigs } = useFilter<Partial<GetListAccountREQ>>(initialQuery);
+  const { queries, hasNone, onSearch, onReset, getPaginationConfigs } = useFilter<Partial<GetListAccountREQ>>(query);
 
   const invalidate = useInvalidate();
 
   // APIS
   const { data: accounts, isFetching: isFetchingAccount } = useQuery({
     queryKey: [QUERY_KEYS.ACCOUNT.LIST, queries],
-    queryFn: () => getAccountListAPI(queries),
+    queryFn: () => getMemberAccountListAPI(queries),
     enabled: !hasNone,
   });
 
@@ -82,7 +84,7 @@ const AccountListPage = () => {
 
   return (
     <Stack>
-      <AppSearch onSearch={(value) => onSearch({ ...queries, name: value })} onReset={onReset} onFilter={openFilter} />
+      <AppSearch onSearch={(value) => onSearch({ ...queries })} onReset={onReset} onFilter={openFilter} />
       <AppTable
         columns={[
           {
