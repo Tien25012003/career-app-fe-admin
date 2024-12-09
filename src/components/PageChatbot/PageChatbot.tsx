@@ -43,8 +43,10 @@ export default function PageChatbot() {
   const { mutate: executePromptMutation, isPending } = useMutation({
     mutationFn: (prompt: string) => executePromptAPI({ prompt }),
     onSuccess: ({ data }) => {
-      setPrompts([...prompts, { isBot: true, message: data }]);
-      setValue('');
+      if (typeof data === 'string') {
+        setPrompts([...prompts, { isBot: true, message: data }]);
+        setValue('');
+      }
     },
     onError,
   });
@@ -146,6 +148,11 @@ export default function PageChatbot() {
                       value={value}
                       onChange={(e) => setValue(e.target.value)}
                       disabled={isPending}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          onExecutePrompt();
+                        }
+                      }}
                     />
                     <ActionIcon variant='subtle' radius={'lg'} size={'lg'} onClick={onExecutePrompt} loading={isPending}>
                       <IconSend2 />

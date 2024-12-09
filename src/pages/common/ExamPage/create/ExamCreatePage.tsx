@@ -293,7 +293,7 @@ export default function ExamCreatePage() {
         name: formValues.name,
         type: null,
         category: category || EExamCategory.DESIGN,
-        status: EExamStatus.UNACTIVATED,
+        status: isCreate ? EExamStatus.UNACTIVATED : detail?.status,
         questions: requestedQuestions,
         results: requestedResults,
       };
