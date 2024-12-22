@@ -12,6 +12,7 @@ import { Suspense } from 'react';
 import { RouteObject } from 'react-router-dom';
 const DashboardPage = lazyWithReload(() => import('@page/common/DashboardPage/DashboardPage'));
 const LoginPage = lazyWithReload(() => import('@page/auth/LoginPage/LoginPage'));
+const ForgotPasswordPage = lazyWithReload(() => import('@page/auth/ForgotPasswordPage/ForgotPasswordPage'));
 const SignUpPage = lazyWithReload(() => import('@page/auth/SignUpPage/SignUpPage'));
 const NewsPage = lazyWithReload(() => import('@page/common/NewsPage/NewsPage'));
 //Account
@@ -50,6 +51,14 @@ const publicRoutes: RouteObject[] = [
     element: (
       <LoadingWrapper>
         <LoginPage />
+      </LoadingWrapper>
+    ),
+  },
+  {
+    path: '/forgot-password',
+    element: (
+      <LoadingWrapper>
+        <ForgotPasswordPage />
       </LoadingWrapper>
     ),
   },
