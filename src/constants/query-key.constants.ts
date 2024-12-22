@@ -24,6 +24,7 @@ export const QUERY_KEYS = {
   },
   NEWS: {
     ALL: 'ALL',
+    DETAIL: 'DETAIL',
     CATEGORY: 'CATEGORY',
   },
   CONCLUSION: {

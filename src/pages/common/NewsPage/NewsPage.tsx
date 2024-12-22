@@ -1,17 +1,20 @@
-import { getAllNewsAPI } from '@api/services/news/news.api';
-import { TNewsREQ } from '@api/services/news/news.request';
+import { queryClient } from '@api/config/queryClient';
+import { deleteNewsAPI, getAllNewsAPI } from '@api/services/news/news.api';
+import { TDeleteNewsREQ, TNewsREQ } from '@api/services/news/news.request';
 import AppSearch from '@component/AppSearch/AppSearch';
 import AppTable from '@component/AppTable/AppTable';
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import { TableButton } from '@component/TableButton/TableButton';
 import { Badge, Button, Group, Image, Modal, ScrollArea, Stack, Text } from '@mantine/core';
 import { IconBrandWechat, IconNews, IconPlus } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { DateUtils } from '@util/DateUtils';
+import { NotifyUtils } from '@util/NotificationUtils';
+import { AxiosError } from 'axios';
 import { QUERY_KEYS } from 'constants/query-key.constants';
 import { useFilter } from 'hooks/useFilter';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 type TNews = {
   id: number;
   createdAt: Date;
@@ -37,6 +40,7 @@ const newsDummyData: TNews[] = [
   },
 ];
 export default function NewsPage() {
+  const navigate = useNavigate();
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const { queries, hasNone, onSearch, onReset, getPaginationConfigs } = useFilter<TNewsREQ>();
 
@@ -44,6 +48,24 @@ export default function NewsPage() {
     queryKey: [QUERY_KEYS.NEWS.ALL, queries],
     queryFn: () => getAllNewsAPI(queries),
   });
+  const { mutate: deleteNews, isPending } = useMutation({
+    mutationFn: (request: TDeleteNewsREQ) => deleteNewsAPI(request),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.NEWS.ALL],
+      });
+      NotifyUtils.success('Xoá tin tức thành công!');
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      NotifyUtils.error(error.response?.data?.message);
+    },
+  });
+  const onDeleteNews = async (id: string, categoryName: string) => {
+    deleteNews({
+      categoryName: categoryName,
+      newsId: id,
+    });
+  };
   return (
     <Stack my='1rem' mx='1rem'>
       <PageHeader
@@ -116,7 +138,13 @@ export default function NewsPage() {
             accessor: 'actions',
             title: 'Thao tác',
             textAlign: 'center',
-            render: () => <TableButton onView={() => {}} onEdit={() => {}} onDelete={() => {}} />,
+            render: (record) => (
+              <TableButton
+                onView={() => navigate(`/news/detail/${record._id}`)}
+                onEdit={() => navigate(`/news/edit/${record._id}`)}
+                onDelete={() => onDeleteNews(record._id, record.type)}
+              />
+            ),
           },
         ]}
       />

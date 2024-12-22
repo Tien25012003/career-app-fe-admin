@@ -14,7 +14,11 @@ const DashboardPage = lazyWithReload(() => import('@page/common/DashboardPage/Da
 const LoginPage = lazyWithReload(() => import('@page/auth/LoginPage/LoginPage'));
 const ForgotPasswordPage = lazyWithReload(() => import('@page/auth/ForgotPasswordPage/ForgotPasswordPage'));
 const SignUpPage = lazyWithReload(() => import('@page/auth/SignUpPage/SignUpPage'));
+//News
 const NewsPage = lazyWithReload(() => import('@page/common/NewsPage/NewsPage'));
+const NewsDetailPage = lazyWithReload(() => import('@page/common/NewsPage/detail/NewsDetailPage'));
+const NewsEditPage = lazyWithReload(() => import('@page/common/NewsPage/edit/NewsEditPage'));
+
 //Account
 const AccountPage = lazyWithReload(() => import('@page/common/AccountPage/AccountPage'));
 const GroupDetailPage = lazyWithReload(() => import('@page/common/AccountPage/detail/GroupDetailPage'));
@@ -239,6 +243,22 @@ const privateRoutes: RouteObject[] = [
             element: (
               <LoadingWrapper>
                 <NewsCreatePage />
+              </LoadingWrapper>
+            ),
+          },
+          {
+            path: '/news/detail/:id',
+            element: (
+              <LoadingWrapper>
+                <NewsDetailPage />
+              </LoadingWrapper>
+            ),
+          },
+          {
+            path: '/news/edit/:id',
+            element: (
+              <LoadingWrapper>
+                <NewsEditPage />
               </LoadingWrapper>
             ),
           },
