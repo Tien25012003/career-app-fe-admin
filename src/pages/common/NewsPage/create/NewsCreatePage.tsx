@@ -167,7 +167,7 @@ const NewsCreatePage = () => {
 
             <Stack>
               <Textarea label={'Nhập tiêu đề'} withAsterisk placeholder='Nhập tiêu đề' rows={5} {...form.getInputProps('title')} />
-              <TextInput type='url' label={'Nhập nội dung'} withAsterisk placeholder='Nhập nội dung' {...form.getInputProps('content')} />
+              <TextInput type='url' label={'Đường dẫn tin tức'} withAsterisk placeholder='Đường dẫn tin tức' {...form.getInputProps('content')} />
             </Stack>
           </SimpleGrid>
           <Divider />

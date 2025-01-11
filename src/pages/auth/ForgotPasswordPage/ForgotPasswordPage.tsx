@@ -1,5 +1,5 @@
-import { loginAPI } from '@api/services/auth/auth.api';
-import { LoginREQ } from '@api/services/auth/auth.request';
+import { forgotPasswordAPI } from '@api/services/auth/auth.api';
+import { ForgotPasswordREQ } from '@api/services/auth/auth.request';
 import { LoginRESP } from '@api/services/auth/auth.response';
 import { CareerAppLogo } from '@icon/CareerAppLogo';
 import { Anchor, Box, Button, Container, getGradient, Group, Paper, PasswordInput, Stack, TextInput, useMantineTheme } from '@mantine/core';
@@ -16,21 +16,19 @@ import { z } from 'zod';
 
 const formSchema = z.object({
   username: z.string().trim().min(1, SchemaUtils.message.nonempty),
-  password: z.string().trim().min(1, SchemaUtils.message.nonempty),
+  newPassword: z.string().trim().min(1, SchemaUtils.message.nonempty),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 const initialFormValues: FormValues = {
   username: '',
-  password: '',
+  newPassword: '',
 };
 
 export default function LoginPage() {
   //const { colorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
   const navigate = useNavigate();
-
-  const setAccessToken = useSetAtom(accessTokenAtom);
 
   // FORM
   const form = useForm({
@@ -39,21 +37,20 @@ export default function LoginPage() {
   });
 
   // API
-  const { mutate: loginMutation, isPending } = useMutation({
-    mutationFn: (request: LoginREQ) => loginAPI(request),
-    onSuccess: ({ data }: BaseResponse<LoginRESP>) => {
-      NotifyUtils.success('Đăng nhập thành công!');
-      setAccessToken(data.accessToken);
-      navigate('/');
+  const { mutate: forgotPasswordMutation, isPending } = useMutation({
+    mutationFn: (request: ForgotPasswordREQ) => forgotPasswordAPI(request),
+    onSuccess: ({ data }: BaseResponse<void>) => {
+      NotifyUtils.success('Vui lòng kiểm tra email của bạn để xác thực đổi mật khẩu');
+      navigate('/login');
     },
     onError: (error: AxiosError) => {
-      NotifyUtils.error('Đăng nhập thất bại!');
+      NotifyUtils.error('Không tìm thấy thông tin đăng nhập. Vui lòng kiểm tra lại!');
     },
   });
 
   // METHODS
   const handleFormSubmit = form.onSubmit((formValues) => {
-    loginMutation({ username: formValues.username, password: formValues.password });
+    forgotPasswordMutation({ username: formValues.username, newPassword: formValues.newPassword });
   });
   return (
     <Box
@@ -75,14 +72,10 @@ export default function LoginPage() {
           </Stack>
           <form onSubmit={handleFormSubmit}>
             <TextInput withAsterisk label='Tên đăng nhập' {...form.getInputProps('username')} />
-            <PasswordInput withAsterisk label='Mật khẩu' mt='md' {...form.getInputProps('password')} />
-            <Group justify='end' mt='sm'>
-              <Anchor component='button' size='sm' c={theme.colors.blue[6]} onClick={() => navigate('/forgot-password')}>
-                Quên mật khẩu?
-              </Anchor>
-            </Group>
+            <PasswordInput withAsterisk label='Mật khẩu mới' mt='md' {...form.getInputProps('newPassword')} />
+
             <Button type='submit' fullWidth mt='xl' loading={isPending}>
-              Đăng nhập
+              Xác nhận
             </Button>
           </form>
         </Paper>
