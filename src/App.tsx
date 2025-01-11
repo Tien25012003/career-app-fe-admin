@@ -10,9 +10,7 @@ import 'mantine-datatable/styles.layer.css';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Provider as JotaiProvider } from 'jotai';
-import { DevTools as JotaiDevTools } from 'jotai-devtools';
 import { useRoutes } from 'react-router-dom';
 import { queryClient } from './api/config/queryClient';
 import { store } from './atoms/store';
@@ -29,9 +27,9 @@ function App() {
           <Notifications />
           <ModalsProvider>{appRoutes}</ModalsProvider>
         </ThemeProvider>
-        <JotaiDevTools />
+        {/* <JotaiDevTools /> */}
       </JotaiProvider>
-      <ReactQueryDevtools initialIsOpen={false} buttonPosition='bottom-right' />
+      {/* <ReactQueryDevtools initialIsOpen={false} buttonPosition='bottom-right' /> */}
     </QueryClientProvider>
   );
 }
