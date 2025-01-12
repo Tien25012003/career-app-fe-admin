@@ -37,3 +37,9 @@ export enum EGroup {
   D1 = 'D1',
   D7 = 'D7',
 }
+export enum EGroupDashboard {
+  A = 'A',
+  B = 'B',
+  C = 'C',
+  D = 'D',
+}

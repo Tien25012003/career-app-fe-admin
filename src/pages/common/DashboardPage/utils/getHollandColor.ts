@@ -1,4 +1,4 @@
-import { EGroup, EHolland } from '@enum/exam';
+import { EGroupDashboard, EHolland } from '@enum/exam';
 
 export const getHollandColor = (type: EHolland) => {
   switch (type) {
@@ -19,18 +19,16 @@ export const getHollandColor = (type: EHolland) => {
   }
 };
 
-export const getSchoolGroupColor = (type: EGroup) => {
+export const getSchoolGroupColor = (type: EGroupDashboard) => {
   switch (type) {
-    case EGroup.A0:
+    case EGroupDashboard.A:
       return 'red';
-    case EGroup.B:
+    case EGroupDashboard.B:
       return 'yellow';
-    case EGroup.C:
+    case EGroupDashboard.C:
       return 'green';
-    case EGroup.D1:
+    case EGroupDashboard.D:
       return 'blue';
-    case EGroup.D7:
-      return 'purple';
     default:
       return 'white';
   }

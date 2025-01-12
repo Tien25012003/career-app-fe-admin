@@ -1,5 +1,5 @@
 import { getReportAPI } from '@api/services/report/report.api';
-import { EGroup, EHolland } from '@enum/exam';
+import { EGroup, EGroupDashboard, EHolland } from '@enum/exam';
 import { Grid, Transition, useMantineTheme } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'constants/query-key.constants';
@@ -103,10 +103,10 @@ export function ScoreChart() {
   const SchoolGroupData = useMemo<ScoreChartItemProps[] | []>(
     () =>
       fetchedReport
-        ?.filter((item) => Object.keys(EGroup)?.includes(item.type as EGroup))
+        ?.filter((item) => Object.keys(EGroupDashboard)?.includes(item.type as EGroup))
         ?.map((item) => ({
           ...item,
-          color: getSchoolGroupColor(item.type as EGroup),
+          color: getSchoolGroupColor(item.type as EGroupDashboard),
         })) || [],
     [fetchedReport],
   );
