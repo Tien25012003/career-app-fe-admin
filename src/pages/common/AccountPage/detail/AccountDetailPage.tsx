@@ -146,7 +146,7 @@ const AccountDetailPage = () => {
           groups={account.data.groups || []}
           name={account.data.name || ''}
           role={account.data.role || ''}
-          status={account.data.status || 0}
+          status={account.data.status ? true : false}
           username={account.data.username || ''}
           permissions={account.data.permissions || []}
         />
