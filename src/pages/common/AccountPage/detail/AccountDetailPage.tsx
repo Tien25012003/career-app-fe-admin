@@ -8,7 +8,10 @@ import { useForm, zodResolver } from '@mantine/form';
 import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconSettings, IconUser } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { SchemaUtils } from '@util/SchemaUtils';
+import { userInfoAtom } from 'atoms/auth.store';
 import { QUERY_KEYS } from 'constants/query-key.constants';
+import { useAtom } from 'jotai';
+import { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { z } from 'zod';
 const formSchema = z.object({
@@ -47,6 +50,9 @@ const AccountForm = (value: FormValues) => {
     console.log('formValues', formValues);
   });
 
+  const [userInfo] = useAtom(userInfoAtom);
+  const userRole = useMemo(() => userInfo?.role, [userInfo?.role]);
+
   return (
     <SimpleGrid cols={{ sm: 1, lg: 2 }}>
       <Paper withBorder shadow='sm' radius={'md'} p='md'>
@@ -77,6 +83,7 @@ const AccountForm = (value: FormValues) => {
             placeholder='Chọn vai trò'
             {...form.getInputProps('role')}
             clearable
+            disabled={userRole !== EROLE.ADMIN}
           />
           <Switch label='Kích hoạt tài khoản' fw={500} {...form.getInputProps('status', { type: 'checkbox' })} />
         </Stack>

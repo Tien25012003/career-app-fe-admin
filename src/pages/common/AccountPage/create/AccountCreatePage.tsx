@@ -11,9 +11,12 @@ import { IconChevronLeft, IconChevronRight, IconUser } from '@tabler/icons-react
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { NotifyUtils } from '@util/NotificationUtils';
 import { SchemaUtils } from '@util/SchemaUtils';
+import { userInfoAtom } from 'atoms/auth.store';
 import { AxiosError } from 'axios';
 import { QUERY_KEYS } from 'constants/query-key.constants';
 import useInvalidate from 'hooks/useInvalidate';
+import { useAtom } from 'jotai';
+import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
@@ -65,6 +68,9 @@ const AccountCreatePage = () => {
   const navigate = useNavigate();
   const invalidate = useInvalidate();
 
+  const [userInfo] = useAtom(userInfoAtom);
+  const userRole = useMemo(() => userInfo?.role, [userInfo?.role]);
+
   const form = useForm({
     initialValues: initialFormValues,
     validate: zodResolver(formSchema),
@@ -97,10 +103,19 @@ const AccountCreatePage = () => {
       ),
     );
   };
+
+  // const roles = useMemo(()=>,[])
   const handleSubmit = form.onSubmit((formValues) => {
     createAccount({ ...formValues, status: formValues.status ? 1 : 0 });
     navigate(-1);
   });
+
+  // EFFECTS
+  useEffect(() => {
+    if (userRole === EROLE.TEACHER) {
+      form.setFieldValue('role', EROLE.STUDENT);
+    }
+  }, []);
 
   return (
     <Stack my='1rem' mx='1rem'>
@@ -147,6 +162,7 @@ const AccountCreatePage = () => {
                 { label: 'Học sinh', value: 'STUDENT' },
               ]}
               placeholder='Chọn vai trò'
+              disabled={userRole !== EROLE.ADMIN}
               {...form.getInputProps('role')}
               clearable
             />

@@ -11,9 +11,11 @@ import { IconChevronLeft, IconChevronRight, IconUser } from '@tabler/icons-react
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { NotifyUtils } from '@util/NotificationUtils';
 import { SchemaUtils } from '@util/SchemaUtils';
+import { userInfoAtom } from 'atoms/auth.store';
 import { AxiosError } from 'axios';
 import { QUERY_KEYS } from 'constants/query-key.constants';
-import { useEffect } from 'react';
+import { useAtom } from 'jotai';
+import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { z } from 'zod';
 
@@ -46,6 +48,9 @@ const AccountForm = ({ initialValues, id }: { initialValues: FormValues; id: str
     initialValues,
     validate: zodResolver(formSchema),
   });
+
+  const [userInfo] = useAtom(userInfoAtom);
+  const userRole = useMemo(() => userInfo?.role, [userInfo?.role]);
 
   // APIS
   const { data: groupSelect } = useQuery({
@@ -113,6 +118,7 @@ const AccountForm = ({ initialValues, id }: { initialValues: FormValues; id: str
               placeholder='Chọn vai trò'
               {...form.getInputProps('role')}
               clearable
+              disabled={userRole !== EROLE.ADMIN}
             />
             <Switch label='Kích hoạt tài khoản' {...form.getInputProps('status', { type: 'checkbox' })} />
           </Stack>
