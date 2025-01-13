@@ -1,5 +1,5 @@
 import { queryClient } from '@api/config/queryClient';
-import { createNewsAPI } from '@api/services/news/news.api';
+import { createNewsAPI, getNewsCategoryAPI } from '@api/services/news/news.api';
 import { NewsItem } from '@api/services/news/news.response';
 import { uploadAPI } from '@api/services/uploads/uploads.api';
 import { PageHeader } from '@component/PageHeader/PageHeader';
@@ -7,7 +7,7 @@ import { PageUploader } from '@component/PageUploader/PageUploader';
 import { Button, Divider, Group, Paper, Select, SimpleGrid, Stack, Text, Textarea, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { IconChevronLeft, IconChevronRight, IconInfoCircle, IconNews } from '@tabler/icons-react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { NotifyUtils } from '@util/NotificationUtils';
 import { SchemaUtils } from '@util/SchemaUtils';
 import { AxiosError } from 'axios';
@@ -20,6 +20,7 @@ const formSchema = z.object({
   type: z.string().min(1, SchemaUtils.message.nonempty),
   title: z.string().min(1, SchemaUtils.message.nonempty),
   content: z.string().min(1, SchemaUtils.message.nonempty),
+  categoryName: z.string().min(1, SchemaUtils.message.nonempty),
   image: z
     .object({
       longImage: z.string().min(0),
@@ -34,6 +35,7 @@ const initialFormValues: FormValues = {
   type: '',
   title: '',
   content: '',
+  categoryName: '',
   image: {
     longImage: '',
     shortImage: '',
@@ -49,6 +51,10 @@ const NewsCreatePage = () => {
   const [isUploadFile, setIsUploadFile] = useState(false);
   const [shortImage, setShortImage] = useState<File>();
   const [longImage, setLongImage] = useState<File>();
+  const { data: newsCategory, isFetching } = useQuery({
+    queryKey: [QUERY_KEYS.NEWS.CATEGORY],
+    queryFn: () => getNewsCategoryAPI(),
+  });
   const { mutate: createNews, isPending } = useMutation({
     mutationFn: (request: Omit<NewsItem, '_id' | 'createdAt'>) => createNewsAPI(request),
     onSuccess: () => {
@@ -128,10 +134,21 @@ const NewsCreatePage = () => {
               <Select
                 withAsterisk
                 comboboxProps={{ withinPortal: false }}
-                label='Chọn loại tin tức'
+                label='Chọn độ ưu tiên'
                 data={['BREAKING', 'NORMAL']}
-                placeholder='Chọn loại tin tức'
+                placeholder='Chọn độ ưu tiên'
                 {...form.getInputProps('type')}
+                clearable
+                searchable
+              />
+              <Select
+                withAsterisk
+                comboboxProps={{ withinPortal: false }}
+                label='Chọn loại tin tức'
+                //@ts-expect-error no check
+                data={newsCategory?.map((item) => item.categoryName)}
+                placeholder='Chọn loại tin tức'
+                {...form.getInputProps('categoryName')}
                 clearable
                 searchable
               />
