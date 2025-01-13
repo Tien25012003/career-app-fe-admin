@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import AccountFilterDrawer from '../AccountGroupListPage/components/AccountFilterDrawer';
 import { useAtom } from 'jotai';
 import { userInfoAtom } from 'atoms/auth.store';
+import { useState } from 'react';
 
 const BadgeStatus = (status: number) => {
   switch (status) {
@@ -53,12 +54,12 @@ const BadgeStatus = (status: number) => {
       );
   }
 };
-const query = {
-  userId: '6741e47fb917b74c31adbea2',
-};
+
 const AccountListPage = () => {
   const navigate = useNavigate();
   const [userInfo] = useAtom(userInfoAtom);
+  const [query, setQuery] = useState({ userId: userInfo?._id });
+
   const [openedFilter, { open: openFilter, close: closeFilter }] = useDisclosure(false);
   const { queries, hasNone, onSearch, onReset, getPaginationConfigs } = useFilter<Partial<GetListAccountREQ>>(query);
 
