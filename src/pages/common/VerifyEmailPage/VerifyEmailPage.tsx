@@ -44,7 +44,7 @@ export default function VerifyEmailPage() {
           <Center>
             <Image src={FailGif} w={200} />
           </Center>
-          <Text ta={'center'} fz={'h3'} fw={'bold'}>
+          <Text ta={'center'} fz={'h3'} fw={'bold'} w={300}>
             Tài khoản Email của chưa được xác thực
           </Text>
           <Text w={300} ta={'center'}>
