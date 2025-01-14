@@ -5,9 +5,11 @@ import AccountCreateGroupPage from '@page/common/AccountPage/create/AccountCreat
 import AccountCreatePage from '@page/common/AccountPage/create/AccountCreatePage';
 import AccountDetailPage from '@page/common/AccountPage/detail/AccountDetailPage';
 import GroupEditPage from '@page/common/AccountPage/edit/GroupEditPage';
+import ConfirmChangePasswordPage from '@page/common/ConfirmChangePasswordPage/ConfirmChangePasswordPage';
 import { HomePage } from '@page/common/HomePage';
 import NewsCreatePage from '@page/common/NewsPage/create/NewsCreatePage';
 import { NotFoundPage } from '@page/common/NotFoundPage/NotFoundPage';
+import VerifyEmailPage from '@page/common/VerifyEmailPage/VerifyEmailPage';
 import { Suspense } from 'react';
 import { RouteObject } from 'react-router-dom';
 const DashboardPage = lazyWithReload(() => import('@page/common/DashboardPage/DashboardPage'));
@@ -50,6 +52,22 @@ export const LoadingWrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 const publicRoutes: RouteObject[] = [
+  {
+    path: '/confirm-change-password',
+    element: (
+      <LoadingWrapper>
+        <ConfirmChangePasswordPage />
+      </LoadingWrapper>
+    ),
+  },
+  {
+    path: '/verify-email',
+    element: (
+      <LoadingWrapper>
+        <VerifyEmailPage />
+      </LoadingWrapper>
+    ),
+  },
   {
     path: '/login',
     element: (
