@@ -115,7 +115,7 @@ export function ScoreChart() {
     <Grid>
       <Transition mounted={!isLoading} transition={'fade-right'} enterDelay={0}>
         {(styles) => (
-          <Grid.Col span={{ sm: 12, lg: 4 }} style={styles}>
+          <Grid.Col span={{ sm: 12, lg: 6 }} style={styles}>
             <PageChart
               chartType='AreaChart'
               title='Thống kê điểm IQ'
@@ -130,7 +130,7 @@ export function ScoreChart() {
       </Transition>
       <Transition mounted={!isLoading} transition={'fade-right'} enterDelay={50}>
         {(styles) => (
-          <Grid.Col span={{ sm: 12, lg: 4 }} style={styles}>
+          <Grid.Col span={{ sm: 12, lg: 6 }} style={styles}>
             <PageChart
               chartType='AreaChart'
               title='Thống kê điểm EQ'
@@ -144,7 +144,7 @@ export function ScoreChart() {
         )}
       </Transition>
 
-      <Transition mounted={!isLoading} transition={'fade-right'} enterDelay={100}>
+      {/* <Transition mounted={!isLoading} transition={'fade-right'} enterDelay={100}>
         {(styles) => (
           <Grid.Col span={{ sm: 12, lg: 4 }} style={styles}>
             <PageChart
@@ -158,7 +158,7 @@ export function ScoreChart() {
             />
           </Grid.Col>
         )}
-      </Transition>
+      </Transition> */}
 
       <Transition mounted={!isLoading} transition={'fade-right'} enterDelay={150}>
         {(styles) => (
