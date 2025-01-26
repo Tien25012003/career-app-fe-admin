@@ -155,13 +155,13 @@ export function Conclusion({ openCreateConclusionModal, setOpenCreateConclusionM
       {
         accessor: 'IQ',
         title: 'IQ',
-        width: 50,
+        width: 100,
         textAlign: 'center',
       },
       {
         accessor: 'EQ',
         title: 'EQ',
-        width: 50,
+        width: 100,
         textAlign: 'center',
       },
       {
