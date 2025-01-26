@@ -1,6 +1,6 @@
 import { PageHeader } from '@component/PageHeader/PageHeader';
 import { Button, Group, Stack } from '@mantine/core';
-import { IconFileUpload, IconPencil, IconPlus } from '@tabler/icons-react';
+import { IconPencil, IconPlus } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Conclusion } from './components/Conclusion';
@@ -85,11 +85,11 @@ export default function SystemExam() {
             </Button>
           ))}
         </Group>
-        {selectedHeader === 'Conclusion' && (
+        {/* {selectedHeader === 'Conclusion' && (
           <Button variant='light' leftSection={<IconFileUpload />}>
             Upload Excel File
           </Button>
-        )}
+        )} */}
       </Group>
       {selectedHeader === 'HOLLAND_IQ_EQ' && (
         <ExamManagement openCreateExamModal={openCreateExamModal} setOpenCreateExamModal={setOpenCreateExamModal} />
