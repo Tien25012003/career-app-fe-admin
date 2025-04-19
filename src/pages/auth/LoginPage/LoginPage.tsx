@@ -7,12 +7,10 @@ import { useForm, zodResolver } from '@mantine/form';
 import { useMutation } from '@tanstack/react-query';
 import { BaseResponse } from '@type/response.type';
 import { NotifyUtils } from '@util/NotificationUtils';
-import { getMobileOperatingSystem } from '@util/PlatformUtil';
 import { SchemaUtils } from '@util/SchemaUtils';
 import { accessTokenAtom } from 'atoms/auth.store';
 import { AxiosError } from 'axios';
 import { useSetAtom } from 'jotai';
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
@@ -57,20 +55,6 @@ export default function LoginPage() {
   const handleFormSubmit = form.onSubmit((formValues) => {
     loginMutation({ username: formValues.username, password: formValues.password });
   });
-
-  // TODO: TEST DEEPLINK --> NEED TO REMOVE WHEN DONE
-  const QR_CODE = 'm_2';
-  useEffect(() => {
-    const os = getMobileOperatingSystem();
-    if (os === 'Android') {
-      // window.location.href = `intent://career-app-fe-admin.vercel.app?qr-code=${QR_CODE}#Intent;scheme=https;package=com.capsulekaiba.pickleduels;end;`;
-      window.location.href = `intent://career-app-fe-admin.vercel.app#Intent;scheme=https;package=com.capsulekaiba.pickleduels;end;`;
-    } else if (os === 'iOS') {
-      console.log('IOS');
-    } else {
-      window.location.href = 'https://www.capsulekaiba.com/about-us';
-    }
-  }, []);
 
   // RENDER
   return (

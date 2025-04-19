@@ -1,6 +1,7 @@
 import { ProtectedRoutes } from '@component/ProtectedRoutes/ProtectedRoutes';
 import { lazyWithReload } from '@helper/lazyWithReload';
 import { Skeleton } from '@mantine/core';
+import { QRCodePage } from '@page/auth/QRCodePage/QRCodePage';
 import AccountCreateGroupPage from '@page/common/AccountPage/create/AccountCreateGroupPage';
 import AccountCreatePage from '@page/common/AccountPage/create/AccountCreatePage';
 import AccountDetailPage from '@page/common/AccountPage/detail/AccountDetailPage';
@@ -73,6 +74,14 @@ const publicRoutes: RouteObject[] = [
     element: (
       <LoadingWrapper>
         <LoginPage />
+      </LoadingWrapper>
+    ),
+  },
+  {
+    path: '/qr-code',
+    element: (
+      <LoadingWrapper>
+        <QRCodePage />
       </LoadingWrapper>
     ),
   },
