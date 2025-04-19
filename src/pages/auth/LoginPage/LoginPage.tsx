@@ -63,7 +63,8 @@ export default function LoginPage() {
   useEffect(() => {
     const os = getMobileOperatingSystem();
     if (os === 'Android') {
-      window.location.href = `intent://career-app-fe-admin.vercel.app?qr-code=${QR_CODE}#Intent;scheme=https;package=com.capsulekaiba.pickleduels;end;`;
+      // window.location.href = `intent://career-app-fe-admin.vercel.app?qr-code=${QR_CODE}#Intent;scheme=https;package=com.capsulekaiba.pickleduels;end;`;
+      window.location.href = `intent://career-app-fe-admin.vercel.app#Intent;scheme=https;package=com.capsulekaiba.pickleduels;end;`;
     } else if (os === 'iOS') {
       console.log('IOS');
     } else {
