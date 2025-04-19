@@ -59,10 +59,11 @@ export default function LoginPage() {
   });
 
   // TODO: TEST DEEPLINK --> NEED TO REMOVE WHEN DONE
+  const QR_CODE = 'm_2';
   useEffect(() => {
     const os = getMobileOperatingSystem();
     if (os === 'Android') {
-      window.location.href = 'https://www.capsulekaiba.com/about-us';
+      window.location.href = `intent://career-app-fe-admin.vercel.app?qr-code=${QR_CODE}#Intent;scheme=https;package=com.capsulekaiba.pickleduels;end;`;
     } else if (os === 'iOS') {
       console.log('IOS');
     } else {

@@ -4,7 +4,10 @@
     "target": {
       "namespace": "android_app",
       "package_name": "com.capsulekaiba.pickleduels",
-      "sha256_cert_fingerprints": ["8E:B5:C3:29:31:7A:51:01:13:40:70:12:C8:CD:39:BE:25:E8:16:07:4C:30:C9:59:92:4F:9C:46:A3:77:DE:E8"]
+      "sha256_cert_fingerprints": [
+        "8E:B5:C3:29:31:7A:51:01:13:40:70:12:C8:CD:39:BE:25:E8:16:07:4C:30:C9:59:92:4F:9C:46:A3:77:DE:E8",
+        "2E:21:D7:C0:82:D3:E0:D9:71:88:05:A6:E3:B9:00:7D:38:8C:FA:34:D2:43:52:28:12:B4:56:C5:3D:E7:53:E4"
+      ]
     }
   }
 ]
